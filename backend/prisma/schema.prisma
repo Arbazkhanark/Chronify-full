@@ -1,0 +1,689 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum GoalType {
+  SHORT_TERM
+  LONG_TERM
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TimeTableSource {
+  MANUAL
+  AI
+}
+
+enum AIIntent {
+  DOUBT
+  TIMETABLE
+  MOTIVATION
+}
+
+enum AccountType {
+  STUDENT
+  MENTOR
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum PostType {
+  ACHIEVEMENT
+  JOURNEY
+  MILESTONE
+  GENERAL
+}
+
+enum TaskStatus {
+  PENDING // task bana hai par start nahi hua
+  ONGOING // abhi chal raha hai
+  COMPLETED // successfully done
+  MISSED // time nikal gaya, nahi hua
+  SKIPPED      // ❌ MISSING
+  DELAYED      // ❌ MISSING
+  RESCHEDULED  // ❌ MISSING
+}
+
+enum SessionStatus {
+  STARTED
+  COMPLETED
+  ABANDONED
+}
+
+enum StudyIntensity {
+  LIGHT // ~2 hrs
+  MEDIUM // ~4 hrs
+  HARD // ~6 hrs
+  EXTREME // exam mode
+}
+
+enum FriendStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+// Profile visibility options
+enum ProfileVisibility {
+  PUBLIC
+  FRIENDS_ONLY
+  PRIVATE
+}
+
+enum FixedTimeType {
+  COLLEGE
+  OFFICE
+  SCHOOL
+  COMMUTE
+  MEETING
+  WORKOUT
+  MEAL
+  ENTERTAINMENT
+  FREE
+  FAMILY
+  HEALTH
+  OTHER
+}
+
+enum TimeSlotType {
+  TASK
+  FIXED
+  BREAK
+  COMMUTE
+  FREE
+  CLASS
+  STUDY
+  HEALTH
+  PROJECT
+  MEETING
+  WORKOUT
+  MEAL
+  ENTERTAINMENT
+  SLEEP
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  timezone    String      @default("Asia/Kolkata")
+  accountType AccountType @default(STUDENT)
+  verified    Boolean     @default(false)
+
+  // 🔥 DOMAIN / INTERESTS (ARRAY)
+  fields    String[] // ["Tech", "Design"]
+  subFields String[] // ["Backend Developer", "AI", "DevOps"]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lastLogin DateTime? // Track last login time
+  isOnline  Boolean   @default(false) // Track if the user is online or not
+
+  profileVisibility ProfileVisibility @default(PUBLIC) // Who can see the user's profile?
+
+  phoneNumber      String? // If required
+  twoFactorEnabled Boolean @default(false) // To handle 2FA
+
+  lastTimetableLockAt DateTime? // - Track when user last locked timetable
+
+
+  // Core
+  goals      Goal[]
+  tasks      Task[]
+  streak     Streak?
+  aiSessions AISession[]
+
+  // Profile
+  profile Profile?
+  privacy PrivacySettings?
+  playSound       Boolean   @default(true)     // Sound notifications
+  gracePeriod Int     @default(60)        // Minutes (60 = 1 hour)
+
+  notifyBeforeTask  Int     @default(15)    // kitne min pehle notify karna hai
+  notifyAtTaskStart Boolean @default(true)  // start pe notify?
+  notifyAtTaskEnd   Boolean @default(true)  // end pe notify?
+  snoozeUntil       DateTime?               // notification snooze
+
+  // Social
+  posts    Post[]
+  reaction Reaction[]
+  comments Comment[]
+
+  sentRequests     FriendRequest[] @relation("SentRequests")
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+
+  // 🔥 SELF RELATION (IMPORTANT)
+  friendsAsUser   Friend[] @relation("UserAsOwner")
+  friendsAsFriend Friend[] @relation("UserAsFriend")
+
+  reminders     Reminder[]
+  taskReminders TaskReminder[]
+  
+
+  // 🔥 ADDED: Relation to FixedTime
+  fixedTimes     FixedTime[]
+  sleepSchedules SleepSchedule[]
+  taskFeedbacks  TaskFeedback[]
+}
+
+model Profile {
+  id     String @id @default(uuid())
+  userId String @unique
+
+  userName    String       @unique
+  avatarUrl   String?
+  coverPhoto  String?
+  bio         String?
+  dob         DateTime? // Adding DOB
+  profession  String? // Adding Profession
+  hobbies     String[] // Hobbies stored as an array of strings
+  socialLinks SocialLink[] // Link to social media platforms
+
+  // Location as separate fields
+  city    String?
+  state   String?
+  country String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model SocialLink {
+  id        String         @id @default(uuid())
+  profileId String // Foreign key to Profile
+  platform  SocialPlatform // E.g., "facebook", "twitter", etc.
+  url       String // URL to the social media profile
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id])
+}
+
+enum SocialPlatform {
+  FACEBOOK
+  TWITTER
+  INSTAGRAM
+  LINKEDIN
+  YOUTUBE
+  TIKTOK
+}
+
+model PrivacySettings {
+  id     String @id @default(uuid())
+  userId String @unique
+
+  profilePublic   Boolean @default(true)
+  timetablePublic Boolean @default(false)
+  progressPublic  Boolean @default(true)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum SleepType {
+  REGULAR
+  POWER_NAP
+  RECOVERY
+  EARLY
+  LATE
+}
+
+enum SleepDay {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+model SleepSchedule {
+  id     String @id @default(uuid())
+  userId String
+
+  // Day-specific schedule
+  day      SleepDay
+  bedtime  String // Format: "23:00"
+  wakeTime String // Format: "07:00"
+  duration Int // In minutes
+  isActive Boolean   @default(true)
+  type     SleepType @default(REGULAR)
+  notes    String?
+  color    String    @default("#4B5563")
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // @@unique([userId, day])
+  @@index([userId])
+  @@index([day])
+  @@index([userId, type])  // Fast query by type
+  @@index([userId, day])   // Fast query by day (not unique)
+}
+
+enum GoalPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum GoalStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+  FAILED
+}
+
+enum GoalCategory {
+  ACADEMIC
+  PROFESSIONAL
+  HEALTH
+  PERSONAL
+  SKILL_DEVELOPMENT
+  FINANCIAL
+  SOCIAL
+  CREATIVE
+}
+
+model Goal {
+  id     String @id @default(uuid())
+  userId String
+
+  // Basic Info
+  title       String
+  description String?
+  category    GoalCategory @default(ACADEMIC)
+  priority    GoalPriority @default(MEDIUM)
+  type        GoalType     @default(SHORT_TERM)
+  status      GoalStatus   @default(NOT_STARTED)
+
+  // Dates
+  targetDate  DateTime?
+  completedAt DateTime?
+
+  // Progress Tracking
+  progress       Float  @default(0) // 0-100
+  totalHours     Int    @default(0)
+  completedHours Int    @default(0)
+  weeklyTarget   Int    @default(5)
+  color          String @default("#3B82F6")
+
+  // Subject/Field
+  subject String?
+
+  // Streak & Activity
+  streak      Int      @default(0)
+  lastUpdated DateTime @default(now())
+
+  // Visibility
+  isPublic Boolean @default(false)
+
+  // Tags (Array)
+  tags String[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user       User        @relation(fields: [userId], references: [id])
+  milestones Milestone[]
+  tasks      Task[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([targetDate])
+  @@index([category])
+}
+
+model Milestone {
+  id             String    @id @default(uuid())
+  goalId         String
+  title          String
+  description    String?
+  completed      Boolean   @default(false)
+  targetDate     DateTime?
+  progress       Float     @default(0)
+  scheduledHours Int       @default(0)
+  completedHours Int       @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  // Milestone can have multiple tasks
+  tasks Task[] @relation("MilestoneTasks")
+
+  @@index([goalId])
+}
+
+enum TaskCategory {
+  ACADEMIC
+  PROFESSIONAL
+  HEALTH
+  PERSONAL
+  LEARNING
+  BREAK
+  COMMUTE
+  PROJECT
+  SLEEP
+}
+
+model Task {
+  id     String  @id @default(uuid())
+  goalId String?
+  userId String
+
+  title     String // Task name
+  subject   String?
+  notes      String?
+  startTime String
+  endTime   String
+  duration  Int // Minutes
+  priority  Priority     @default(MEDIUM)
+  color     String       @default("#3B82F6")
+  day       String
+  type      TimeSlotType
+  category  TaskCategory
+  icon      String?
+
+  // Linked to fixed time free periods
+  fixedTimeId  String?
+  isFreePeriod Boolean @default(false)
+
+  // Goal tracking - milestone can have multiple tasks
+  milestoneId String?
+
+  status      TaskStatus @default(PENDING)
+  isCompleted Boolean    @default(false)
+  completedAt DateTime?
+  lastStatusUpdateAt DateTime?
+
+  // 🟢 STARTED AT - IMPORTANT
+  startedAt DateTime?   // ✅ ADD THIS - Jab user "Start Task" karega tab set karo
+  
+  // 🟢 ACTUAL DURATION - IMPORTANT
+  actualDuration Int?   // ✅ ADD THIS - Actually kitna time laga (minutes)
+
+  // 🟢 GRACE PERIOD HANDLING
+  gracePeriodEndsAt DateTime? // ✅ ADD THIS - Task end time + 1 hour
+
+
+
+  // 1. For rescheduling (ek baar ke liye)
+  isRescheduled     Boolean   @default(false) // Kya task reschedule hua hai?
+  rescheduledToTime String?   // Naya start time agar reschedule kiya toh
+  rescheduledDay    String?   // Naya day agar reschedule kiya toh
+  rescheduledCount  Int       @default(0) // Sirf 0 ya 1 hoga
+
+  taskReminders TaskReminder[]
+
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+
+   // RELATIONS
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal      Goal?      @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  milestone Milestone? @relation("MilestoneTasks", fields: [milestoneId], references: [id], onDelete: Cascade)
+  fixedTime FixedTime? @relation(fields: [fixedTimeId], references: [id], onDelete: Cascade)
+
+  // Relation to TimeSlot
+  // timeSlots TimeSlot[]
+  feedback  TaskFeedback?
+
+  @@index([userId])
+  @@index([day])
+  @@index([status])     // ✅ ADD THIS - Fast filtering by status
+  @@index([startTime])  // ✅ ADD THIS
+  @@index([goalId])
+  @@index([fixedTimeId])
+}
+
+model TaskFeedback {
+  id     String @id @default(uuid())
+  taskId String @unique
+  userId String
+
+  focusLevel    Int // 1-10
+  completedWell Boolean @default(true)
+  notes         String?
+  duration    Int?    // Actually kitna time laga (minutes mein)
+
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model FixedTime {
+  id          String        @id @default(uuid())
+  userId      String
+  title       String
+  description String?
+  days        String[]
+  startTime   String
+  endTime     String
+  type        FixedTimeType @default(OTHER)
+  color       String        @default("#6B7280")
+  isEditable  Boolean       @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  freePeriods FreePeriod[]
+  tasks       Task[]
+  // @@index([days])
+
+  @@index([userId])
+}
+
+model FreePeriod {
+  id          String @id @default(uuid())
+  fixedTimeId String
+  title       String @default("Free Period")
+  startTime   String
+  endTime     String
+  duration    Int
+  day         String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fixedTime FixedTime @relation(fields: [fixedTimeId], references: [id], onDelete: Cascade)
+
+  @@index([fixedTimeId])
+  @@index([day])
+}
+
+
+model Streak {
+  id     String @id @default(uuid())
+  userId String @unique
+
+  current    Int       @default(0)
+  best       Int       @default(0)
+  lastActive DateTime?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model AISession {
+  id     String @id @default(uuid())
+  userId String
+
+  input    String // User ka natural language input
+  response String // AI ka output
+  intent   AIIntent
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model FriendRequest {
+  id         String              @id @default(uuid())
+  senderId   String
+  receiverId String
+  status     FriendRequestStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sender   User @relation("SentRequests", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedRequests", fields: [receiverId], references: [id])
+
+  // To prevent duplicate requests
+  @@unique([senderId, receiverId])
+}
+
+model Friend {
+  id String @id @default(uuid())
+
+  userId   String
+  friendId String
+  status   FriendStatus @default(ACTIVE) // Added status
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User @relation("UserAsOwner", fields: [userId], references: [id])
+  friend User @relation("UserAsFriend", fields: [friendId], references: [id])
+
+  @@unique([userId, friendId])
+}
+
+model Post {
+  id      String   @id @default(uuid())
+  userId  String
+  content String
+  type    PostType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id])
+  reactions Reaction[]
+  comments  Comment[]
+}
+
+model Reaction {
+  id        String       @id @default(uuid())
+  postId    String?
+  commentId String?
+  userId    String
+  reaction  ReactionType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post    Post?    @relation(fields: [postId], references: [id])
+  comment Comment? @relation(fields: [commentId], references: [id])
+  user    User     @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+  @@unique([commentId, userId])
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  SAD
+  ANGRY
+  HAHA
+}
+
+model Comment {
+  id        String    @id @default(uuid())
+  postId    String
+  userId    String
+  content   String
+  parentId  String?
+  isDeleted Boolean   @default(false)
+  editedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies Comment[] @relation("CommentReplies")
+
+  reactions Reaction[]
+}
+
+
+model TaskReminder {
+  id        String   @id @default(uuid())
+  taskId    String
+  userId    String
+  
+  remindAt  DateTime  // kab remind karna hai
+  type      ReminderType // BEFORE_START, AT_START, AFTER_END
+  sent      Boolean  @default(false)  // bhej diya?
+  sentAt    DateTime?
+  
+  createdAt DateTime @default(now())
+  
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, remindAt])
+  @@index([sent])
+}
+
+enum ReminderType {
+  BEFORE_START  // X minutes pehle
+  AT_START      // exactly start time pe
+  AFTER_END     // complete karne ke liye (1 hour grace mein)
+}
+
+model Reminder {
+  id       String   @id @default(uuid())
+  userId   String
+  message  String
+  remindAt DateTime
+
+  user User @relation(fields: [userId], references: [id])
+}
