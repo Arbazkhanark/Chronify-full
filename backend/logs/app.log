@@ -16220,3 +16220,2707 @@ Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"4213ms","i
 Trace Id: a1d27744-9f43-421a-b889-8f6a319c3fa6
 Function Name: prisma.query
 Metadata: {"model":"Task","operation":"findMany","duration":"4211ms","timestamp":"2026-03-13T16:05:26.093Z","threshold":"500ms"}
+2026-03-13T18:01:04.899Z: info: Database connection attempt 1
+Trace Id: 3ac74091-cb25-4e19-863a-ba5ccdf48d22
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-03-13T18:01:08.993Z: warn: Slow database query detected
+Trace Id: a155b87d-c95b-4baa-b59c-58a2531d41a6
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"683ms","timestamp":"2026-03-13T18:01:08.310Z","threshold":"500ms"}
+2026-03-13T18:01:08.994Z: info: Database connected successfully
+Trace Id: 5126ba2e-89a3-4025-80f6-cbe68bd67ca0
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-03-13T18:01:09.631Z: warn: Slow database query detected
+Trace Id: 85cd5172-be33-4916-a281-f69b9630689e
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"637ms","timestamp":"2026-03-13T18:01:08.994Z","threshold":"500ms"}
+2026-03-13T18:01:09.633Z: info: ServerStarted
+Trace Id: defb1e77-4eb5-400b-92bf-91f34af6c6a1
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":31697}
+2026-03-13T18:01:17.359Z: info: OPTIONS /v0/api/users/me
+Trace Id: 59e96f73-111e-4682-8093-6987f6732523
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"7ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:01:17.374Z: info: Fetching user profile
+Trace Id: e1194c5e-4d01-49bf-8f27-ed0e82fdd7e5
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:17.373Z: info: Profile API called
+Trace Id: e1194c5e-4d01-49bf-8f27-ed0e82fdd7e5
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:18.236Z: info: Profile fetched successfully
+Trace Id: e1194c5e-4d01-49bf-8f27-ed0e82fdd7e5
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:18.235Z: warn: Slow database query detected
+Trace Id: e1194c5e-4d01-49bf-8f27-ed0e82fdd7e5
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"858ms","timestamp":"2026-03-13T18:01:17.377Z","threshold":"500ms"}
+2026-03-13T18:01:18.238Z: info: GET /me
+Trace Id: e1194c5e-4d01-49bf-8f27-ed0e82fdd7e5
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"877ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:01:20.855Z: info: Profile API called
+Trace Id: 34f8c608-7c5e-4fb2-862c-7936ea88b341
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:20.856Z: info: Fetching user profile
+Trace Id: 34f8c608-7c5e-4fb2-862c-7936ea88b341
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:21.201Z: info: Profile fetched successfully
+Trace Id: 34f8c608-7c5e-4fb2-862c-7936ea88b341
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:21.202Z: info: GET /me
+Trace Id: 34f8c608-7c5e-4fb2-862c-7936ea88b341
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"348ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:01:21.203Z: info: Profile API called
+Trace Id: f9724260-6a06-4174-b114-daf68f7c0a26
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:21.203Z: info: Fetching user profile
+Trace Id: f9724260-6a06-4174-b114-daf68f7c0a26
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:21.219Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 90edaef0-1825-4c7e-91c8-cf7df4648e94
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:01:21.220Z: info: OPTIONS /v0/api/goals
+Trace Id: 1bcc0cba-8775-4a8d-804f-558e9bbeaddd
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:01:21.221Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: 48ecaea3-2000-4616-a401-d838661efcac
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:01:21.232Z: info: Fetching full timetable
+Trace Id: 06db2d5f-852a-4cdc-a50a-874aba91a1cb
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:01:21.232Z: info: Get full timetable API called
+Trace Id: 06db2d5f-852a-4cdc-a50a-874aba91a1cb
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:01:21.237Z: info: Get goals API called
+Trace Id: 899e8cbe-1003-4a8d-8204-4e1d98876fbd
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:01:21.237Z: info: Fetching goals with filters
+Trace Id: 899e8cbe-1003-4a8d-8204-4e1d98876fbd
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:01:21.241Z: info: Get task statistics API called
+Trace Id: e39ade4e-7155-4f4b-b8a6-3ee08d9ac32d
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:21.241Z: info: Fetching task statistics
+Trace Id: e39ade4e-7155-4f4b-b8a6-3ee08d9ac32d
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:21.613Z: info: Profile fetched successfully
+Trace Id: f9724260-6a06-4174-b114-daf68f7c0a26
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:21.613Z: info: GET /me
+Trace Id: f9724260-6a06-4174-b114-daf68f7c0a26
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"410ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:01:24.788Z: warn: Slow database query detected
+Trace Id: 06db2d5f-852a-4cdc-a50a-874aba91a1cb
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"3555ms","timestamp":"2026-03-13T18:01:21.233Z","threshold":"500ms"}
+2026-03-13T18:01:24.789Z: warn: Slow database query detected
+Trace Id: 899e8cbe-1003-4a8d-8204-4e1d98876fbd
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"3551ms","timestamp":"2026-03-13T18:01:21.238Z","threshold":"500ms"}
+2026-03-13T18:01:25.386Z: warn: Slow database query detected
+Trace Id: 06db2d5f-852a-4cdc-a50a-874aba91a1cb
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"4152ms","timestamp":"2026-03-13T18:01:21.233Z","threshold":"500ms"}
+2026-03-13T18:01:25.386Z: warn: Slow database query detected
+Trace Id: 899e8cbe-1003-4a8d-8204-4e1d98876fbd
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"4148ms","timestamp":"2026-03-13T18:01:21.238Z","threshold":"500ms"}
+2026-03-13T18:01:25.386Z: info: Goals fetched successfully
+Trace Id: 899e8cbe-1003-4a8d-8204-4e1d98876fbd
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:01:25.386Z: info: Goals fetched successfully
+Trace Id: 899e8cbe-1003-4a8d-8204-4e1d98876fbd
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:01:25.387Z: info: GET /
+Trace Id: 899e8cbe-1003-4a8d-8204-4e1d98876fbd
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"4153ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:01:26.096Z: warn: Slow database query detected
+Trace Id: e39ade4e-7155-4f4b-b8a6-3ee08d9ac32d
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"4855ms","timestamp":"2026-03-13T18:01:21.241Z","threshold":"500ms"}
+2026-03-13T18:01:26.097Z: info: Task statistics fetched successfully
+Trace Id: e39ade4e-7155-4f4b-b8a6-3ee08d9ac32d
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:26.097Z: info: Task statistics fetched successfully
+Trace Id: e39ade4e-7155-4f4b-b8a6-3ee08d9ac32d
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:01:26.098Z: info: GET /stats
+Trace Id: e39ade4e-7155-4f4b-b8a6-3ee08d9ac32d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"4858ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:01:26.835Z: info: Full timetable generated successfully
+Trace Id: 06db2d5f-852a-4cdc-a50a-874aba91a1cb
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:01:26.835Z: warn: Slow database query detected
+Trace Id: 06db2d5f-852a-4cdc-a50a-874aba91a1cb
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"5601ms","timestamp":"2026-03-13T18:01:21.233Z","threshold":"500ms"}
+2026-03-13T18:01:26.835Z: info: Full timetable fetched successfully
+Trace Id: 06db2d5f-852a-4cdc-a50a-874aba91a1cb
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:01:26.836Z: info: GET /full
+Trace Id: 06db2d5f-852a-4cdc-a50a-874aba91a1cb
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"5615ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:27.110Z: info: OPTIONS /v0/api/users/me
+Trace Id: d4d38eca-55e5-4077-9ab4-0110d8aa0435
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"22ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:27.121Z: info: Profile API called
+Trace Id: e77af141-bd42-4067-97b5-bd4e49f5bc2f
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:27.121Z: info: Fetching user profile
+Trace Id: e77af141-bd42-4067-97b5-bd4e49f5bc2f
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:27.127Z: info: OPTIONS /v0/api/users/me
+Trace Id: d2ab2425-7e34-4ed7-b1c5-a1af3ee0c7fc
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:28.275Z: warn: Slow database query detected
+Trace Id: e77af141-bd42-4067-97b5-bd4e49f5bc2f
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1153ms","timestamp":"2026-03-13T18:02:27.122Z","threshold":"500ms"}
+2026-03-13T18:02:28.276Z: info: GET /me
+Trace Id: e77af141-bd42-4067-97b5-bd4e49f5bc2f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1164ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:28.275Z: info: Profile fetched successfully
+Trace Id: e77af141-bd42-4067-97b5-bd4e49f5bc2f
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:28.281Z: info: Fetching user profile
+Trace Id: 855c23be-ec56-44ee-82cc-8645a0aaeb1f
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:28.281Z: info: Profile API called
+Trace Id: 855c23be-ec56-44ee-82cc-8645a0aaeb1f
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:28.303Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 2f31b8bc-a400-49b8-ba55-1ce2721a0e3f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:28.304Z: info: OPTIONS /v0/api/goals
+Trace Id: 62dd28f9-a94c-4289-90f9-9ba295c63fff
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:28.306Z: info: Get full timetable API called
+Trace Id: 0690980e-d4eb-494d-9996-c2b8fd0ba4ce
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:02:28.306Z: info: Fetching full timetable
+Trace Id: 0690980e-d4eb-494d-9996-c2b8fd0ba4ce
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:02:28.308Z: info: Get goals API called
+Trace Id: a2f5ea3d-89c7-4a66-b2d9-f15ec24ea656
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:02:28.308Z: info: Fetching goals with filters
+Trace Id: a2f5ea3d-89c7-4a66-b2d9-f15ec24ea656
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:02:28.308Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: 0890e67e-edf0-4c9c-8d3d-897f72f8532d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:28.310Z: info: Get task statistics API called
+Trace Id: be0466ae-64f1-4689-bd96-a06eca302c0e
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:28.310Z: info: Fetching task statistics
+Trace Id: be0466ae-64f1-4689-bd96-a06eca302c0e
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:28.557Z: info: Profile fetched successfully
+Trace Id: 855c23be-ec56-44ee-82cc-8645a0aaeb1f
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:28.558Z: info: GET /me
+Trace Id: 855c23be-ec56-44ee-82cc-8645a0aaeb1f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"278ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:29.301Z: warn: Slow database query detected
+Trace Id: 0690980e-d4eb-494d-9996-c2b8fd0ba4ce
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"994ms","timestamp":"2026-03-13T18:02:28.307Z","threshold":"500ms"}
+2026-03-13T18:02:29.301Z: warn: Slow database query detected
+Trace Id: a2f5ea3d-89c7-4a66-b2d9-f15ec24ea656
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"993ms","timestamp":"2026-03-13T18:02:28.308Z","threshold":"500ms"}
+2026-03-13T18:02:29.975Z: warn: Slow database query detected
+Trace Id: 0690980e-d4eb-494d-9996-c2b8fd0ba4ce
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1668ms","timestamp":"2026-03-13T18:02:28.307Z","threshold":"500ms"}
+2026-03-13T18:02:29.976Z: warn: Slow database query detected
+Trace Id: a2f5ea3d-89c7-4a66-b2d9-f15ec24ea656
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1668ms","timestamp":"2026-03-13T18:02:28.308Z","threshold":"500ms"}
+2026-03-13T18:02:29.976Z: info: Goals fetched successfully
+Trace Id: a2f5ea3d-89c7-4a66-b2d9-f15ec24ea656
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:02:29.976Z: info: Goals fetched successfully
+Trace Id: a2f5ea3d-89c7-4a66-b2d9-f15ec24ea656
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:02:29.977Z: info: GET /
+Trace Id: a2f5ea3d-89c7-4a66-b2d9-f15ec24ea656
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1670ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:30.643Z: info: Task statistics fetched successfully
+Trace Id: be0466ae-64f1-4689-bd96-a06eca302c0e
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:30.642Z: warn: Slow database query detected
+Trace Id: be0466ae-64f1-4689-bd96-a06eca302c0e
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2332ms","timestamp":"2026-03-13T18:02:28.310Z","threshold":"500ms"}
+2026-03-13T18:02:30.643Z: info: GET /stats
+Trace Id: be0466ae-64f1-4689-bd96-a06eca302c0e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"2334ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:30.643Z: info: Task statistics fetched successfully
+Trace Id: be0466ae-64f1-4689-bd96-a06eca302c0e
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:31.296Z: warn: Slow database query detected
+Trace Id: 0690980e-d4eb-494d-9996-c2b8fd0ba4ce
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2989ms","timestamp":"2026-03-13T18:02:28.307Z","threshold":"500ms"}
+2026-03-13T18:02:31.296Z: info: Full timetable generated successfully
+Trace Id: 0690980e-d4eb-494d-9996-c2b8fd0ba4ce
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:02:31.297Z: info: Full timetable fetched successfully
+Trace Id: 0690980e-d4eb-494d-9996-c2b8fd0ba4ce
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:02:31.297Z: info: GET /full
+Trace Id: 0690980e-d4eb-494d-9996-c2b8fd0ba4ce
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"2992ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:37.299Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 9f5f665a-bcc9-49a8-9174-f2563d7a3206
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:37.299Z: info: OPTIONS /v0/api/goals
+Trace Id: d9e6be1c-192c-4451-bfda-594e0b8b21c7
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:37.300Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: e9a942c0-e10f-4f4d-b77d-967e815f77d3
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:37.303Z: info: Get full timetable API called
+Trace Id: 28b92469-3ec6-4dcd-b2c2-9ba82fae9ce9
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:02:37.303Z: info: Fetching full timetable
+Trace Id: 28b92469-3ec6-4dcd-b2c2-9ba82fae9ce9
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:02:37.305Z: info: Get goals API called
+Trace Id: cb5fa6f5-5036-4bb2-9782-b585fab2d24b
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:02:37.305Z: info: Fetching goals with filters
+Trace Id: cb5fa6f5-5036-4bb2-9782-b585fab2d24b
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:02:37.306Z: info: Fetching task statistics
+Trace Id: e56951f5-5670-46ff-b122-2cd911172e84
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:37.306Z: info: Get task statistics API called
+Trace Id: e56951f5-5670-46ff-b122-2cd911172e84
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:37.977Z: warn: Slow database query detected
+Trace Id: 28b92469-3ec6-4dcd-b2c2-9ba82fae9ce9
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"673ms","timestamp":"2026-03-13T18:02:37.304Z","threshold":"500ms"}
+2026-03-13T18:02:38.636Z: warn: Slow database query detected
+Trace Id: 28b92469-3ec6-4dcd-b2c2-9ba82fae9ce9
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1332ms","timestamp":"2026-03-13T18:02:37.304Z","threshold":"500ms"}
+2026-03-13T18:02:38.637Z: info: Goals fetched successfully
+Trace Id: cb5fa6f5-5036-4bb2-9782-b585fab2d24b
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:02:38.637Z: info: Goals fetched successfully
+Trace Id: cb5fa6f5-5036-4bb2-9782-b585fab2d24b
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:02:38.637Z: warn: Slow database query detected
+Trace Id: cb5fa6f5-5036-4bb2-9782-b585fab2d24b
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1331ms","timestamp":"2026-03-13T18:02:37.305Z","threshold":"500ms"}
+2026-03-13T18:02:38.637Z: info: GET /
+Trace Id: cb5fa6f5-5036-4bb2-9782-b585fab2d24b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1333ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:39.239Z: info: Task statistics fetched successfully
+Trace Id: e56951f5-5670-46ff-b122-2cd911172e84
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:39.239Z: info: Task statistics fetched successfully
+Trace Id: e56951f5-5670-46ff-b122-2cd911172e84
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:39.239Z: warn: Slow database query detected
+Trace Id: e56951f5-5670-46ff-b122-2cd911172e84
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"1933ms","timestamp":"2026-03-13T18:02:37.306Z","threshold":"500ms"}
+2026-03-13T18:02:39.239Z: info: GET /stats
+Trace Id: e56951f5-5670-46ff-b122-2cd911172e84
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"1934ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:39.944Z: warn: Slow database query detected
+Trace Id: 28b92469-3ec6-4dcd-b2c2-9ba82fae9ce9
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2640ms","timestamp":"2026-03-13T18:02:37.304Z","threshold":"500ms"}
+2026-03-13T18:02:39.944Z: info: Full timetable generated successfully
+Trace Id: 28b92469-3ec6-4dcd-b2c2-9ba82fae9ce9
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:02:39.944Z: info: Full timetable fetched successfully
+Trace Id: 28b92469-3ec6-4dcd-b2c2-9ba82fae9ce9
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:02:39.945Z: info: GET /full
+Trace Id: 28b92469-3ec6-4dcd-b2c2-9ba82fae9ce9
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"2643ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:42.474Z: info: OPTIONS /v0/api/users/me
+Trace Id: 2bbe0a6e-1881-4b5b-87ce-60eb19ec81a2
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"3ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:42.477Z: info: Fetching user profile
+Trace Id: 62630103-9b6a-4d1e-95f9-ab9279670fee
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:42.477Z: info: Profile API called
+Trace Id: 62630103-9b6a-4d1e-95f9-ab9279670fee
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:43.102Z: warn: Slow database query detected
+Trace Id: 62630103-9b6a-4d1e-95f9-ab9279670fee
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"623ms","timestamp":"2026-03-13T18:02:42.479Z","threshold":"500ms"}
+2026-03-13T18:02:43.102Z: info: Profile fetched successfully
+Trace Id: 62630103-9b6a-4d1e-95f9-ab9279670fee
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:43.103Z: info: GET /me
+Trace Id: 62630103-9b6a-4d1e-95f9-ab9279670fee
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"628ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:43.104Z: info: Profile API called
+Trace Id: 21347a95-5ca4-4da4-ae59-22b4b3b91604
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:43.104Z: info: Fetching user profile
+Trace Id: 21347a95-5ca4-4da4-ae59-22b4b3b91604
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:43.112Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 92b1dd59-6293-4fc5-bc08-41e69fab3869
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:43.113Z: info: OPTIONS /v0/api/goals
+Trace Id: 92e8da11-32e2-4a13-b354-434a5eaea0dc
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:43.113Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: 9574c8d8-1ede-4dcf-ba70-7b871cdfd21f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:43.114Z: info: Get goals API called
+Trace Id: 2c320f79-8b57-4bdd-8e6a-c639cec0e3e2
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:02:43.114Z: info: Fetching goals with filters
+Trace Id: 2c320f79-8b57-4bdd-8e6a-c639cec0e3e2
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:02:43.116Z: info: Get full timetable API called
+Trace Id: 9929873a-6392-41e9-9bb7-42f59bc6a251
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:02:43.116Z: info: Fetching full timetable
+Trace Id: 9929873a-6392-41e9-9bb7-42f59bc6a251
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:02:43.117Z: info: Get task statistics API called
+Trace Id: 744c7c7d-5139-4815-978b-6ae7fbb06a6c
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:43.117Z: info: Fetching task statistics
+Trace Id: 744c7c7d-5139-4815-978b-6ae7fbb06a6c
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:43.431Z: info: Profile fetched successfully
+Trace Id: 21347a95-5ca4-4da4-ae59-22b4b3b91604
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:43.431Z: info: GET /me
+Trace Id: 21347a95-5ca4-4da4-ae59-22b4b3b91604
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"328ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:43.742Z: warn: Slow database query detected
+Trace Id: 2c320f79-8b57-4bdd-8e6a-c639cec0e3e2
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"628ms","timestamp":"2026-03-13T18:02:43.114Z","threshold":"500ms"}
+2026-03-13T18:02:43.743Z: warn: Slow database query detected
+Trace Id: 9929873a-6392-41e9-9bb7-42f59bc6a251
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"626ms","timestamp":"2026-03-13T18:02:43.116Z","threshold":"500ms"}
+2026-03-13T18:02:44.454Z: warn: Slow database query detected
+Trace Id: 2c320f79-8b57-4bdd-8e6a-c639cec0e3e2
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1340ms","timestamp":"2026-03-13T18:02:43.114Z","threshold":"500ms"}
+2026-03-13T18:02:44.455Z: info: Goals fetched successfully
+Trace Id: 2c320f79-8b57-4bdd-8e6a-c639cec0e3e2
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:02:44.455Z: info: Goals fetched successfully
+Trace Id: 2c320f79-8b57-4bdd-8e6a-c639cec0e3e2
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:02:44.455Z: info: GET /
+Trace Id: 2c320f79-8b57-4bdd-8e6a-c639cec0e3e2
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1342ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:45.455Z: info: Task statistics fetched successfully
+Trace Id: 744c7c7d-5139-4815-978b-6ae7fbb06a6c
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:45.455Z: warn: Slow database query detected
+Trace Id: 744c7c7d-5139-4815-978b-6ae7fbb06a6c
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2338ms","timestamp":"2026-03-13T18:02:43.117Z","threshold":"500ms"}
+2026-03-13T18:02:45.455Z: info: Task statistics fetched successfully
+Trace Id: 744c7c7d-5139-4815-978b-6ae7fbb06a6c
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:45.456Z: info: GET /stats
+Trace Id: 744c7c7d-5139-4815-978b-6ae7fbb06a6c
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"2339ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:45.739Z: warn: Slow database query detected
+Trace Id: 9929873a-6392-41e9-9bb7-42f59bc6a251
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2623ms","timestamp":"2026-03-13T18:02:43.116Z","threshold":"500ms"}
+2026-03-13T18:02:45.739Z: info: Full timetable generated successfully
+Trace Id: 9929873a-6392-41e9-9bb7-42f59bc6a251
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:02:45.739Z: info: GET /full
+Trace Id: 9929873a-6392-41e9-9bb7-42f59bc6a251
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"2624ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:45.739Z: info: Full timetable fetched successfully
+Trace Id: 9929873a-6392-41e9-9bb7-42f59bc6a251
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:02:55.823Z: info: OPTIONS /v0/api/users/me
+Trace Id: 16d948aa-12f0-4fb6-b3f1-41ee9230415a
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:55.826Z: info: Profile API called
+Trace Id: bb7804dc-dc9c-48e4-82cd-a3e60d23568e
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:55.827Z: info: Fetching user profile
+Trace Id: bb7804dc-dc9c-48e4-82cd-a3e60d23568e
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:56.866Z: warn: Slow database query detected
+Trace Id: bb7804dc-dc9c-48e4-82cd-a3e60d23568e
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1037ms","timestamp":"2026-03-13T18:02:55.827Z","threshold":"500ms"}
+2026-03-13T18:02:56.866Z: info: Profile fetched successfully
+Trace Id: bb7804dc-dc9c-48e4-82cd-a3e60d23568e
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:56.872Z: info: GET /me
+Trace Id: bb7804dc-dc9c-48e4-82cd-a3e60d23568e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1046ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:56.888Z: info: Profile API called
+Trace Id: 3dae0b21-ce2a-4f81-a0cf-e5fb03a5acd2
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:56.889Z: info: Fetching user profile
+Trace Id: 3dae0b21-ce2a-4f81-a0cf-e5fb03a5acd2
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:56.908Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 81f7b294-ff20-4b12-a10c-afac646d8b20
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:56.911Z: info: OPTIONS /v0/api/goals
+Trace Id: 1dd0393d-0c9a-460f-9e25-673506699a26
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:56.912Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: 42de179e-5f15-4180-8c87-b328d96aa333
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:56.914Z: info: Get goals API called
+Trace Id: 171ce116-982a-4ca7-b32d-320a8df3ad6f
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:02:56.914Z: info: Fetching goals with filters
+Trace Id: 171ce116-982a-4ca7-b32d-320a8df3ad6f
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:02:56.917Z: info: Get full timetable API called
+Trace Id: 121b6a04-6cc9-4b87-98f7-2960ea864269
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:02:56.917Z: info: Fetching full timetable
+Trace Id: 121b6a04-6cc9-4b87-98f7-2960ea864269
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:02:56.923Z: info: Get task statistics API called
+Trace Id: 4ae20638-51b6-4e0d-ab78-99df0b3598cf
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:56.923Z: info: Fetching task statistics
+Trace Id: 4ae20638-51b6-4e0d-ab78-99df0b3598cf
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:57.257Z: info: Profile fetched successfully
+Trace Id: 3dae0b21-ce2a-4f81-a0cf-e5fb03a5acd2
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:57.258Z: info: GET /me
+Trace Id: 3dae0b21-ce2a-4f81-a0cf-e5fb03a5acd2
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"383ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:57.871Z: warn: Slow database query detected
+Trace Id: 171ce116-982a-4ca7-b32d-320a8df3ad6f
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"956ms","timestamp":"2026-03-13T18:02:56.915Z","threshold":"500ms"}
+2026-03-13T18:02:57.871Z: warn: Slow database query detected
+Trace Id: 121b6a04-6cc9-4b87-98f7-2960ea864269
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"954ms","timestamp":"2026-03-13T18:02:56.917Z","threshold":"500ms"}
+2026-03-13T18:02:57.871Z: warn: Slow database query detected
+Trace Id: 121b6a04-6cc9-4b87-98f7-2960ea864269
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"953ms","timestamp":"2026-03-13T18:02:56.918Z","threshold":"500ms"}
+2026-03-13T18:02:58.162Z: warn: Slow database query detected
+Trace Id: 171ce116-982a-4ca7-b32d-320a8df3ad6f
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1246ms","timestamp":"2026-03-13T18:02:56.915Z","threshold":"500ms"}
+2026-03-13T18:02:58.162Z: info: Goals fetched successfully
+Trace Id: 171ce116-982a-4ca7-b32d-320a8df3ad6f
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:02:58.162Z: info: Goals fetched successfully
+Trace Id: 171ce116-982a-4ca7-b32d-320a8df3ad6f
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:02:58.162Z: info: GET /
+Trace Id: 171ce116-982a-4ca7-b32d-320a8df3ad6f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1250ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:59.097Z: warn: Slow database query detected
+Trace Id: 4ae20638-51b6-4e0d-ab78-99df0b3598cf
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2173ms","timestamp":"2026-03-13T18:02:56.924Z","threshold":"500ms"}
+2026-03-13T18:02:59.097Z: info: Task statistics fetched successfully
+Trace Id: 4ae20638-51b6-4e0d-ab78-99df0b3598cf
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:59.098Z: info: GET /stats
+Trace Id: 4ae20638-51b6-4e0d-ab78-99df0b3598cf
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"2177ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:02:59.097Z: info: Task statistics fetched successfully
+Trace Id: 4ae20638-51b6-4e0d-ab78-99df0b3598cf
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:02:59.941Z: warn: Slow database query detected
+Trace Id: 121b6a04-6cc9-4b87-98f7-2960ea864269
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"3022ms","timestamp":"2026-03-13T18:02:56.918Z","threshold":"500ms"}
+2026-03-13T18:02:59.941Z: info: Full timetable fetched successfully
+Trace Id: 121b6a04-6cc9-4b87-98f7-2960ea864269
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:02:59.941Z: info: Full timetable generated successfully
+Trace Id: 121b6a04-6cc9-4b87-98f7-2960ea864269
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:02:59.941Z: info: GET /full
+Trace Id: 121b6a04-6cc9-4b87-98f7-2960ea864269
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"3025ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:03:31.408Z: info: OPTIONS /v0/api/users/me
+Trace Id: dba54806-7627-4330-b099-155d0ba3bdae
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"17ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:03:31.440Z: info: Profile API called
+Trace Id: 16eb84c5-abaf-4ef2-8c73-fef34891738e
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:03:31.442Z: info: Fetching user profile
+Trace Id: 16eb84c5-abaf-4ef2-8c73-fef34891738e
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:03:31.452Z: info: OPTIONS /v0/api/users/me
+Trace Id: c44b20ce-4194-4843-81bc-9f3e2e37d60d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:03:32.145Z: warn: Slow database query detected
+Trace Id: 16eb84c5-abaf-4ef2-8c73-fef34891738e
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"698ms","timestamp":"2026-03-13T18:03:31.446Z","threshold":"500ms"}
+2026-03-13T18:03:32.146Z: info: GET /me
+Trace Id: 16eb84c5-abaf-4ef2-8c73-fef34891738e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"727ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:03:32.145Z: info: Profile fetched successfully
+Trace Id: 16eb84c5-abaf-4ef2-8c73-fef34891738e
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:03:32.147Z: info: Profile API called
+Trace Id: ef072f42-e196-4958-9900-cf13e1e15a64
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:03:32.147Z: info: Fetching user profile
+Trace Id: ef072f42-e196-4958-9900-cf13e1e15a64
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:03:32.169Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: d591e5c6-1bbd-4a1e-972f-5eda06d902f7
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:03:32.169Z: info: OPTIONS /v0/api/goals
+Trace Id: 3c0549f5-0172-4f90-ba58-970039b9ac43
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:03:32.170Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: e7cd1b3a-438e-4851-bc36-ecc26f6e2a12
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:03:32.172Z: info: Fetching goals with filters
+Trace Id: 3f524533-6944-4ce7-b8fa-861aa1d66153
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:03:32.171Z: info: Get goals API called
+Trace Id: 3f524533-6944-4ce7-b8fa-861aa1d66153
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:03:32.173Z: info: Get full timetable API called
+Trace Id: a22d08d4-78c7-4696-85f9-6bf0baebae7b
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:03:32.174Z: info: Fetching full timetable
+Trace Id: a22d08d4-78c7-4696-85f9-6bf0baebae7b
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:03:32.177Z: info: Fetching task statistics
+Trace Id: d0a96045-d7f9-433d-84fc-d1e6a5012f3a
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:03:32.177Z: info: Get task statistics API called
+Trace Id: d0a96045-d7f9-433d-84fc-d1e6a5012f3a
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:03:32.451Z: info: Profile fetched successfully
+Trace Id: ef072f42-e196-4958-9900-cf13e1e15a64
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:03:32.452Z: info: GET /me
+Trace Id: ef072f42-e196-4958-9900-cf13e1e15a64
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"305ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:03:32.726Z: warn: Slow database query detected
+Trace Id: a22d08d4-78c7-4696-85f9-6bf0baebae7b
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"552ms","timestamp":"2026-03-13T18:03:32.174Z","threshold":"500ms"}
+2026-03-13T18:03:32.995Z: warn: Slow database query detected
+Trace Id: a22d08d4-78c7-4696-85f9-6bf0baebae7b
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"821ms","timestamp":"2026-03-13T18:03:32.174Z","threshold":"500ms"}
+2026-03-13T18:03:32.995Z: warn: Slow database query detected
+Trace Id: 3f524533-6944-4ce7-b8fa-861aa1d66153
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"823ms","timestamp":"2026-03-13T18:03:32.172Z","threshold":"500ms"}
+2026-03-13T18:03:33.003Z: info: Goals fetched successfully
+Trace Id: 3f524533-6944-4ce7-b8fa-861aa1d66153
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:03:33.003Z: warn: Slow database query detected
+Trace Id: 3f524533-6944-4ce7-b8fa-861aa1d66153
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"831ms","timestamp":"2026-03-13T18:03:32.172Z","threshold":"500ms"}
+2026-03-13T18:03:33.003Z: info: Goals fetched successfully
+Trace Id: 3f524533-6944-4ce7-b8fa-861aa1d66153
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:03:33.004Z: info: GET /
+Trace Id: 3f524533-6944-4ce7-b8fa-861aa1d66153
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"834ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:03:34.180Z: info: Task statistics fetched successfully
+Trace Id: d0a96045-d7f9-433d-84fc-d1e6a5012f3a
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:03:34.179Z: warn: Slow database query detected
+Trace Id: d0a96045-d7f9-433d-84fc-d1e6a5012f3a
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"1996ms","timestamp":"2026-03-13T18:03:32.183Z","threshold":"500ms"}
+2026-03-13T18:03:34.180Z: info: Task statistics fetched successfully
+Trace Id: d0a96045-d7f9-433d-84fc-d1e6a5012f3a
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:03:34.180Z: info: GET /stats
+Trace Id: d0a96045-d7f9-433d-84fc-d1e6a5012f3a
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"2005ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:03:34.801Z: warn: Slow database query detected
+Trace Id: a22d08d4-78c7-4696-85f9-6bf0baebae7b
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2626ms","timestamp":"2026-03-13T18:03:32.174Z","threshold":"500ms"}
+2026-03-13T18:03:34.801Z: info: Full timetable fetched successfully
+Trace Id: a22d08d4-78c7-4696-85f9-6bf0baebae7b
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:03:34.801Z: info: Full timetable generated successfully
+Trace Id: a22d08d4-78c7-4696-85f9-6bf0baebae7b
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:03:34.801Z: info: GET /full
+Trace Id: a22d08d4-78c7-4696-85f9-6bf0baebae7b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"2629ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:30.443Z: info: OPTIONS /v0/api/users/me
+Trace Id: 12b3e0f4-a999-485c-901c-56ba868da31a
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"9ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:30.500Z: info: Fetching user profile
+Trace Id: 8191cab8-cb21-4a56-9849-c4542027d5a5
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:04:30.498Z: info: Profile API called
+Trace Id: 8191cab8-cb21-4a56-9849-c4542027d5a5
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:04:30.519Z: info: OPTIONS /v0/api/users/me
+Trace Id: 1e6621c6-5a4a-44b5-ab28-935d798df405
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:31.570Z: warn: Slow database query detected
+Trace Id: 8191cab8-cb21-4a56-9849-c4542027d5a5
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1065ms","timestamp":"2026-03-13T18:04:30.504Z","threshold":"500ms"}
+2026-03-13T18:04:31.575Z: info: GET /me
+Trace Id: 8191cab8-cb21-4a56-9849-c4542027d5a5
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1127ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:31.572Z: info: Profile fetched successfully
+Trace Id: 8191cab8-cb21-4a56-9849-c4542027d5a5
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:04:31.582Z: info: Profile API called
+Trace Id: 199e360d-32f1-4513-8657-7d0451615b8b
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:04:31.582Z: info: Fetching user profile
+Trace Id: 199e360d-32f1-4513-8657-7d0451615b8b
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:04:31.618Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: b77ef68f-a6fb-451e-8573-862c48d316a2
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:31.619Z: info: OPTIONS /v0/api/goals
+Trace Id: b9534539-2389-44dc-a413-52eaee6336c2
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:31.620Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: 0995f2c2-2be1-4397-b84b-efa3de64d7a1
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:31.630Z: info: Fetching task statistics
+Trace Id: c7820761-a023-4022-bf55-d7df4cae3414
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:04:31.632Z: info: Get full timetable API called
+Trace Id: 57beb0e1-07c5-4392-b773-3f58aad94c15
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:04:31.630Z: info: Get task statistics API called
+Trace Id: c7820761-a023-4022-bf55-d7df4cae3414
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:04:31.632Z: info: Fetching full timetable
+Trace Id: 57beb0e1-07c5-4392-b773-3f58aad94c15
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:04:31.635Z: info: Get goals API called
+Trace Id: e986f86f-145a-4de9-8234-120f2c8058ca
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:04:31.635Z: info: Fetching goals with filters
+Trace Id: e986f86f-145a-4de9-8234-120f2c8058ca
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:04:31.876Z: info: Profile fetched successfully
+Trace Id: 199e360d-32f1-4513-8657-7d0451615b8b
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:04:31.877Z: info: GET /me
+Trace Id: 199e360d-32f1-4513-8657-7d0451615b8b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"297ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:32.489Z: warn: Slow database query detected
+Trace Id: 57beb0e1-07c5-4392-b773-3f58aad94c15
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"855ms","timestamp":"2026-03-13T18:04:31.633Z","threshold":"500ms"}
+2026-03-13T18:04:32.715Z: warn: Slow database query detected
+Trace Id: e986f86f-145a-4de9-8234-120f2c8058ca
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1077ms","timestamp":"2026-03-13T18:04:31.635Z","threshold":"500ms"}
+2026-03-13T18:04:32.720Z: warn: Slow database query detected
+Trace Id: e986f86f-145a-4de9-8234-120f2c8058ca
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"1085ms","timestamp":"2026-03-13T18:04:31.635Z","threshold":"500ms"}
+2026-03-13T18:04:32.725Z: info: Goals fetched successfully
+Trace Id: e986f86f-145a-4de9-8234-120f2c8058ca
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:04:32.736Z: info: GET /
+Trace Id: e986f86f-145a-4de9-8234-120f2c8058ca
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1103ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:32.725Z: info: Goals fetched successfully
+Trace Id: e986f86f-145a-4de9-8234-120f2c8058ca
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:04:32.795Z: warn: Slow database query detected
+Trace Id: c7820761-a023-4022-bf55-d7df4cae3414
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"1164ms","timestamp":"2026-03-13T18:04:31.630Z","threshold":"500ms"}
+2026-03-13T18:04:32.795Z: info: Task statistics fetched successfully
+Trace Id: c7820761-a023-4022-bf55-d7df4cae3414
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:04:32.795Z: info: Task statistics fetched successfully
+Trace Id: c7820761-a023-4022-bf55-d7df4cae3414
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:04:32.796Z: info: GET /stats
+Trace Id: c7820761-a023-4022-bf55-d7df4cae3414
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"1170ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:33.308Z: warn: Slow database query detected
+Trace Id: 57beb0e1-07c5-4392-b773-3f58aad94c15
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1674ms","timestamp":"2026-03-13T18:04:31.633Z","threshold":"500ms"}
+2026-03-13T18:04:34.539Z: warn: Slow database query detected
+Trace Id: 57beb0e1-07c5-4392-b773-3f58aad94c15
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2906ms","timestamp":"2026-03-13T18:04:31.633Z","threshold":"500ms"}
+2026-03-13T18:04:34.540Z: info: Full timetable fetched successfully
+Trace Id: 57beb0e1-07c5-4392-b773-3f58aad94c15
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:04:34.543Z: info: GET /full
+Trace Id: 57beb0e1-07c5-4392-b773-3f58aad94c15
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"2911ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:04:34.540Z: info: Full timetable generated successfully
+Trace Id: 57beb0e1-07c5-4392-b773-3f58aad94c15
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:06:33.544Z: info: OPTIONS /v0/api/users/me
+Trace Id: 5395a37d-2a1a-48f2-a7e6-91f33307a440
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:06:33.562Z: info: Fetching user profile
+Trace Id: ec3a5d3a-b7d5-42eb-b26c-e819da6afa57
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:06:33.562Z: info: Profile API called
+Trace Id: ec3a5d3a-b7d5-42eb-b26c-e819da6afa57
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:06:33.570Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 25db0a78-1be9-46af-98e5-83ecb87a3994
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:06:33.578Z: info: Get full timetable API called
+Trace Id: 3a74bcff-927f-4d63-9d9a-c5158ce25cb9
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:06:33.585Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: 8fef65b3-4969-4032-aafd-47870ae9025e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:06:33.595Z: info: Fetching goals with filters
+Trace Id: bb86a1d6-4518-44a1-ad91-c4caec73a22b
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:06:33.595Z: info: Get goals API called
+Trace Id: bb86a1d6-4518-44a1-ad91-c4caec73a22b
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:06:33.572Z: info: OPTIONS /v0/api/goals
+Trace Id: 24ac38f0-5924-48cc-995f-b31bbd9f4e2c
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:06:33.579Z: info: Fetching full timetable
+Trace Id: 3a74bcff-927f-4d63-9d9a-c5158ce25cb9
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:06:33.607Z: info: Fetching task statistics
+Trace Id: dc7dd9ba-60b7-42c3-b4f0-588e2cd921bd
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:06:33.607Z: info: Get task statistics API called
+Trace Id: dc7dd9ba-60b7-42c3-b4f0-588e2cd921bd
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:06:36.769Z: warn: Slow database query detected
+Trace Id: bb86a1d6-4518-44a1-ad91-c4caec73a22b
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"3174ms","timestamp":"2026-03-13T18:06:33.595Z","threshold":"500ms"}
+2026-03-13T18:06:36.790Z: warn: Slow database query detected
+Trace Id: ec3a5d3a-b7d5-42eb-b26c-e819da6afa57
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"3225ms","timestamp":"2026-03-13T18:06:33.564Z","threshold":"500ms"}
+2026-03-13T18:06:36.790Z: info: Profile fetched successfully
+Trace Id: ec3a5d3a-b7d5-42eb-b26c-e819da6afa57
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:06:36.790Z: info: GET /me
+Trace Id: ec3a5d3a-b7d5-42eb-b26c-e819da6afa57
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"3243ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:06:36.790Z: warn: Slow database query detected
+Trace Id: 3a74bcff-927f-4d63-9d9a-c5158ce25cb9
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"3209ms","timestamp":"2026-03-13T18:06:33.581Z","threshold":"500ms"}
+2026-03-13T18:06:37.315Z: info: Goals fetched successfully
+Trace Id: bb86a1d6-4518-44a1-ad91-c4caec73a22b
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:06:37.315Z: info: Goals fetched successfully
+Trace Id: bb86a1d6-4518-44a1-ad91-c4caec73a22b
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:06:37.315Z: warn: Slow database query detected
+Trace Id: bb86a1d6-4518-44a1-ad91-c4caec73a22b
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"3720ms","timestamp":"2026-03-13T18:06:33.595Z","threshold":"500ms"}
+2026-03-13T18:06:37.316Z: info: GET /
+Trace Id: bb86a1d6-4518-44a1-ad91-c4caec73a22b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"3727ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:06:37.518Z: warn: Slow database query detected
+Trace Id: 3a74bcff-927f-4d63-9d9a-c5158ce25cb9
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"3937ms","timestamp":"2026-03-13T18:06:33.581Z","threshold":"500ms"}
+2026-03-13T18:06:38.200Z: warn: Slow database query detected
+Trace Id: dc7dd9ba-60b7-42c3-b4f0-588e2cd921bd
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"4588ms","timestamp":"2026-03-13T18:06:33.611Z","threshold":"500ms"}
+2026-03-13T18:06:38.201Z: info: Task statistics fetched successfully
+Trace Id: dc7dd9ba-60b7-42c3-b4f0-588e2cd921bd
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:06:38.201Z: info: Task statistics fetched successfully
+Trace Id: dc7dd9ba-60b7-42c3-b4f0-588e2cd921bd
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:06:38.201Z: info: GET /stats
+Trace Id: dc7dd9ba-60b7-42c3-b4f0-588e2cd921bd
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"4599ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:06:38.849Z: warn: Slow database query detected
+Trace Id: 3a74bcff-927f-4d63-9d9a-c5158ce25cb9
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"5268ms","timestamp":"2026-03-13T18:06:33.581Z","threshold":"500ms"}
+2026-03-13T18:06:38.849Z: info: Full timetable generated successfully
+Trace Id: 3a74bcff-927f-4d63-9d9a-c5158ce25cb9
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:06:38.850Z: info: Full timetable fetched successfully
+Trace Id: 3a74bcff-927f-4d63-9d9a-c5158ce25cb9
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:06:38.850Z: info: GET /full
+Trace Id: 3a74bcff-927f-4d63-9d9a-c5158ce25cb9
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"5277ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:07:30.569Z: info: OPTIONS /v0/api/users/me
+Trace Id: f69e7a4a-4021-4448-88f0-994f611bc72d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"16ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:07:30.603Z: info: Profile API called
+Trace Id: f3df6628-1b02-47a0-8858-d7c684228a21
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:07:30.604Z: info: Fetching user profile
+Trace Id: f3df6628-1b02-47a0-8858-d7c684228a21
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:07:30.625Z: info: OPTIONS /v0/api/users/me
+Trace Id: 8444167c-02d1-498e-9018-bdef548a33dc
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:07:31.809Z: warn: Slow database query detected
+Trace Id: f3df6628-1b02-47a0-8858-d7c684228a21
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1198ms","timestamp":"2026-03-13T18:07:30.609Z","threshold":"500ms"}
+2026-03-13T18:07:31.811Z: info: Profile fetched successfully
+Trace Id: f3df6628-1b02-47a0-8858-d7c684228a21
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:07:31.818Z: info: GET /me
+Trace Id: f3df6628-1b02-47a0-8858-d7c684228a21
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1240ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:07:31.821Z: info: Profile API called
+Trace Id: f42912c9-edfc-4747-96c1-c628ccfb45cd
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:07:31.821Z: info: Fetching user profile
+Trace Id: f42912c9-edfc-4747-96c1-c628ccfb45cd
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:07:32.303Z: info: Profile fetched successfully
+Trace Id: f42912c9-edfc-4747-96c1-c628ccfb45cd
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:07:32.304Z: info: GET /me
+Trace Id: f42912c9-edfc-4747-96c1-c628ccfb45cd
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"485ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:52.750Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 32d4bb80-ad99-442c-90ea-83c35d82e32d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"62ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:52.832Z: info: Get full timetable API called
+Trace Id: 62c1db3f-c8da-4325-b4a4-7159c2b111ba
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:09:52.834Z: info: Fetching full timetable
+Trace Id: 62c1db3f-c8da-4325-b4a4-7159c2b111ba
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:09:52.901Z: info: OPTIONS /v0/api/goals
+Trace Id: 13f98185-c7fd-4d16-808f-d424ecc70d94
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"3ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:52.940Z: info: Fetching goals with filters
+Trace Id: 2b0493ff-81bb-4498-b868-24ebda251db0
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:09:52.936Z: info: Get goals API called
+Trace Id: 2b0493ff-81bb-4498-b868-24ebda251db0
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:09:53.865Z: warn: Slow database query detected
+Trace Id: 2b0493ff-81bb-4498-b868-24ebda251db0
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"923ms","timestamp":"2026-03-13T18:09:52.942Z","threshold":"500ms"}
+2026-03-13T18:09:53.924Z: warn: Slow database query detected
+Trace Id: 62c1db3f-c8da-4325-b4a4-7159c2b111ba
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"1066ms","timestamp":"2026-03-13T18:09:52.858Z","threshold":"500ms"}
+2026-03-13T18:09:53.926Z: warn: Slow database query detected
+Trace Id: 2b0493ff-81bb-4498-b868-24ebda251db0
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"983ms","timestamp":"2026-03-13T18:09:52.942Z","threshold":"500ms"}
+2026-03-13T18:09:53.926Z: info: Goals fetched successfully
+Trace Id: 2b0493ff-81bb-4498-b868-24ebda251db0
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:09:53.927Z: info: Goals fetched successfully
+Trace Id: 2b0493ff-81bb-4498-b868-24ebda251db0
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:09:53.933Z: info: GET /
+Trace Id: 2b0493ff-81bb-4498-b868-24ebda251db0
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1030ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:54.690Z: warn: Slow database query detected
+Trace Id: 62c1db3f-c8da-4325-b4a4-7159c2b111ba
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1827ms","timestamp":"2026-03-13T18:09:52.858Z","threshold":"500ms"}
+2026-03-13T18:09:55.962Z: warn: Slow database query detected
+Trace Id: 62c1db3f-c8da-4325-b4a4-7159c2b111ba
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"3099ms","timestamp":"2026-03-13T18:09:52.859Z","threshold":"500ms"}
+2026-03-13T18:09:55.965Z: info: Full timetable generated successfully
+Trace Id: 62c1db3f-c8da-4325-b4a4-7159c2b111ba
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:09:55.965Z: info: Full timetable fetched successfully
+Trace Id: 62c1db3f-c8da-4325-b4a4-7159c2b111ba
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:09:55.967Z: info: GET /full
+Trace Id: 62c1db3f-c8da-4325-b4a4-7159c2b111ba
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"3180ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:56.708Z: info: OPTIONS /v0/api/users/me
+Trace Id: 1300e0fc-5196-47b2-a19f-0017a26fd63c
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"6ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:56.730Z: info: Fetching full timetable
+Trace Id: 7c1263bc-e3a0-409a-8a61-d07f2a32dccc
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:09:56.740Z: info: Profile API called
+Trace Id: ff22da01-d40a-4478-8b2a-085199e227c0
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:09:56.729Z: info: Get full timetable API called
+Trace Id: 7c1263bc-e3a0-409a-8a61-d07f2a32dccc
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:09:56.740Z: info: Fetching user profile
+Trace Id: ff22da01-d40a-4478-8b2a-085199e227c0
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:09:56.765Z: info: Get goals API called
+Trace Id: 50ba4f7b-6d7b-41c7-92fb-5ecde6df750c
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:09:56.766Z: info: Fetching goals with filters
+Trace Id: 50ba4f7b-6d7b-41c7-92fb-5ecde6df750c
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:09:56.769Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: ee117983-c645-463d-af4e-d03a3f633f4e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:56.771Z: info: Get task statistics API called
+Trace Id: a8390770-63a1-43a1-8e83-3a219e0208ab
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:09:56.771Z: info: Fetching task statistics
+Trace Id: a8390770-63a1-43a1-8e83-3a219e0208ab
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:09:57.100Z: info: Profile fetched successfully
+Trace Id: ff22da01-d40a-4478-8b2a-085199e227c0
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:09:57.100Z: info: GET /me
+Trace Id: ff22da01-d40a-4478-8b2a-085199e227c0
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"361ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:57.319Z: info: Profile API called
+Trace Id: 70b340c3-d5cb-4329-b785-dd3e029a5027
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:09:57.319Z: info: Fetching user profile
+Trace Id: 70b340c3-d5cb-4329-b785-dd3e029a5027
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:09:57.510Z: warn: Slow database query detected
+Trace Id: 7c1263bc-e3a0-409a-8a61-d07f2a32dccc
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"771ms","timestamp":"2026-03-13T18:09:56.738Z","threshold":"500ms"}
+2026-03-13T18:09:57.510Z: warn: Slow database query detected
+Trace Id: 50ba4f7b-6d7b-41c7-92fb-5ecde6df750c
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"744ms","timestamp":"2026-03-13T18:09:56.766Z","threshold":"500ms"}
+2026-03-13T18:09:57.610Z: info: Profile fetched successfully
+Trace Id: 70b340c3-d5cb-4329-b785-dd3e029a5027
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:09:57.610Z: info: GET /me
+Trace Id: 70b340c3-d5cb-4329-b785-dd3e029a5027
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"292ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:57.810Z: info: Goals fetched successfully
+Trace Id: 50ba4f7b-6d7b-41c7-92fb-5ecde6df750c
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:09:57.810Z: info: Goals fetched successfully
+Trace Id: 50ba4f7b-6d7b-41c7-92fb-5ecde6df750c
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:09:57.811Z: info: GET /
+Trace Id: 50ba4f7b-6d7b-41c7-92fb-5ecde6df750c
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1050ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:57.810Z: warn: Slow database query detected
+Trace Id: 50ba4f7b-6d7b-41c7-92fb-5ecde6df750c
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"1043ms","timestamp":"2026-03-13T18:09:56.766Z","threshold":"500ms"}
+2026-03-13T18:09:57.816Z: info: Get goals API called
+Trace Id: bfa27e0d-3c53-4897-8a49-f2da23c95c41
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:09:57.816Z: info: Fetching goals with filters
+Trace Id: bfa27e0d-3c53-4897-8a49-f2da23c95c41
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:09:58.153Z: warn: Slow database query detected
+Trace Id: 7c1263bc-e3a0-409a-8a61-d07f2a32dccc
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1415ms","timestamp":"2026-03-13T18:09:56.738Z","threshold":"500ms"}
+2026-03-13T18:09:59.046Z: warn: Slow database query detected
+Trace Id: a8390770-63a1-43a1-8e83-3a219e0208ab
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2270ms","timestamp":"2026-03-13T18:09:56.775Z","threshold":"500ms"}
+2026-03-13T18:09:59.046Z: info: Task statistics fetched successfully
+Trace Id: a8390770-63a1-43a1-8e83-3a219e0208ab
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:09:59.057Z: warn: Slow database query detected
+Trace Id: bfa27e0d-3c53-4897-8a49-f2da23c95c41
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1240ms","timestamp":"2026-03-13T18:09:57.816Z","threshold":"500ms"}
+2026-03-13T18:09:59.046Z: info: Task statistics fetched successfully
+Trace Id: a8390770-63a1-43a1-8e83-3a219e0208ab
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:09:59.053Z: info: GET /stats
+Trace Id: a8390770-63a1-43a1-8e83-3a219e0208ab
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"2283ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:59.058Z: info: GET /
+Trace Id: bfa27e0d-3c53-4897-8a49-f2da23c95c41
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1246ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:59.057Z: info: Goals fetched successfully
+Trace Id: bfa27e0d-3c53-4897-8a49-f2da23c95c41
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:09:59.058Z: info: Goals fetched successfully
+Trace Id: bfa27e0d-3c53-4897-8a49-f2da23c95c41
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:09:59.064Z: info: Get goals API called
+Trace Id: 7e6c5470-43c0-4d03-a074-113fb3abde8f
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:09:59.064Z: info: Fetching goals with filters
+Trace Id: 7e6c5470-43c0-4d03-a074-113fb3abde8f
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:09:59.506Z: warn: Slow database query detected
+Trace Id: 7c1263bc-e3a0-409a-8a61-d07f2a32dccc
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2766ms","timestamp":"2026-03-13T18:09:56.739Z","threshold":"500ms"}
+2026-03-13T18:09:59.537Z: info: Full timetable fetched successfully
+Trace Id: 7c1263bc-e3a0-409a-8a61-d07f2a32dccc
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:09:59.533Z: info: Full timetable generated successfully
+Trace Id: 7c1263bc-e3a0-409a-8a61-d07f2a32dccc
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:09:59.556Z: info: GET /full
+Trace Id: 7c1263bc-e3a0-409a-8a61-d07f2a32dccc
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"2845ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:09:59.562Z: info: Get full timetable API called
+Trace Id: 862377c4-1fd7-4666-93ce-56621590eb42
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:09:59.562Z: info: Fetching full timetable
+Trace Id: 862377c4-1fd7-4666-93ce-56621590eb42
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:10:00.461Z: info: Goals fetched successfully
+Trace Id: 7e6c5470-43c0-4d03-a074-113fb3abde8f
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:10:00.462Z: info: Goals fetched successfully
+Trace Id: 7e6c5470-43c0-4d03-a074-113fb3abde8f
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:10:00.461Z: warn: Slow database query detected
+Trace Id: 7e6c5470-43c0-4d03-a074-113fb3abde8f
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1395ms","timestamp":"2026-03-13T18:09:59.065Z","threshold":"500ms"}
+2026-03-13T18:10:00.462Z: info: GET /
+Trace Id: 7e6c5470-43c0-4d03-a074-113fb3abde8f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1400ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:10:00.754Z: warn: Slow database query detected
+Trace Id: 862377c4-1fd7-4666-93ce-56621590eb42
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1190ms","timestamp":"2026-03-13T18:09:59.563Z","threshold":"500ms"}
+2026-03-13T18:10:00.754Z: info: Full timetable generated successfully
+Trace Id: 862377c4-1fd7-4666-93ce-56621590eb42
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:10:00.754Z: warn: Slow database query detected
+Trace Id: 862377c4-1fd7-4666-93ce-56621590eb42
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"1191ms","timestamp":"2026-03-13T18:09:59.563Z","threshold":"500ms"}
+2026-03-13T18:10:00.754Z: info: Full timetable fetched successfully
+Trace Id: 862377c4-1fd7-4666-93ce-56621590eb42
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:10:00.756Z: info: GET /full
+Trace Id: 862377c4-1fd7-4666-93ce-56621590eb42
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"1195ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:10:00.759Z: info: Get full timetable API called
+Trace Id: 37441d24-0a7c-49be-9950-a83b8a537db0
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:10:00.759Z: info: Fetching full timetable
+Trace Id: 37441d24-0a7c-49be-9950-a83b8a537db0
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:10:01.614Z: warn: Slow database query detected
+Trace Id: 37441d24-0a7c-49be-9950-a83b8a537db0
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"854ms","timestamp":"2026-03-13T18:10:00.760Z","threshold":"500ms"}
+2026-03-13T18:10:03.471Z: warn: Slow database query detected
+Trace Id: 37441d24-0a7c-49be-9950-a83b8a537db0
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2711ms","timestamp":"2026-03-13T18:10:00.760Z","threshold":"500ms"}
+2026-03-13T18:10:03.471Z: info: Full timetable fetched successfully
+Trace Id: 37441d24-0a7c-49be-9950-a83b8a537db0
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:10:03.471Z: info: Full timetable generated successfully
+Trace Id: 37441d24-0a7c-49be-9950-a83b8a537db0
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:10:03.472Z: info: GET /full
+Trace Id: 37441d24-0a7c-49be-9950-a83b8a537db0
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"2713ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:21:29.880Z: info: OPTIONS /v0/api/users/me
+Trace Id: 1f4fe5f8-af1c-4d0d-bca0-35d53f30e8ac
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"21ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:21:29.895Z: info: OPTIONS /v0/api/users/me
+Trace Id: dfe5c73e-6d2d-407a-9bdd-788e18822bf6
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:21:37.540Z: info: OPTIONS /v0/api/users/me
+Trace Id: d66725bf-f53d-4e5c-9efd-d955be35e5f9
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"3ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:21:37.549Z: info: OPTIONS /v0/api/users/me
+Trace Id: 28c6e2c1-1d82-47d9-859b-87ed6a1a467e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:21:48.849Z: info: OPTIONS /v0/api/users/login
+Trace Id: 719c20e9-f476-4178-a123-3df8ff99f5fc
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/login","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:22:04.242Z: info: OPTIONS /v0/api/users/login
+Trace Id: 4e875f2a-e36e-4bef-baeb-3647c1fcc0a3
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/login","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:03.906Z: info: ShutdownSignal
+Trace Id: 39838955-d9fd-40c0-8702-2a5454940145
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-03-13T18:24:05.588Z: info: Database connection attempt 1
+Trace Id: a56270d0-efed-4186-9414-ad3b70ada6cd
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-03-13T18:24:09.091Z: warn: Slow database query detected
+Trace Id: 444b13d1-07cd-42bf-ad52-f0ccb281a8a5
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"643ms","timestamp":"2026-03-13T18:24:08.447Z","threshold":"500ms"}
+2026-03-13T18:24:09.091Z: info: Database connected successfully
+Trace Id: abdca2b1-c3ae-4624-b589-8317c2cbed44
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-03-13T18:24:09.701Z: warn: Slow database query detected
+Trace Id: 8f5c78ae-2644-485b-a813-1974b483e8fe
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"609ms","timestamp":"2026-03-13T18:24:09.091Z","threshold":"500ms"}
+2026-03-13T18:24:09.703Z: info: ServerStarted
+Trace Id: f3a99ff1-9e96-4781-8b88-837cf0d10935
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":41220}
+2026-03-13T18:24:12.889Z: info: OPTIONS /v0/api/users/login
+Trace Id: 6690ce54-09dc-4a09-b13f-c3975fab4f4a
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/login","status":204,"responseTime":"10ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:12.909Z: info: Processing login request
+Trace Id: ee199d20-4c93-4639-80fb-5280b0a2c233
+Function Name: UserService.login
+Metadata: {"email":"arbaaazkhanark23@gmail.com"}
+2026-03-13T18:24:12.909Z: info: Login API called
+Trace Id: ee199d20-4c93-4639-80fb-5280b0a2c233
+Function Name: UserController.login
+Metadata: {"email":"arbaaazkhanark23@gmail.com"}
+2026-03-13T18:24:13.553Z: warn: Slow database query detected
+Trace Id: ee199d20-4c93-4639-80fb-5280b0a2c233
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"642ms","timestamp":"2026-03-13T18:24:12.911Z","threshold":"500ms"}
+2026-03-13T18:24:13.823Z: info: Login successful, tokens issued
+Trace Id: ee199d20-4c93-4639-80fb-5280b0a2c233
+Function Name: UserService.login
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:13.823Z: info: Login API success
+Trace Id: ee199d20-4c93-4639-80fb-5280b0a2c233
+Function Name: UserController.login
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:13.824Z: info: POST /login
+Trace Id: ee199d20-4c93-4639-80fb-5280b0a2c233
+Function Name: HTTP_REQUEST
+Metadata: {"method":"POST","url":"/login","status":200,"responseTime":"917ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:13.829Z: info: OPTIONS /v0/api/users/me
+Trace Id: b475990f-9952-42ce-854b-350f5cae475d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:13.832Z: info: Profile API called
+Trace Id: a15e1228-811e-4cf9-b25a-92a04e90c63d
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:13.833Z: info: Fetching user profile
+Trace Id: a15e1228-811e-4cf9-b25a-92a04e90c63d
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:14.500Z: warn: Slow database query detected
+Trace Id: a15e1228-811e-4cf9-b25a-92a04e90c63d
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"667ms","timestamp":"2026-03-13T18:24:13.833Z","threshold":"500ms"}
+2026-03-13T18:24:14.500Z: info: Profile fetched successfully
+Trace Id: a15e1228-811e-4cf9-b25a-92a04e90c63d
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:14.501Z: info: GET /me
+Trace Id: a15e1228-811e-4cf9-b25a-92a04e90c63d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"669ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:17.590Z: info: Fetching user profile
+Trace Id: fb578064-eb0b-4eb1-bf68-6fa4b5357346
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:17.590Z: info: Profile API called
+Trace Id: fb578064-eb0b-4eb1-bf68-6fa4b5357346
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:17.884Z: info: Profile fetched successfully
+Trace Id: fb578064-eb0b-4eb1-bf68-6fa4b5357346
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:17.885Z: info: GET /me
+Trace Id: fb578064-eb0b-4eb1-bf68-6fa4b5357346
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"304ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:17.888Z: info: Fetching user profile
+Trace Id: a8d290a7-4efb-40e7-a8dd-7467b4b10183
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:17.887Z: info: Profile API called
+Trace Id: a8d290a7-4efb-40e7-a8dd-7467b4b10183
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:17.928Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 334f2d89-c8e9-4900-950f-cd751a99214b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:17.932Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: b3ec39c2-dbda-47e8-b5d9-62558496a302
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"3ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:17.940Z: info: Get full timetable API called
+Trace Id: 24a52d98-00fb-420a-a069-bfe55c6f9d8a
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:24:17.941Z: info: Fetching full timetable
+Trace Id: 24a52d98-00fb-420a-a069-bfe55c6f9d8a
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:24:17.935Z: info: OPTIONS /v0/api/goals
+Trace Id: 662e41a2-c844-47e5-b4a5-b40e22e8824c
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:17.944Z: info: Fetching task statistics
+Trace Id: b43996ed-9be0-499d-8902-b76331e92ee3
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:17.944Z: info: Get task statistics API called
+Trace Id: b43996ed-9be0-499d-8902-b76331e92ee3
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:17.945Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: 3b772206-fa33-46c8-ad62-97e27a633129
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:17.948Z: info: Get goals API called
+Trace Id: cc63ee24-0f14-4340-86c8-6c3009e78513
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:24:17.948Z: info: Fetching goals with filters
+Trace Id: cc63ee24-0f14-4340-86c8-6c3009e78513
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:24:17.951Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: f2a08956-ff29-4ec0-a2c9-69bb742b4f78
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:17.953Z: info: OPTIONS /v0/api/goals
+Trace Id: 7af6051e-f118-4a93-8de9-5f7211696fdc
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:18.300Z: info: ShutdownSignal
+Trace Id: 8c7894fc-b91f-493d-acb6-c07a4667c590
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-03-13T18:24:18.352Z: info: Profile fetched successfully
+Trace Id: a8d290a7-4efb-40e7-a8dd-7467b4b10183
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:18.352Z: info: GET /me
+Trace Id: a8d290a7-4efb-40e7-a8dd-7467b4b10183
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"465ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:21.266Z: warn: Slow database query detected
+Trace Id: 24a52d98-00fb-420a-a069-bfe55c6f9d8a
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"3324ms","timestamp":"2026-03-13T18:24:17.941Z","threshold":"500ms"}
+2026-03-13T18:24:21.267Z: warn: Slow database query detected
+Trace Id: cc63ee24-0f14-4340-86c8-6c3009e78513
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"3318ms","timestamp":"2026-03-13T18:24:17.949Z","threshold":"500ms"}
+2026-03-13T18:24:21.947Z: warn: Slow database query detected
+Trace Id: 24a52d98-00fb-420a-a069-bfe55c6f9d8a
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"4006ms","timestamp":"2026-03-13T18:24:17.941Z","threshold":"500ms"}
+2026-03-13T18:24:21.979Z: info: Goals fetched successfully
+Trace Id: cc63ee24-0f14-4340-86c8-6c3009e78513
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:24:21.979Z: warn: Slow database query detected
+Trace Id: cc63ee24-0f14-4340-86c8-6c3009e78513
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"4030ms","timestamp":"2026-03-13T18:24:17.949Z","threshold":"500ms"}
+2026-03-13T18:24:21.979Z: info: Goals fetched successfully
+Trace Id: cc63ee24-0f14-4340-86c8-6c3009e78513
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:24:21.980Z: info: GET /
+Trace Id: cc63ee24-0f14-4340-86c8-6c3009e78513
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"4034ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:21.987Z: info: Get goals API called
+Trace Id: 5f1abdf2-6068-4f15-9ab9-5b215f00bae5
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:24:21.987Z: info: Fetching goals with filters
+Trace Id: 5f1abdf2-6068-4f15-9ab9-5b215f00bae5
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:24:22.673Z: warn: Slow database query detected
+Trace Id: b43996ed-9be0-499d-8902-b76331e92ee3
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"4729ms","timestamp":"2026-03-13T18:24:17.944Z","threshold":"500ms"}
+2026-03-13T18:24:22.674Z: info: Task statistics fetched successfully
+Trace Id: b43996ed-9be0-499d-8902-b76331e92ee3
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:22.674Z: info: Task statistics fetched successfully
+Trace Id: b43996ed-9be0-499d-8902-b76331e92ee3
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:22.674Z: warn: Slow database query detected
+Trace Id: 5f1abdf2-6068-4f15-9ab9-5b215f00bae5
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"686ms","timestamp":"2026-03-13T18:24:21.988Z","threshold":"500ms"}
+2026-03-13T18:24:22.674Z: info: GET /stats
+Trace Id: b43996ed-9be0-499d-8902-b76331e92ee3
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"4731ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:24:22.677Z: info: Get task statistics API called
+Trace Id: 4f49b5b6-1a65-4443-8a41-b32ee9a2aed9
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:22.677Z: info: Fetching task statistics
+Trace Id: 4f49b5b6-1a65-4443-8a41-b32ee9a2aed9
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:24:24.318Z: info: Database connection attempt 1
+Trace Id: cbcb863d-ea25-41dc-8b56-a170b37a1639
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-03-13T18:24:27.561Z: warn: Slow database query detected
+Trace Id: 27f073d3-9326-4e7e-a822-296faa2eae41
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"899ms","timestamp":"2026-03-13T18:24:26.661Z","threshold":"500ms"}
+2026-03-13T18:24:27.561Z: info: Database connected successfully
+Trace Id: 3a565d06-8e36-4dc5-857c-1617d331e1ea
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-03-13T18:24:28.122Z: warn: Slow database query detected
+Trace Id: c3bc4e9a-25e2-42e8-813d-25bd4a1226cc
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"561ms","timestamp":"2026-03-13T18:24:27.561Z","threshold":"500ms"}
+2026-03-13T18:24:28.124Z: info: ServerStarted
+Trace Id: 7c1b94b4-065a-4cd5-b4f9-27ac73d74931
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":41428}
+2026-03-13T18:25:45.864Z: info: OPTIONS /v0/api/users/me
+Trace Id: d397f0a8-2008-4408-b45f-516865e99506
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"7ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:46.079Z: info: Profile API called
+Trace Id: c1592259-707a-4a82-8e80-9347981bd291
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:46.080Z: info: Fetching user profile
+Trace Id: c1592259-707a-4a82-8e80-9347981bd291
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:46.112Z: info: OPTIONS /v0/api/users/me
+Trace Id: d2686cec-7315-45ce-b453-a0a2955b15e4
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"4ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:47.288Z: warn: Slow database query detected
+Trace Id: c1592259-707a-4a82-8e80-9347981bd291
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1184ms","timestamp":"2026-03-13T18:25:46.104Z","threshold":"500ms"}
+2026-03-13T18:25:47.289Z: info: Profile fetched successfully
+Trace Id: c1592259-707a-4a82-8e80-9347981bd291
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:47.291Z: info: GET /me
+Trace Id: c1592259-707a-4a82-8e80-9347981bd291
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1425ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:47.304Z: info: Profile API called
+Trace Id: 87b6f4a2-681d-48a3-8788-f9643b2cea49
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:47.305Z: info: Fetching user profile
+Trace Id: 87b6f4a2-681d-48a3-8788-f9643b2cea49
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:47.351Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 4a44e550-3697-424a-8d3d-a39a20d05746
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"11ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:47.355Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: bf414005-8595-4249-89c0-0a440bbd01f4
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:47.358Z: info: OPTIONS /v0/api/goals
+Trace Id: c8e7077c-b6f5-42b2-bfcd-eca90d6848d3
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:47.377Z: info: Fetching full timetable
+Trace Id: 95ce15eb-ae68-42ea-bd88-7403bcaf9d8b
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:25:47.376Z: info: Get full timetable API called
+Trace Id: 95ce15eb-ae68-42ea-bd88-7403bcaf9d8b
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:25:47.383Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: 14f080b3-0b32-4280-912c-90d8db7c7510
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:47.388Z: info: Get goals API called
+Trace Id: 2bd7d031-9bfc-44db-85bc-b5bf15f38922
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:25:47.388Z: info: Fetching goals with filters
+Trace Id: 2bd7d031-9bfc-44db-85bc-b5bf15f38922
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:25:47.406Z: info: Get task statistics API called
+Trace Id: 4dbfb4e6-217e-4d4b-b8c3-c5fd9f5d0840
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:47.406Z: info: Fetching task statistics
+Trace Id: 4dbfb4e6-217e-4d4b-b8c3-c5fd9f5d0840
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:47.409Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 9c8dc667-ff2c-478c-894c-7cced49f23da
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:47.411Z: info: OPTIONS /v0/api/goals
+Trace Id: 5bb9d11f-16ca-4e0d-8411-cd19c53e613d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:47.792Z: info: Profile fetched successfully
+Trace Id: 87b6f4a2-681d-48a3-8788-f9643b2cea49
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:47.792Z: info: GET /me
+Trace Id: 87b6f4a2-681d-48a3-8788-f9643b2cea49
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"494ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:50.455Z: warn: Slow database query detected
+Trace Id: 2bd7d031-9bfc-44db-85bc-b5bf15f38922
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"3065ms","timestamp":"2026-03-13T18:25:47.390Z","threshold":"500ms"}
+2026-03-13T18:25:50.657Z: warn: Slow database query detected
+Trace Id: 95ce15eb-ae68-42ea-bd88-7403bcaf9d8b
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"3279ms","timestamp":"2026-03-13T18:25:47.378Z","threshold":"500ms"}
+2026-03-13T18:25:51.274Z: warn: Slow database query detected
+Trace Id: 95ce15eb-ae68-42ea-bd88-7403bcaf9d8b
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"3896ms","timestamp":"2026-03-13T18:25:47.378Z","threshold":"500ms"}
+2026-03-13T18:25:51.275Z: warn: Slow database query detected
+Trace Id: 2bd7d031-9bfc-44db-85bc-b5bf15f38922
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"3885ms","timestamp":"2026-03-13T18:25:47.390Z","threshold":"500ms"}
+2026-03-13T18:25:51.275Z: info: Goals fetched successfully
+Trace Id: 2bd7d031-9bfc-44db-85bc-b5bf15f38922
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:25:51.275Z: info: Goals fetched successfully
+Trace Id: 2bd7d031-9bfc-44db-85bc-b5bf15f38922
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:25:51.275Z: info: GET /
+Trace Id: 2bd7d031-9bfc-44db-85bc-b5bf15f38922
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"3891ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:51.278Z: info: Get goals API called
+Trace Id: 6ea7bee2-0b29-4bb5-bbfd-19282ef5b367
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:25:51.278Z: info: Fetching goals with filters
+Trace Id: 6ea7bee2-0b29-4bb5-bbfd-19282ef5b367
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:25:51.990Z: warn: Slow database query detected
+Trace Id: 4dbfb4e6-217e-4d4b-b8c3-c5fd9f5d0840
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"4583ms","timestamp":"2026-03-13T18:25:47.407Z","threshold":"500ms"}
+2026-03-13T18:25:51.991Z: info: Task statistics fetched successfully
+Trace Id: 4dbfb4e6-217e-4d4b-b8c3-c5fd9f5d0840
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:51.991Z: info: Task statistics fetched successfully
+Trace Id: 4dbfb4e6-217e-4d4b-b8c3-c5fd9f5d0840
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:51.991Z: warn: Slow database query detected
+Trace Id: 6ea7bee2-0b29-4bb5-bbfd-19282ef5b367
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"713ms","timestamp":"2026-03-13T18:25:51.278Z","threshold":"500ms"}
+2026-03-13T18:25:51.991Z: info: GET /stats
+Trace Id: 4dbfb4e6-217e-4d4b-b8c3-c5fd9f5d0840
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"4600ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:51.994Z: info: Get task statistics API called
+Trace Id: ad35f48b-f022-4d63-9230-de8f309f0ee4
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:51.994Z: info: Fetching task statistics
+Trace Id: ad35f48b-f022-4d63-9230-de8f309f0ee4
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:52.709Z: warn: Slow database query detected
+Trace Id: 95ce15eb-ae68-42ea-bd88-7403bcaf9d8b
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"5331ms","timestamp":"2026-03-13T18:25:47.378Z","threshold":"500ms"}
+2026-03-13T18:25:52.709Z: info: Full timetable generated successfully
+Trace Id: 95ce15eb-ae68-42ea-bd88-7403bcaf9d8b
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:25:52.709Z: info: Full timetable fetched successfully
+Trace Id: 95ce15eb-ae68-42ea-bd88-7403bcaf9d8b
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:25:52.710Z: warn: Slow database query detected
+Trace Id: 6ea7bee2-0b29-4bb5-bbfd-19282ef5b367
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1432ms","timestamp":"2026-03-13T18:25:51.278Z","threshold":"500ms"}
+2026-03-13T18:25:52.710Z: info: Goals fetched successfully
+Trace Id: 6ea7bee2-0b29-4bb5-bbfd-19282ef5b367
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:25:52.710Z: info: GET /
+Trace Id: 6ea7bee2-0b29-4bb5-bbfd-19282ef5b367
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1433ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:52.710Z: info: GET /full
+Trace Id: 95ce15eb-ae68-42ea-bd88-7403bcaf9d8b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"5351ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:52.710Z: info: Goals fetched successfully
+Trace Id: 6ea7bee2-0b29-4bb5-bbfd-19282ef5b367
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:25:52.712Z: info: Get full timetable API called
+Trace Id: 46d8778e-e99a-4511-bf40-20236fddf48f
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:25:52.713Z: info: Fetching full timetable
+Trace Id: 46d8778e-e99a-4511-bf40-20236fddf48f
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:25:53.424Z: warn: Slow database query detected
+Trace Id: 46d8778e-e99a-4511-bf40-20236fddf48f
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"711ms","timestamp":"2026-03-13T18:25:52.713Z","threshold":"500ms"}
+2026-03-13T18:25:54.212Z: warn: Slow database query detected
+Trace Id: ad35f48b-f022-4d63-9230-de8f309f0ee4
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2217ms","timestamp":"2026-03-13T18:25:51.994Z","threshold":"500ms"}
+2026-03-13T18:25:54.212Z: info: Task statistics fetched successfully
+Trace Id: ad35f48b-f022-4d63-9230-de8f309f0ee4
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:54.212Z: info: Task statistics fetched successfully
+Trace Id: ad35f48b-f022-4d63-9230-de8f309f0ee4
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:25:54.213Z: info: GET /stats
+Trace Id: ad35f48b-f022-4d63-9230-de8f309f0ee4
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"2219ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:25:54.213Z: warn: Slow database query detected
+Trace Id: 46d8778e-e99a-4511-bf40-20236fddf48f
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1500ms","timestamp":"2026-03-13T18:25:52.713Z","threshold":"500ms"}
+2026-03-13T18:25:55.573Z: info: Full timetable generated successfully
+Trace Id: 46d8778e-e99a-4511-bf40-20236fddf48f
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:25:55.573Z: warn: Slow database query detected
+Trace Id: 46d8778e-e99a-4511-bf40-20236fddf48f
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2860ms","timestamp":"2026-03-13T18:25:52.713Z","threshold":"500ms"}
+2026-03-13T18:25:55.573Z: info: Full timetable fetched successfully
+Trace Id: 46d8778e-e99a-4511-bf40-20236fddf48f
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:25:55.574Z: info: GET /full
+Trace Id: 46d8778e-e99a-4511-bf40-20236fddf48f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"2862ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:43:13.379Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 4cfe3102-4947-42c3-a7a5-30ef9432edbb
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"53ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:43:13.550Z: info: Get full timetable API called
+Trace Id: f4864b49-f15a-4684-9bfa-fb5695071fe2
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:43:13.624Z: info: OPTIONS /v0/api/goals
+Trace Id: b51882d0-bd66-48e1-9727-4c85e4b35bfc
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:43:13.553Z: info: Fetching full timetable
+Trace Id: f4864b49-f15a-4684-9bfa-fb5695071fe2
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:43:13.652Z: info: Fetching goals with filters
+Trace Id: 72258b38-759f-40a6-9c2f-b262e8a00062
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:43:13.625Z: info: OPTIONS /v0/api/goals
+Trace Id: d7b20d0b-43ea-443d-b6ff-b2a12675c7e2
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:43:13.625Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 5d703536-6b7b-48c7-84b2-3123d796fd87
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:43:13.646Z: info: Get goals API called
+Trace Id: 72258b38-759f-40a6-9c2f-b262e8a00062
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:43:17.939Z: warn: Slow database query detected
+Trace Id: 72258b38-759f-40a6-9c2f-b262e8a00062
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"4269ms","timestamp":"2026-03-13T18:43:13.659Z","threshold":"500ms"}
+2026-03-13T18:43:18.053Z: warn: Slow database query detected
+Trace Id: f4864b49-f15a-4684-9bfa-fb5695071fe2
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"4460ms","timestamp":"2026-03-13T18:43:13.592Z","threshold":"500ms"}
+2026-03-13T18:43:18.059Z: info: Goals fetched successfully
+Trace Id: 72258b38-759f-40a6-9c2f-b262e8a00062
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:43:18.059Z: info: Goals fetched successfully
+Trace Id: 72258b38-759f-40a6-9c2f-b262e8a00062
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:43:18.057Z: warn: Slow database query detected
+Trace Id: 72258b38-759f-40a6-9c2f-b262e8a00062
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"4396ms","timestamp":"2026-03-13T18:43:13.659Z","threshold":"500ms"}
+2026-03-13T18:43:18.069Z: info: GET /
+Trace Id: 72258b38-759f-40a6-9c2f-b262e8a00062
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"4439ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:43:18.103Z: info: Get goals API called
+Trace Id: 79a83d98-d822-4036-b287-2ad2d499a8bf
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:43:18.103Z: info: Fetching goals with filters
+Trace Id: 79a83d98-d822-4036-b287-2ad2d499a8bf
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:43:18.719Z: warn: Slow database query detected
+Trace Id: f4864b49-f15a-4684-9bfa-fb5695071fe2
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"5126ms","timestamp":"2026-03-13T18:43:13.592Z","threshold":"500ms"}
+2026-03-13T18:43:18.719Z: warn: Slow database query detected
+Trace Id: 79a83d98-d822-4036-b287-2ad2d499a8bf
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"606ms","timestamp":"2026-03-13T18:43:18.113Z","threshold":"500ms"}
+2026-03-13T18:43:19.347Z: warn: Slow database query detected
+Trace Id: 79a83d98-d822-4036-b287-2ad2d499a8bf
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1233ms","timestamp":"2026-03-13T18:43:18.113Z","threshold":"500ms"}
+2026-03-13T18:43:19.347Z: info: Goals fetched successfully
+Trace Id: 79a83d98-d822-4036-b287-2ad2d499a8bf
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:43:19.347Z: info: Goals fetched successfully
+Trace Id: 79a83d98-d822-4036-b287-2ad2d499a8bf
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:43:19.353Z: info: GET /
+Trace Id: 79a83d98-d822-4036-b287-2ad2d499a8bf
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1272ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:43:19.959Z: warn: Slow database query detected
+Trace Id: f4864b49-f15a-4684-9bfa-fb5695071fe2
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"6363ms","timestamp":"2026-03-13T18:43:13.592Z","threshold":"500ms"}
+2026-03-13T18:43:19.963Z: info: Full timetable fetched successfully
+Trace Id: f4864b49-f15a-4684-9bfa-fb5695071fe2
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:43:19.960Z: info: Full timetable generated successfully
+Trace Id: f4864b49-f15a-4684-9bfa-fb5695071fe2
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:43:19.976Z: info: GET /full
+Trace Id: f4864b49-f15a-4684-9bfa-fb5695071fe2
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":200,"responseTime":"6575ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:43:19.986Z: info: Get full timetable API called
+Trace Id: 2cb78057-06e1-4b6c-8b11-e2d6cc168010
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:43:19.986Z: info: Fetching full timetable
+Trace Id: 2cb78057-06e1-4b6c-8b11-e2d6cc168010
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:43:21.278Z: warn: Slow database query detected
+Trace Id: 2cb78057-06e1-4b6c-8b11-e2d6cc168010
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1290ms","timestamp":"2026-03-13T18:43:19.987Z","threshold":"500ms"}
+2026-03-13T18:43:22.624Z: warn: Slow database query detected
+Trace Id: 2cb78057-06e1-4b6c-8b11-e2d6cc168010
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2637ms","timestamp":"2026-03-13T18:43:19.987Z","threshold":"500ms"}
+2026-03-13T18:43:22.624Z: info: Full timetable fetched successfully
+Trace Id: 2cb78057-06e1-4b6c-8b11-e2d6cc168010
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:43:22.624Z: info: Full timetable generated successfully
+Trace Id: 2cb78057-06e1-4b6c-8b11-e2d6cc168010
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:43:22.625Z: info: GET /full
+Trace Id: 2cb78057-06e1-4b6c-8b11-e2d6cc168010
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"2645ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:44:57.404Z: info: OPTIONS /v0/api/users/me
+Trace Id: 2fe087b7-321f-47c3-a4d2-a0848dc58104
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"26ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:44:57.644Z: info: Fetching user profile
+Trace Id: b9f7abfd-5e53-42c1-b87d-a4ca874f22ef
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:44:57.639Z: info: Profile API called
+Trace Id: b9f7abfd-5e53-42c1-b87d-a4ca874f22ef
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:44:57.803Z: info: OPTIONS /v0/api/users/me
+Trace Id: e757485e-5c64-487e-896f-422b9842406f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"4ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:44:59.279Z: warn: Slow database query detected
+Trace Id: b9f7abfd-5e53-42c1-b87d-a4ca874f22ef
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1582ms","timestamp":"2026-03-13T18:44:57.693Z","threshold":"500ms"}
+2026-03-13T18:44:59.368Z: info: GET /me
+Trace Id: b9f7abfd-5e53-42c1-b87d-a4ca874f22ef
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1919ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:44:59.283Z: info: Profile fetched successfully
+Trace Id: b9f7abfd-5e53-42c1-b87d-a4ca874f22ef
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:44:59.650Z: info: Fetching user profile
+Trace Id: c399e9ea-9e23-4581-b8d2-29338081adcb
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:44:59.650Z: info: Profile API called
+Trace Id: c399e9ea-9e23-4581-b8d2-29338081adcb
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:44:59.679Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 68960461-2883-4b04-8d1c-2a9b7c589e3d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:44:59.695Z: info: OPTIONS /v0/api/goals
+Trace Id: 40dac8a7-d892-476c-97e8-e84c7d9e30cc
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"11ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:44:59.709Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: 9e88686d-1d7a-41d3-9a4e-ff620b5b79f1
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:44:59.728Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: dae87da2-cfcb-4f2b-9483-314b2f8e2e65
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"12ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:44:59.800Z: info: Fetching full timetable
+Trace Id: 9a48b9a8-81c7-466b-b09b-fc16496a958d
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:44:59.796Z: info: Get full timetable API called
+Trace Id: 9a48b9a8-81c7-466b-b09b-fc16496a958d
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:44:59.865Z: info: Get task statistics API called
+Trace Id: 72b8ba95-262c-4cfe-927a-d16b5fe5e4a0
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:44:59.869Z: info: Fetching task statistics
+Trace Id: 72b8ba95-262c-4cfe-927a-d16b5fe5e4a0
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:44:59.905Z: info: Get goals API called
+Trace Id: 8fecb7ff-7d44-4a9c-959c-b147f47d598a
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:44:59.916Z: info: Fetching goals with filters
+Trace Id: 8fecb7ff-7d44-4a9c-959c-b147f47d598a
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:44:59.944Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 83dae20c-96c3-4a5b-9823-e3d3318d4967
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:44:59.974Z: info: OPTIONS /v0/api/goals
+Trace Id: 0d9f9a92-2570-4f42-8a69-db713d09ea19
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:45:00.048Z: info: Profile fetched successfully
+Trace Id: c399e9ea-9e23-4581-b8d2-29338081adcb
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:45:00.049Z: info: GET /me
+Trace Id: c399e9ea-9e23-4581-b8d2-29338081adcb
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"457ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:45:01.161Z: warn: Slow database query detected
+Trace Id: 9a48b9a8-81c7-466b-b09b-fc16496a958d
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"1342ms","timestamp":"2026-03-13T18:44:59.818Z","threshold":"500ms"}
+2026-03-13T18:45:01.893Z: warn: Slow database query detected
+Trace Id: 9a48b9a8-81c7-466b-b09b-fc16496a958d
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"2061ms","timestamp":"2026-03-13T18:44:59.818Z","threshold":"500ms"}
+2026-03-13T18:45:02.615Z: info: Task statistics fetched successfully
+Trace Id: 72b8ba95-262c-4cfe-927a-d16b5fe5e4a0
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:45:02.588Z: warn: Slow database query detected
+Trace Id: 72b8ba95-262c-4cfe-927a-d16b5fe5e4a0
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2709ms","timestamp":"2026-03-13T18:44:59.879Z","threshold":"500ms"}
+2026-03-13T18:45:02.614Z: info: Task statistics fetched successfully
+Trace Id: 72b8ba95-262c-4cfe-927a-d16b5fe5e4a0
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:45:02.616Z: info: GET /stats
+Trace Id: 72b8ba95-262c-4cfe-927a-d16b5fe5e4a0
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"2761ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:45:02.619Z: info: Get task statistics API called
+Trace Id: 863c7523-b9cc-4cfe-9c27-ffff4f0d0b34
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:45:02.620Z: info: Fetching task statistics
+Trace Id: 863c7523-b9cc-4cfe-9c27-ffff4f0d0b34
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:45:03.457Z: warn: Slow database query detected
+Trace Id: 9a48b9a8-81c7-466b-b09b-fc16496a958d
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"3621ms","timestamp":"2026-03-13T18:44:59.828Z","threshold":"500ms"}
+2026-03-13T18:45:03.464Z: info: Full timetable generated successfully
+Trace Id: 9a48b9a8-81c7-466b-b09b-fc16496a958d
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:45:03.464Z: info: Full timetable fetched successfully
+Trace Id: 9a48b9a8-81c7-466b-b09b-fc16496a958d
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:45:03.475Z: info: GET /full
+Trace Id: 9a48b9a8-81c7-466b-b09b-fc16496a958d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"3746ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:45:03.508Z: info: Get full timetable API called
+Trace Id: 48af8a67-767e-4e31-b08c-579be5378972
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:45:03.509Z: info: Fetching full timetable
+Trace Id: 48af8a67-767e-4e31-b08c-579be5378972
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T18:45:04.071Z: warn: Slow database query detected
+Trace Id: 8fecb7ff-7d44-4a9c-959c-b147f47d598a
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"4136ms","timestamp":"2026-03-13T18:44:59.934Z","threshold":"500ms"}
+2026-03-13T18:45:04.072Z: warn: Slow database query detected
+Trace Id: 863c7523-b9cc-4cfe-9c27-ffff4f0d0b34
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"1446ms","timestamp":"2026-03-13T18:45:02.625Z","threshold":"500ms"}
+2026-03-13T18:45:04.072Z: info: Task statistics fetched successfully
+Trace Id: 863c7523-b9cc-4cfe-9c27-ffff4f0d0b34
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:45:04.072Z: info: Task statistics fetched successfully
+Trace Id: 863c7523-b9cc-4cfe-9c27-ffff4f0d0b34
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T18:45:04.074Z: warn: Slow database query detected
+Trace Id: 48af8a67-767e-4e31-b08c-579be5378972
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"560ms","timestamp":"2026-03-13T18:45:03.514Z","threshold":"500ms"}
+2026-03-13T18:45:04.074Z: info: GET /stats
+Trace Id: 863c7523-b9cc-4cfe-9c27-ffff4f0d0b34
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"1455ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:45:04.531Z: warn: Slow database query detected
+Trace Id: 8fecb7ff-7d44-4a9c-959c-b147f47d598a
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"4597ms","timestamp":"2026-03-13T18:44:59.934Z","threshold":"500ms"}
+2026-03-13T18:45:04.548Z: info: GET /
+Trace Id: 8fecb7ff-7d44-4a9c-959c-b147f47d598a
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"4669ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:45:04.547Z: info: Goals fetched successfully
+Trace Id: 8fecb7ff-7d44-4a9c-959c-b147f47d598a
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:45:04.547Z: info: Goals fetched successfully
+Trace Id: 8fecb7ff-7d44-4a9c-959c-b147f47d598a
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:45:04.566Z: info: Fetching goals with filters
+Trace Id: be48a462-fc59-4c41-b6a5-4adbd8d5f723
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:45:04.565Z: info: Get goals API called
+Trace Id: be48a462-fc59-4c41-b6a5-4adbd8d5f723
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T18:45:04.814Z: warn: Slow database query detected
+Trace Id: 48af8a67-767e-4e31-b08c-579be5378972
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1302ms","timestamp":"2026-03-13T18:45:03.512Z","threshold":"500ms"}
+2026-03-13T18:45:04.814Z: info: Full timetable generated successfully
+Trace Id: 48af8a67-767e-4e31-b08c-579be5378972
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T18:45:04.814Z: info: Full timetable fetched successfully
+Trace Id: 48af8a67-767e-4e31-b08c-579be5378972
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T18:45:04.814Z: warn: Slow database query detected
+Trace Id: 48af8a67-767e-4e31-b08c-579be5378972
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"1300ms","timestamp":"2026-03-13T18:45:03.514Z","threshold":"500ms"}
+2026-03-13T18:45:04.815Z: info: GET /full
+Trace Id: 48af8a67-767e-4e31-b08c-579be5378972
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"1313ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:45:05.231Z: warn: Slow database query detected
+Trace Id: be48a462-fc59-4c41-b6a5-4adbd8d5f723
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"665ms","timestamp":"2026-03-13T18:45:04.566Z","threshold":"500ms"}
+2026-03-13T18:45:05.231Z: info: Goals fetched successfully
+Trace Id: be48a462-fc59-4c41-b6a5-4adbd8d5f723
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:45:05.231Z: info: Goals fetched successfully
+Trace Id: be48a462-fc59-4c41-b6a5-4adbd8d5f723
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T18:45:05.231Z: info: GET /
+Trace Id: be48a462-fc59-4c41-b6a5-4adbd8d5f723
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"680ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T18:45:05.231Z: warn: Slow database query detected
+Trace Id: be48a462-fc59-4c41-b6a5-4adbd8d5f723
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"665ms","timestamp":"2026-03-13T18:45:04.566Z","threshold":"500ms"}
+2026-03-13T18:52:01.346Z: info: ShutdownSignal
+Trace Id: 86619afe-31a7-4955-84de-bf573d1ca4f8
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-03-13T18:52:02.198Z: info: Database connection attempt 1
+Trace Id: 1b8666a5-59ef-4d7d-a842-504c729c90f7
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-03-13T18:52:05.087Z: info: Database connection attempt 1
+Trace Id: dfef95be-ac87-4cc2-b7c0-d3dcfd951016
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-03-13T18:52:07.860Z: warn: Slow database query detected
+Trace Id: ea4716f1-77fe-428d-9d2b-474dbf4c3731
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"634ms","timestamp":"2026-03-13T18:52:07.226Z","threshold":"500ms"}
+2026-03-13T18:52:07.860Z: info: Database connected successfully
+Trace Id: d019535a-9265-4d14-8b95-f5660d71a244
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-03-13T18:52:08.556Z: warn: Slow database query detected
+Trace Id: 1ee1ee15-c4f6-4245-8ff8-396b02a4b010
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"696ms","timestamp":"2026-03-13T18:52:07.860Z","threshold":"500ms"}
+2026-03-13T18:52:08.559Z: info: ServerStarted
+Trace Id: 1f47734d-7875-47d6-acba-3b6936b5ae3c
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":49354}
+2026-03-13T19:12:39.002Z: info: OPTIONS /v0/api/users/me
+Trace Id: 304e0ed7-b500-4fef-95ea-7f4da672f091
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"23ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:12:39.076Z: info: Profile API called
+Trace Id: fc95e2a5-7053-4a28-b2d3-4fc1d9618608
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:12:39.078Z: info: Fetching user profile
+Trace Id: fc95e2a5-7053-4a28-b2d3-4fc1d9618608
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:12:39.157Z: info: OPTIONS /v0/api/users/me
+Trace Id: b910a828-6acd-4303-b55d-36ec3a6acbc5
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:12:49.377Z: error: Database operation failed
+Trace Id: fc95e2a5-7053-4a28-b2d3-4fc1d9618608
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"10254ms","timestamp":"2026-03-13T19:12:39.121Z","error":{"message":"\nInvalid `prisma.user.findUnique()` invocation in\n/Users/arbazkhan/Documents/studyway/backend/src/modules/user/user.repository.ts:26:24\n\n  23 }\n  24 \n  25 static findByIdWithoutPassword(id: string) {\n→ 26   return prisma.user.findUnique(\nTimed out fetching a new connection from the connection pool. More info: http://pris.ly/d/connection-pool (Current connection pool timeout: 10, connection limit: 17)","name":"PrismaClientKnownRequestError","stack":"PrismaClientKnownRequestError: \nInvalid `prisma.user.findUnique()` invocation in\n/Users/arbazkhan/Documents/studyway/backend/src/modules/user/user.repository.ts:26:24\n\n  23 }\n  24 \n  25 static findByIdWithoutPassword(id: string) {\n→ 26   return prisma.user.findUnique(\nTimed out fetching a new connection from the connection pool. More info: http://pris.ly/d/connection-pool (Current connection pool timeout: 10, connection limit: 17)\n    at ei.handleRequestError (/Users/arbazkhan/Documents/studyway/backend/node_modules/@prisma/client/src/runtime/RequestHandler.ts:228:13)\n    at ei.handleAndLogRequestError (/Users/arbazkhan/Documents/studyway/backend/node_modules/@prisma/client/src/runtime/RequestHandler.ts:174:12)\n    at ei.request (/Users/arbazkhan/Documents/studyway/backend/node_modules/@prisma/client/src/runtime/RequestHandler.ts:143:12)\n    at async Array.$allOperations (/Users/arbazkhan/Documents/studyway/backend/src/config/prisma.ts:411:24)\n    at async a (/Users/arbazkhan/Documents/studyway/backend/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:833:24)\n    at async Function.getProfile (/Users/arbazkhan/Documents/studyway/backend/src/modules/user/user.service.ts:486:18)\n    at async profile (/Users/arbazkhan/Documents/studyway/backend/src/modules/user/user.controller.ts:450:20)"}}
+2026-03-13T19:12:49.377Z: error: Profile fetch failed: 
+Invalid `prisma.user.findUnique()` invocation in
+/Users/arbazkhan/Documents/studyway/backend/src/modules/user/user.repository.ts:26:24
+
+  23 }
+  24 
+  25 static findByIdWithoutPassword(id: string) {
+→ 26   return prisma.user.findUnique(
+Timed out fetching a new connection from the connection pool. More info: http://pris.ly/d/connection-pool (Current connection pool timeout: 10, connection limit: 17)
+Trace Id: fc95e2a5-7053-4a28-b2d3-4fc1d9618608
+Function Name: UserController.profile
+Metadata: {}
+2026-03-13T19:12:49.381Z: info: GET /me
+Trace Id: fc95e2a5-7053-4a28-b2d3-4fc1d9618608
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":500,"responseTime":"10363ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:12:49.401Z: info: Profile API called
+Trace Id: 8ba6df78-7852-49d1-a54c-5b296fec1440
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:12:49.401Z: info: Fetching user profile
+Trace Id: 8ba6df78-7852-49d1-a54c-5b296fec1440
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:12:52.955Z: warn: Slow database query detected
+Trace Id: 8ba6df78-7852-49d1-a54c-5b296fec1440
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"3553ms","timestamp":"2026-03-13T19:12:49.402Z","threshold":"500ms"}
+2026-03-13T19:12:52.955Z: info: Profile fetched successfully
+Trace Id: 8ba6df78-7852-49d1-a54c-5b296fec1440
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:12:52.956Z: info: GET /me
+Trace Id: 8ba6df78-7852-49d1-a54c-5b296fec1440
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":200,"responseTime":"3562ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:16.965Z: info: OPTIONS /v0/api/users/login
+Trace Id: 6ec5c205-674f-44e9-9a75-de6f1ff11669
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/login","status":204,"responseTime":"7ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:17.036Z: info: Login API called
+Trace Id: 0d1b48ca-3c12-4a97-80af-0cb078d8aa10
+Function Name: UserController.login
+Metadata: {"email":"arbaaazkhanark23@gmail.com"}
+2026-03-13T19:13:17.036Z: info: Processing login request
+Trace Id: 0d1b48ca-3c12-4a97-80af-0cb078d8aa10
+Function Name: UserService.login
+Metadata: {"email":"arbaaazkhanark23@gmail.com"}
+2026-03-13T19:13:18.324Z: warn: Slow database query detected
+Trace Id: 0d1b48ca-3c12-4a97-80af-0cb078d8aa10
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1288ms","timestamp":"2026-03-13T19:13:17.036Z","threshold":"500ms"}
+2026-03-13T19:13:18.615Z: info: Login successful, tokens issued
+Trace Id: 0d1b48ca-3c12-4a97-80af-0cb078d8aa10
+Function Name: UserService.login
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:18.615Z: info: Login API success
+Trace Id: 0d1b48ca-3c12-4a97-80af-0cb078d8aa10
+Function Name: UserController.login
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:18.615Z: info: POST /login
+Trace Id: 0d1b48ca-3c12-4a97-80af-0cb078d8aa10
+Function Name: HTTP_REQUEST
+Metadata: {"method":"POST","url":"/login","status":200,"responseTime":"1583ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:18.621Z: info: OPTIONS /v0/api/users/me
+Trace Id: 584d9474-471e-42ff-b32f-73a02206a568
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:18.624Z: info: Profile API called
+Trace Id: bbc2cbb7-8f56-450d-b132-003284c3665f
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:18.624Z: info: Fetching user profile
+Trace Id: bbc2cbb7-8f56-450d-b132-003284c3665f
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:19.018Z: info: Profile fetched successfully
+Trace Id: bbc2cbb7-8f56-450d-b132-003284c3665f
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:19.019Z: info: GET /me
+Trace Id: bbc2cbb7-8f56-450d-b132-003284c3665f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"396ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:22.726Z: info: Fetching user profile
+Trace Id: daca7103-09e3-4532-abcb-76387a07f293
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:22.725Z: info: Profile API called
+Trace Id: daca7103-09e3-4532-abcb-76387a07f293
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:23.042Z: info: Profile fetched successfully
+Trace Id: daca7103-09e3-4532-abcb-76387a07f293
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:23.043Z: info: GET /me
+Trace Id: daca7103-09e3-4532-abcb-76387a07f293
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"325ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:23.044Z: info: Fetching user profile
+Trace Id: 909807de-e79b-471c-a8e3-f4624d710df8
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:23.044Z: info: Profile API called
+Trace Id: 909807de-e79b-471c-a8e3-f4624d710df8
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:23.103Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 7dffc56b-3e67-4362-8708-bab28e690542
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:23.105Z: info: OPTIONS /v0/api/goals
+Trace Id: 38122d0d-09bb-40c0-b3f3-faaebbefaf1f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:23.112Z: info: Get full timetable API called
+Trace Id: bc06c9fe-1c26-4680-ac89-40da385fa0c4
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T19:13:23.112Z: info: Fetching full timetable
+Trace Id: bc06c9fe-1c26-4680-ac89-40da385fa0c4
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T19:13:23.114Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: 7e54a261-0d2f-4277-b38f-470db93f538f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:23.115Z: info: Get goals API called
+Trace Id: a02038a7-8a3d-4ffd-a684-8d4a7eb15f7d
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T19:13:23.115Z: info: Fetching goals with filters
+Trace Id: a02038a7-8a3d-4ffd-a684-8d4a7eb15f7d
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T19:13:23.117Z: info: OPTIONS /v0/api/goals
+Trace Id: 4907c4df-6574-463a-9a38-147e38f4bb49
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:23.353Z: info: Profile fetched successfully
+Trace Id: 909807de-e79b-471c-a8e3-f4624d710df8
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:13:23.354Z: info: GET /me
+Trace Id: 909807de-e79b-471c-a8e3-f4624d710df8
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"310ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:26.187Z: warn: Slow database query detected
+Trace Id: bc06c9fe-1c26-4680-ac89-40da385fa0c4
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"3075ms","timestamp":"2026-03-13T19:13:23.112Z","threshold":"500ms"}
+2026-03-13T19:13:26.187Z: warn: Slow database query detected
+Trace Id: a02038a7-8a3d-4ffd-a684-8d4a7eb15f7d
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"3071ms","timestamp":"2026-03-13T19:13:23.116Z","threshold":"500ms"}
+2026-03-13T19:13:27.040Z: warn: Slow database query detected
+Trace Id: bc06c9fe-1c26-4680-ac89-40da385fa0c4
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"3928ms","timestamp":"2026-03-13T19:13:23.112Z","threshold":"500ms"}
+2026-03-13T19:13:27.041Z: warn: Slow database query detected
+Trace Id: a02038a7-8a3d-4ffd-a684-8d4a7eb15f7d
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"3925ms","timestamp":"2026-03-13T19:13:23.116Z","threshold":"500ms"}
+2026-03-13T19:13:27.041Z: info: Goals fetched successfully
+Trace Id: a02038a7-8a3d-4ffd-a684-8d4a7eb15f7d
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T19:13:27.041Z: info: Goals fetched successfully
+Trace Id: a02038a7-8a3d-4ffd-a684-8d4a7eb15f7d
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T19:13:27.042Z: info: GET /
+Trace Id: a02038a7-8a3d-4ffd-a684-8d4a7eb15f7d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"3928ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:27.045Z: info: Get goals API called
+Trace Id: 1a579f7f-b832-461d-922f-91a20c0e5268
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T19:13:27.045Z: info: Fetching goals with filters
+Trace Id: 1a579f7f-b832-461d-922f-91a20c0e5268
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T19:13:27.623Z: warn: Slow database query detected
+Trace Id: 1a579f7f-b832-461d-922f-91a20c0e5268
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"578ms","timestamp":"2026-03-13T19:13:27.045Z","threshold":"500ms"}
+2026-03-13T19:13:27.652Z: warn: Slow database query detected
+Trace Id: 1a579f7f-b832-461d-922f-91a20c0e5268
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"607ms","timestamp":"2026-03-13T19:13:27.045Z","threshold":"500ms"}
+2026-03-13T19:13:27.652Z: info: Goals fetched successfully
+Trace Id: 1a579f7f-b832-461d-922f-91a20c0e5268
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T19:13:27.652Z: info: Goals fetched successfully
+Trace Id: 1a579f7f-b832-461d-922f-91a20c0e5268
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T19:13:27.653Z: info: GET /
+Trace Id: 1a579f7f-b832-461d-922f-91a20c0e5268
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"609ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:28.315Z: info: Full timetable generated successfully
+Trace Id: bc06c9fe-1c26-4680-ac89-40da385fa0c4
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T19:13:28.315Z: warn: Slow database query detected
+Trace Id: bc06c9fe-1c26-4680-ac89-40da385fa0c4
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"5203ms","timestamp":"2026-03-13T19:13:23.112Z","threshold":"500ms"}
+2026-03-13T19:13:28.316Z: info: Full timetable fetched successfully
+Trace Id: bc06c9fe-1c26-4680-ac89-40da385fa0c4
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T19:13:28.316Z: info: GET /full
+Trace Id: bc06c9fe-1c26-4680-ac89-40da385fa0c4
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"5210ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:13:28.320Z: info: Get full timetable API called
+Trace Id: 7fd0268f-3adf-448f-92be-719cfac533a4
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T19:13:28.321Z: info: Fetching full timetable
+Trace Id: 7fd0268f-3adf-448f-92be-719cfac533a4
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T19:13:28.965Z: warn: Slow database query detected
+Trace Id: 7fd0268f-3adf-448f-92be-719cfac533a4
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"644ms","timestamp":"2026-03-13T19:13:28.321Z","threshold":"500ms"}
+2026-03-13T19:13:29.599Z: warn: Slow database query detected
+Trace Id: 7fd0268f-3adf-448f-92be-719cfac533a4
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1278ms","timestamp":"2026-03-13T19:13:28.321Z","threshold":"500ms"}
+2026-03-13T19:13:30.904Z: warn: Slow database query detected
+Trace Id: 7fd0268f-3adf-448f-92be-719cfac533a4
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"2583ms","timestamp":"2026-03-13T19:13:28.321Z","threshold":"500ms"}
+2026-03-13T19:13:30.905Z: info: Full timetable generated successfully
+Trace Id: 7fd0268f-3adf-448f-92be-719cfac533a4
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T19:13:30.905Z: info: Full timetable fetched successfully
+Trace Id: 7fd0268f-3adf-448f-92be-719cfac533a4
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T19:13:30.906Z: info: GET /full
+Trace Id: 7fd0268f-3adf-448f-92be-719cfac533a4
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"2586ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:15:48.685Z: info: OPTIONS /v0/api/users/me
+Trace Id: 2739c2bf-8f09-49c1-ba82-e0efd85e7e56
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"14ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:15:48.737Z: info: Profile API called
+Trace Id: f416d845-623e-4a43-b98d-9f9102ca93cb
+Function Name: UserController.profile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:15:48.739Z: info: Fetching user profile
+Trace Id: f416d845-623e-4a43-b98d-9f9102ca93cb
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:15:48.768Z: info: OPTIONS /v0/api/time-table/full
+Trace Id: dce45b08-0ee2-4982-be94-5520f6488a9b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/time-table/full","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:15:48.771Z: info: OPTIONS /v0/api/goals
+Trace Id: 4c13878e-661f-41d2-806c-c193d0ed6c69
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:15:48.771Z: info: OPTIONS /v0/api/tasks/stats
+Trace Id: 121e8a3b-f9f5-412f-a762-10e49de4b295
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/tasks/stats","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:15:48.787Z: info: Get full timetable API called
+Trace Id: ebcfa1c6-3098-455a-99a6-31f33810e473
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T19:15:48.787Z: info: Fetching full timetable
+Trace Id: ebcfa1c6-3098-455a-99a6-31f33810e473
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{}}
+2026-03-13T19:15:48.805Z: info: Fetching goals with filters
+Trace Id: dfbee3f0-084c-48ae-bb74-63b29f537fc9
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T19:15:48.805Z: info: Get goals API called
+Trace Id: dfbee3f0-084c-48ae-bb74-63b29f537fc9
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","filters":{"limit":20,"page":1}}
+2026-03-13T19:15:48.833Z: info: Get task statistics API called
+Trace Id: a5f7db84-d119-4a7e-85c0-17c89ba1e319
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:15:48.842Z: info: Fetching task statistics
+Trace Id: a5f7db84-d119-4a7e-85c0-17c89ba1e319
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:15:49.869Z: info: Profile fetched successfully
+Trace Id: f416d845-623e-4a43-b98d-9f9102ca93cb
+Function Name: UserService.getProfile
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:15:49.869Z: warn: Slow database query detected
+Trace Id: f416d845-623e-4a43-b98d-9f9102ca93cb
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1116ms","timestamp":"2026-03-13T19:15:48.752Z","threshold":"500ms"}
+2026-03-13T19:15:49.871Z: info: GET /me
+Trace Id: f416d845-623e-4a43-b98d-9f9102ca93cb
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1174ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:15:49.875Z: warn: Slow database query detected
+Trace Id: ebcfa1c6-3098-455a-99a6-31f33810e473
+Function Name: prisma.query
+Metadata: {"model":"SleepSchedule","operation":"findMany","duration":"1082ms","timestamp":"2026-03-13T19:15:48.791Z","threshold":"500ms"}
+2026-03-13T19:15:49.875Z: warn: Slow database query detected
+Trace Id: dfbee3f0-084c-48ae-bb74-63b29f537fc9
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"1062ms","timestamp":"2026-03-13T19:15:48.813Z","threshold":"500ms"}
+2026-03-13T19:15:50.527Z: warn: Slow database query detected
+Trace Id: ebcfa1c6-3098-455a-99a6-31f33810e473
+Function Name: prisma.query
+Metadata: {"model":"FixedTime","operation":"findMany","duration":"1737ms","timestamp":"2026-03-13T19:15:48.790Z","threshold":"500ms"}
+2026-03-13T19:15:50.531Z: info: Full timetable generated successfully
+Trace Id: ebcfa1c6-3098-455a-99a6-31f33810e473
+Function Name: TimetableService.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysProcessed":7}
+2026-03-13T19:15:50.529Z: warn: Slow database query detected
+Trace Id: ebcfa1c6-3098-455a-99a6-31f33810e473
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"1737ms","timestamp":"2026-03-13T19:15:48.792Z","threshold":"500ms"}
+2026-03-13T19:15:50.531Z: info: Full timetable fetched successfully
+Trace Id: ebcfa1c6-3098-455a-99a6-31f33810e473
+Function Name: TimetableController.getFullTimetable
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","daysCount":7}
+2026-03-13T19:15:50.533Z: info: GET /full
+Trace Id: ebcfa1c6-3098-455a-99a6-31f33810e473
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/full","status":304,"responseTime":"1758ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:15:50.536Z: info: Goals fetched successfully
+Trace Id: dfbee3f0-084c-48ae-bb74-63b29f537fc9
+Function Name: GoalService.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T19:15:50.536Z: warn: Slow database query detected
+Trace Id: dfbee3f0-084c-48ae-bb74-63b29f537fc9
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1723ms","timestamp":"2026-03-13T19:15:48.813Z","threshold":"500ms"}
+2026-03-13T19:15:50.536Z: info: Goals fetched successfully
+Trace Id: dfbee3f0-084c-48ae-bb74-63b29f537fc9
+Function Name: GoalController.getGoals
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380","count":2}
+2026-03-13T19:15:50.538Z: info: GET /
+Trace Id: dfbee3f0-084c-48ae-bb74-63b29f537fc9
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1740ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
+2026-03-13T19:15:53.128Z: info: Task statistics fetched successfully
+Trace Id: a5f7db84-d119-4a7e-85c0-17c89ba1e319
+Function Name: TaskService.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:15:53.128Z: info: Task statistics fetched successfully
+Trace Id: a5f7db84-d119-4a7e-85c0-17c89ba1e319
+Function Name: TaskController.getStatistics
+Metadata: {"userId":"d4bc0e08-6b74-4347-9158-bd2db8511380"}
+2026-03-13T19:15:53.113Z: warn: Slow database query detected
+Trace Id: a5f7db84-d119-4a7e-85c0-17c89ba1e319
+Function Name: prisma.query
+Metadata: {"model":"Task","operation":"findMany","duration":"4267ms","timestamp":"2026-03-13T19:15:48.845Z","threshold":"500ms"}
+2026-03-13T19:15:53.134Z: info: GET /stats
+Trace Id: a5f7db84-d119-4a7e-85c0-17c89ba1e319
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/stats","status":304,"responseTime":"4313ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"}
