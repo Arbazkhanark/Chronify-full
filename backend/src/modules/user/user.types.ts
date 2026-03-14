@@ -1,3 +1,4 @@
+// src/modules/user/user.types.ts
 export interface CreateUserDTO {
   name: string;
   email: string;

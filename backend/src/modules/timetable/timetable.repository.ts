@@ -916,7 +916,7 @@ static async resetUserTimetable(
 
 
 // Helper functions (add these in the same file)
-private static calculateDuration(startTime: string, endTime: string): number {
+private static calculateDuration1(startTime: string, endTime: string): number {
   const [sh, sm] = startTime.split(':').map(Number);
   const [eh, em] = endTime.split(':').map(Number);
   let startMin = sh * 60 + sm;
@@ -924,6 +924,33 @@ private static calculateDuration(startTime: string, endTime: string): number {
   if (endMin < startMin) endMin += 24 * 60;
   return endMin - startMin;
 }
+
+
+
+private static calculateDuration(startTime: string, endTime: string): number {
+  let startMin = this.timeToMinutes(startTime);
+  let endMin = this.timeToMinutes(endTime);
+  
+  // Handle midnight crossing
+  if (endMin < startMin) {
+    endMin += 24 * 60;
+  }
+  
+  return endMin - startMin;
+}
+
+private static timeToMinutes(time: string): number {
+  let [hours, minutes] = time.split(':').map(Number);
+  
+  // Handle 24:00 as 00:00 (next day)
+  if (hours === 24) {
+    hours = 0;
+  }
+  
+  return hours * 60 + minutes;
+}
+
+
 
 private static calculateEndTime(startTime: string, duration: number): string {
   const [sh, sm] = startTime.split(':').map(Number);

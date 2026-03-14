@@ -182,6 +182,9 @@ model User {
 
   reminders     Reminder[]
   taskReminders TaskReminder[]
+
+  // 🔥 ADD THIS LINE - Push subscriptions for this user
+  pushSubscriptions PushSubscription[]  // Ek user ke multiple devices ho sakte hain, toh multiple subscriptions
   
 
   // 🔥 ADDED: Relation to FixedTime
@@ -686,4 +689,20 @@ model Reminder {
   remindAt DateTime
 
   user User @relation(fields: [userId], references: [id])
+}
+
+
+
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  token     String   // FCM token (long string)
+  platform  String   @default("web") // web, android, ios (future ke liye)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

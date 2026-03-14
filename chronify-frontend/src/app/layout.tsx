@@ -117,6 +117,7 @@ import './globals.css'
 import { Header } from "@/components/shared/header"
 import { Footer } from "@/components/shared/footer"
 import { TutorialTourProvider } from '@/contexts/tutorial-tour-context'
+import FCMProvider from "@/components/shared/FCMProvider"
 
 const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"] });
@@ -143,6 +144,7 @@ export default function RootLayout({
             storageKey="studyflow-theme"
           >
             <Header/>
+            <FCMProvider />
             {children}
             <Footer/>
           </ThemeProvider>

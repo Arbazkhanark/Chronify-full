@@ -21,7 +21,7 @@ app.use(httpLogger());
 
 // CORS configuration
 app.use(cors({
-    origin: 'http://localhost:3001', // Update with your frontend URL
+    origin: 'http://localhost:3000', // Update with your frontend URL
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));

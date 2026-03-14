@@ -17,6 +17,8 @@ router.post("/change-password", authMiddleware, UserController.changePassword); 
 router.put("/profile", authMiddleware, UserController.updateProfile);
 router.get("/me", authMiddleware, UserController.profile);                          //Tested
 
+router.post("/save-fcm-token", authMiddleware, UserController.saveFcmToken);
+
 export default router;
 
 

@@ -109,6 +109,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { toast } from 'sonner'
 import { Progress } from '@/components/ui/progress'
+import { Checkbox } from '@/components/ui/checkbox'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 // Types
 interface TimeSlot {
@@ -383,8 +385,32 @@ const TASK_TYPES = [
   { id: 'OTHER', label: 'Other', icon: Clock }
 ]
 
-// Map API task types to UI task types
-const mapApiTaskTypeToUIType = (apiType: string): TimeSlot['type'] => {
+// ==================== FIXED: Task Type Mapping Functions ====================
+
+// Map UI task type to API task type (UPPERCASE)
+const mapUITypeToAPIType = (uiType: TimeSlot['type']): ApiTask['type'] => {
+  switch(uiType) {
+    case 'study': return 'STUDY'
+    case 'class': return 'CLASS'
+    case 'project': return 'PROJECT'
+    case 'health': return 'HEALTH'
+    case 'meeting': return 'MEETING'
+    case 'workout': return 'WORKOUT'
+    case 'meal': return 'MEAL'
+    case 'entertainment': return 'ENTERTAINMENT'
+    case 'sleep': return 'SLEEP'
+    case 'task': return 'STUDY' // Default to STUDY
+    case 'break': return 'OTHER'
+    case 'commute': return 'OTHER'
+    case 'free': return 'OTHER'
+    case 'fixed': return 'OTHER'
+    case 'other': return 'OTHER'
+    default: return 'OTHER'
+  }
+}
+
+// Map API task type to UI task type (lowercase)
+const mapAPITypeToUIType = (apiType: string): TimeSlot['type'] => {
   switch(apiType) {
     case 'STUDY': return 'study'
     case 'CLASS': return 'class'
@@ -398,6 +424,8 @@ const mapApiTaskTypeToUIType = (apiType: string): TimeSlot['type'] => {
     default: return 'task'
   }
 }
+
+// ==================== END FIXED ====================
 
 const API_BASE_URL = 'http://localhost:8181/v0/api'
 
@@ -421,6 +449,10 @@ export default function TimetableBuilderPage() {
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isResetting, setIsResetting] = useState(false)
+
+  // ==================== NEW: Lock Confirmation State ====================
+  const [showLockConfirm, setShowLockConfirm] = useState(false)
+  const [lockConfirmed, setLockConfirmed] = useState(false)
 
   const [userType, setUserType] = useState<'student' | 'professional' | 'jobseeker' | 'other'>('student')
   const [showSetupModal, setShowSetupModal] = useState(false)
@@ -662,11 +694,10 @@ export default function TimetableBuilderPage() {
               }
             }
             
-            // Handle TASK slots - THIS IS THE FIX
-            // Map all possible task types from API to our internal task format
+            // Handle TASK slots - USING THE FIXED MAPPING FUNCTION
             const taskTypes = ['STUDY', 'PROJECT', 'CLASS', 'HEALTH', 'MEETING', 'WORKOUT', 'MEAL', 'ENTERTAINMENT']
             if (taskTypes.includes(slot.type) && slot.taskId) {
-              const taskType = mapApiTaskTypeToUIType(slot.type)
+              const taskType = mapAPITypeToUIType(slot.type)
               
               allTasks.push({
                 id: slot.taskId,
@@ -696,7 +727,7 @@ export default function TimetableBuilderPage() {
         setSleepSchedules(sleepSchedulesArray)
         setTasks(allTasks)
         
-        console.log('Loaded tasks:', allTasks) // Debug log
+        console.log('Loaded tasks:', allTasks)
         console.log('Loaded fixed times:', fixedTimesArray)
         console.log('Loaded sleep schedules:', sleepSchedulesArray)
         
@@ -1426,11 +1457,25 @@ export default function TimetableBuilderPage() {
     toast.success('Sleep schedule deleted')
   }
 
+  // ==================== MODIFIED: Lock Timetable with Confirmation ====================
   const handleLockTimetable = () => {
     if (!hasUnsavedChanges) {
       toast.info('No changes to save')
       return
     }
+    
+    // Show confirmation dialog first
+    setShowLockConfirm(true)
+    setLockConfirmed(false)
+  }
+
+  const handleConfirmLock = () => {
+    if (!lockConfirmed) {
+      toast.error('Please confirm that you understand the lock will last for 1 week')
+      return
+    }
+    
+    setShowLockConfirm(false)
     setShowLockProgress(true)
     setIsLocking(true)
     setLockProgress([{ step: 'Saving Timetable', status: 'in-progress', message: 'Preparing data...' }])
@@ -1486,6 +1531,7 @@ export default function TimetableBuilderPage() {
     }
   }
 
+  // ==================== FIXED: prepareLockPayload with proper type mapping ====================
   const prepareLockPayload = () => {
     const apiFixedTimes: any[] = fixedTimes.map(ft => ({
       title: ft.title,
@@ -1515,23 +1561,12 @@ export default function TimetableBuilderPage() {
       color: s.color
     }))
 
+    // FIXED: Map UI task types to API task types using the mapping function
     const apiTasks: any[] = tasks
       .filter(t => !t.isSleepTime)
       .map(task => {
-        // Map UI task type to API task type
-        let apiTaskType = 'STUDY'
-        switch(task.type) {
-          case 'study': apiTaskType = 'STUDY'; break
-          case 'class': apiTaskType = 'CLASS'; break
-          case 'project': apiTaskType = 'PROJECT'; break
-          case 'health': apiTaskType = 'HEALTH'; break
-          case 'meeting': apiTaskType = 'MEETING'; break
-          case 'workout': apiTaskType = 'WORKOUT'; break
-          case 'meal': apiTaskType = 'MEAL'; break
-          case 'entertainment': apiTaskType = 'ENTERTAINMENT'; break
-          case 'sleep': apiTaskType = 'SLEEP'; break
-          default: apiTaskType = 'OTHER'
-        }
+        // Use the mapping function to convert UI type to API type
+        const apiTaskType = mapUITypeToAPIType(task.type)
 
         const apiTask: any = {
           title: task.title,
@@ -1543,7 +1578,7 @@ export default function TimetableBuilderPage() {
           priority: task.priority,
           color: task.color,
           day: task.day,
-          type: apiTaskType,
+          type: apiTaskType, // This is now properly mapped to uppercase
           category: task.category || 'ACADEMIC',
           status: task.status || 'PENDING'
         }
@@ -1564,12 +1599,15 @@ export default function TimetableBuilderPage() {
         return apiTask
       })
 
+    console.log('Prepared API Tasks with mapped types:', apiTasks.map(t => ({ title: t.title, type: t.type })))
+
     return {
       fixedTimes: apiFixedTimes,
       sleepSchedules: apiSleepSchedules,
       tasks: apiTasks
     }
   }
+  // ==================== END FIXED ====================
 
   const lockTimetable = async (payload: any): Promise<LockApiResponse> => {
     const token = getAuthToken()
@@ -1669,7 +1707,7 @@ export default function TimetableBuilderPage() {
         priority: 'HIGH' as const,
         color: '#3B82F6',
         day: '',
-        type: 'task' as const
+        type: 'study' as const
       },
       {
         id: 'pool-2',
@@ -1681,7 +1719,7 @@ export default function TimetableBuilderPage() {
         priority: 'CRITICAL' as const,
         color: '#EF4444',
         day: '',
-        type: 'task' as const
+        type: 'study' as const
       }
     ]
   }
@@ -2715,6 +2753,113 @@ export default function TimetableBuilderPage() {
           </div>
         </div>
 
+        {/* ==================== MODIFIED: Lock Confirmation Dialog with improved width and scrollable height ==================== */}
+        <Dialog open={showLockConfirm} onOpenChange={setShowLockConfirm}>
+          <DialogContent className="sm:max-w-lg md:max-w-xl bg-white dark:bg-gray-800 max-h-[90vh] flex flex-col">
+            <DialogHeader className="flex-shrink-0">
+              <DialogTitle className="dark:text-gray-100 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                Lock Timetable Confirmation
+              </DialogTitle>
+              <DialogDescription className="dark:text-gray-400">
+                Please read carefully before locking your timetable
+              </DialogDescription>
+            </DialogHeader>
+            
+            <ScrollArea className="flex-1 py-4 pr-4 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+              <div className="space-y-4">
+                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                  <div className="flex items-start gap-3">
+                    <Lock className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-medium text-yellow-800 dark:text-yellow-300 mb-2">
+                        Once locked, you won't be able to edit for 1 week!
+                      </h4>
+                      <ul className="space-y-2 text-sm text-yellow-700 dark:text-yellow-400">
+                        <li className="flex items-start gap-2">
+                          <span className="text-yellow-500">•</span>
+                          <span>Your timetable will be saved and locked for the next 7 days</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-yellow-500">•</span>
+                          <span>You cannot add, edit, or delete any tasks during this period</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-yellow-500">•</span>
+                          <span>Fixed commitments and sleep schedules become read-only</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-yellow-500">•</span>
+                          <span>You can still view your timetable in read-only mode</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-yellow-500">•</span>
+                          <span>After 7 days, you can unlock and make changes again</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <h4 className="font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    What will be saved:
+                  </h4>
+                  <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-400">
+                    <li>• {tasks.filter(t => !t.isSleepTime).length} tasks</li>
+                    <li>• {fixedTimes.length} fixed commitments</li>
+                    <li>• {sleepSchedules.filter(s => s.isActive).length} active sleep schedules</li>
+                    <li>• {fixedTimes.reduce((acc, ft) => acc + (ft.freePeriods?.length || 0), 0)} free periods</li>
+                  </ul>
+                </div>
+                
+                <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <Checkbox 
+                    id="lock-confirm" 
+                    checked={lockConfirmed}
+                    onCheckedChange={(checked) => setLockConfirmed(checked as boolean)}
+                    className="mt-1 flex-shrink-0"
+                  />
+                  <Label 
+                    htmlFor="lock-confirm" 
+                    className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
+                  >
+                    I understand that once locked, I will not be able to make any changes to my timetable for the next 7 days. I have reviewed my schedule and confirm that it is correct.
+                  </Label>
+                </div>
+              </div>
+            </ScrollArea>
+            
+            <DialogFooter className="flex-shrink-0 pt-4 border-t border-gray-200 dark:border-gray-700 gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowLockConfirm(false)
+                  setLockConfirmed(false)
+                }}
+                className="dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirmLock}
+                disabled={!lockConfirmed || isLocking}
+                className="bg-yellow-600 hover:bg-yellow-700 text-white"
+              >
+                {isLocking ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Locking...
+                  </>
+                ) : (
+                  'Yes, Lock Timetable'
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         {/* Lock Progress Dialog */}
         <Dialog open={showLockProgress} onOpenChange={setShowLockProgress}>
           <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800">
@@ -2723,16 +2868,16 @@ export default function TimetableBuilderPage() {
                 {lockSuccess ? (
                   <>
                     <CheckCircle className="w-5 h-5 text-green-500" />
-                    Timetable Saved Successfully
+                    Timetable Locked Successfully
                   </>
                 ) : (
-                  'Saving Timetable'
+                  'Locking Timetable'
                 )}
               </DialogTitle>
               <DialogDescription className="dark:text-gray-400">
                 {lockSuccess 
-                  ? 'Your timetable has been locked and saved to the server.'
-                  : 'Please wait while we save your timetable. Do not close this window.'}
+                  ? 'Your timetable has been locked and saved to the server. You cannot make changes for the next 7 days.'
+                  : 'Please wait while we lock your timetable. Do not close this window.'}
               </DialogDescription>
             </DialogHeader>
             
@@ -5365,6 +5510,4 @@ export default function TimetableBuilderPage() {
     </div>
   )
 }
-
-
 

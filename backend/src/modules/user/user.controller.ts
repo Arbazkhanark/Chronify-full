@@ -1,161 +1,3 @@
-// import { Request, Response } from "express";
-// import { UserService } from "./user.service";
-// import { getLiveTraceId, logger } from "patal-log";
-// import { AppError } from "../../utils/AppError";
-
-// export class UserController {
-//   static async signup(req: Request, res: Response) {
-    
-//     try {
-//       logger.info("Signup API called", {
-//         functionName: "UserController.signup",
-//         metadata: { email: req.body?.email },
-//       });
-
-//       const user = await UserService.signup(req.body);
-
-//       logger.info("User signup successful", {
-//         functionName: "UserController.signup",
-//         metadata: { userId: user.id },
-//       });
-
-//       res.status(201).json({ success: true, user });
-//     } catch (err: any) {
-//       logger.error(`Signup failed cause ${err.message}`, {
-//         functionName: "UserController.signup",
-//         error: err?.message,
-//         metadata: { email: req.body?.email },
-//       });
-//       res.status(400).json({ success: false, message: err.message });
-//     }
-//   }
-
-//   static async login(req: Request, res: Response) {
-    
-//     try {
-//       logger.info("Login API called", {
-//         functionName: "UserController.login",
-//         metadata: { email: req.body?.email },
-//       });
-
-//       const user = await UserService.login(req.body);
-
-//       logger.info("User login successful", {
-//         functionName: "UserController.login",
-//         metadata: { userId: user.id },
-//       });
-
-//       return res.status(200).json({
-//         success: true,
-//         message: "Login successful",
-//         data: user,
-//       });
-//     } catch (err: any) {
-//       logger.error(`Login failed cause ${err.message}`, {
-//         functionName: "UserController.login",
-//         error: err?.message,
-//         metadata: { email: req.body?.email },
-//       });
-
-//       if (err instanceof AppError) {
-//         return res.status(err.statusCode).json({
-//           success: false,
-//           message: err.message,
-//           code: err.code,
-//         });
-//       }
-
-//       return res.status(500).json({
-//         success: false,
-//         message: "Internal server error",
-//       });
-//     }
-//   }
-
-//   static async profile(req: Request, res: Response) {
-    
-//     try {
-//       const userId = req.headers["x-user-id"] as string;
-
-//       logger.info("Profile API called", {
-//         functionName: "UserController.profile",
-//         metadata: { userId },
-//       });
-
-//       const user = await UserService.getProfile(userId);
-
-//       logger.info("Profile fetch successful", {
-//         functionName: "UserController.profile",
-//         metadata: { userId },
-//       });
-
-//       res.json({ success: true, user });
-//     } catch (err: any) {
-//       logger.error(`Profile fetch failed cause ${err.message}`, {
-//         functionName: "UserController.profile",
-//         error: err?.message,
-//       });
-//       res.status(404).json({ success: false, message: err.message });
-//     }
-//   }
-// }
-
-
-
-
-
-// import { Request, Response } from "express";
-// import { UserService } from "./user.service";
-// import { signupSchema, loginSchema } from "./user.validation";
-// import { AuthRequest } from "../../middlewares/auth.middleware";
-// import { logger } from "patal-log";
-
-// export class UserController {
-//   static async signup(req: Request, res: Response) {
-//     const payload = signupSchema.parse(req.body);
-//     const user = await UserService.signup(payload);
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Signup successful",
-//       data: user,
-//     });
-//   }
-
-//   static async login(req: Request, res: Response) {
-//     const payload = loginSchema.parse(req.body);
-//     const result = await UserService.login(payload);
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Login successful",
-//       data: result,
-//     });
-//   }
-
-//   static async profile(req: AuthRequest, res: Response) {
-//     const user = await UserService.getProfile(req.user!.id);
-
-//     res.status(200).json({
-//       success: true,
-//       data: user,
-//     });
-//   }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // src/modules/user/user.controller.ts
 import { Request, Response } from "express";
 import { UserService } from "./user.service";
@@ -170,6 +12,7 @@ import {
 import { AuthRequest } from "../../middlewares/auth.middleware";
 import { AppError } from "../../utils/AppError";
 import { logger } from "patal-log";
+import { UserRepository } from "./user.repository";
 
 export class UserController {
   static async signup(req: Request, res: Response) {
@@ -471,4 +314,42 @@ export class UserController {
       });
     }
   }
+
+
+
+
+  static async saveFcmToken(req: AuthRequest, res: Response) {
+  try {
+    const { token } = req.body;
+    const userId = req.user!.id;
+
+    if (!token) {
+      throw new AppError("FCM token is required", 400);
+    }
+
+    logger.info("Saving FCM token", {
+      functionName: "UserController.saveFcmToken",
+      metadata: { userId },
+    });
+
+    await UserService.saveFcmToken(userId, token);
+
+    res.json({
+      success: true,
+      message: "FCM token saved successfully",
+    });
+  } catch (err: any) {
+    logger.error("Save FCM token failed", { functionName: "UserController.saveFcmToken", error: err.message });
+
+    if (err instanceof AppError) {
+      return res.status(err.statusCode).json({ success: false, message: err.message });
+    }
+
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}
+
+
+
+
 }

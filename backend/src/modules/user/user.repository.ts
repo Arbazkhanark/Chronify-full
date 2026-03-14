@@ -76,6 +76,18 @@ export class UserRepository {
 
 
 
+  static async saveFcmToken(userId: string, token: string) {
+  return prisma.pushSubscription.upsert({
+    where: { userId },
+    update: { token },
+    create: {
+      userId,
+      token,
+      platform: 'web',
+    },
+  });
+}
+
 
 
 }

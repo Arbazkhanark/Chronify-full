@@ -23,7 +23,7 @@ const TimeSlotTypeEnum = z.enum([
 // Task category enum
 const TaskCategoryEnum = z.enum([
   'ACADEMIC', 'PROFESSIONAL', 'HEALTH', 'PERSONAL', 'LEARNING', 
-  'BREAK', 'COMMUTE', 'PROJECT', 'SLEEP'
+  'BREAK', 'COMMUTE', 'PROJECT', 'SLEEP', 'OTHER'
 ])
 
 // Fixed time type enum
@@ -87,7 +87,7 @@ export const createSleepScheduleSchema = z.object({
 });
 
 // ==================== TASK SCHEMA ====================
-export const createTaskSchema = z.object({
+export const createTaskSchema1 = z.object({
   title: z.string().min(1, 'Title is required').max(200),
   subject: z.string().optional(),
   note: z.string().optional(),
@@ -119,6 +119,79 @@ export const createTaskSchema = z.object({
   message: 'End time must be after start time',
   path: ['endTime']
 });
+
+
+// src/modules/timetable/timetable.validation.ts
+
+export const createTaskSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200),
+  subject: z.string().optional(),
+  note: z.string().optional(),
+  startTime: z.string().regex(timeRegex, 'Invalid time format (HH:MM)'),
+  endTime: z.string().regex(timeRegex, 'Invalid time format (HH:MM)').optional(),
+  duration: z.number().int().positive('Duration must be positive'),
+  priority: PriorityEnum.optional().default('MEDIUM'),
+  color: z.string().regex(/^#[0-9A-F]{6}$/i, 'Invalid hex color').optional().default('#3B82F6'),
+  day: DayEnum,
+  type: TimeSlotTypeEnum.default('TASK'),
+  category: TaskCategoryEnum.default('ACADEMIC'),
+  icon: z.string().optional(),
+  goalId: z.string().uuid('Invalid goal ID').optional().nullable(),
+  milestoneId: z.string().uuid('Invalid milestone ID').optional().nullable(),
+  fixedTimeId: z.string().uuid('Invalid fixed time ID').optional().nullable(),
+  status: TaskStatusEnum.optional().default('PENDING'),
+  isCompleted: z.boolean().optional().default(false),
+  completedAt: z.string().datetime().optional().nullable(),
+}).superRefine((data, ctx) => {
+  // Validate time format first
+  if (!data.startTime || !data.endTime) return;
+  
+  // Parse times
+  const [startHour, startMin] = data.startTime.split(':').map(Number);
+  const [endHour, endMin] = data.endTime.split(':').map(Number);
+  
+  // Convert to minutes
+  const startMinutes = startHour * 60 + startMin;
+  let endMinutes = endHour * 60 + endMin;
+  
+  // Handle midnight crossing: if end time is less than start time,
+  // it means the task goes into the next day
+  if (endMinutes < startMinutes) {
+    endMinutes += 24 * 60; // Add 24 hours
+  }
+  
+  // Check if end time is after start time
+  if (endMinutes <= startMinutes) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'End time must be after start time',
+      path: ['endTime']
+    });
+  }
+  
+  // Validate that startTime is valid (not 24:00)
+  if (startHour > 23 || startMin > 59) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Invalid start time - hours must be 00-23',
+      path: ['startTime']
+    });
+  }
+  
+  // Validate that endTime is valid (not 24:00)
+  if (endHour > 23 || endMin > 59) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Invalid end time - hours must be 00-23',
+      path: ['endTime']
+    });
+  }
+});
+
+
+
+
+
 
 // ==================== GET TIMETABLE SCHEMA ====================
 export const getTimetableSchema = z.object({

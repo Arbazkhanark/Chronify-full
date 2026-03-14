@@ -888,6 +888,11 @@ export class TimetableController {
         }
       });
     } catch (err: any) {
+          // Log the FULL error object
+    console.error("Full error:", err);
+    console.error("Error name:", err.name);
+    console.error("Error message:", err.message);
+    console.error("Error stack:", err.stack);
       logger.error("Lock timetable failed", { error: err.message, stack: err.stack });
 
       if (err instanceof AppError) {

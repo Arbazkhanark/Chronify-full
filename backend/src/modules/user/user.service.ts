@@ -499,4 +499,17 @@ static async forgotPassword(email: string) {
 
     return user;
   }
+
+
+
+  static async saveFcmToken(userId: string, token: string) {
+  logger.info("Saving FCM token to DB", {
+    functionName: "UserService.saveFcmToken",
+    metadata: { userId },
+  });
+
+  await UserRepository.saveFcmToken(userId, token);
+}
+
+
 }
