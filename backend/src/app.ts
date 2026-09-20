@@ -19,9 +19,15 @@ logger.init({
 app.use(express.json());
 app.use(httpLogger());
 
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.FRONTEND_URL,
+].filter((origin): origin is string => Boolean(origin));
+
 // CORS configuration
 app.use(cors({
-    origin: 'http://localhost:3000', // Update with your frontend URL
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
