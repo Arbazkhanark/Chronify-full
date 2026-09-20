@@ -7,11 +7,19 @@ export const app = express();
 
 
 
-logger.init({
-    mode: 'pro',
-    logLevel: 'info',
-    filePath: './logs/app.log'
-});
+
+if (process.env.VERCEL !== "1") {
+  logger.init({
+    mode: "pro",
+    logLevel: "info",
+    filePath: "./logs/app.log",
+  });
+}
+// logger.init({
+//     mode: 'pro',
+//     logLevel: 'info',
+//     filePath: './logs/app.log'
+// });
 
 
 
@@ -21,8 +29,8 @@ app.use(httpLogger());
 
 
 const allowedOrigins = [
-  "http://localhost:3000",
   process.env.FRONTEND_URL,
+  "http://localhost:3000",
 ].filter((origin): origin is string => Boolean(origin));
 
 // CORS configuration
