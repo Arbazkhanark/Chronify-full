@@ -1,6 +1,6 @@
 // src/modules/tasks/task.repository.ts
 import { prisma } from "../../config/prisma"
-import { Task } from "../../generated/prisma/client"
+import { Task, TaskCategory } from "../../generated/prisma/client"
 import { AppError } from "../../utils/AppError"
 import { 
   CreateTaskDTO, 
@@ -20,6 +20,7 @@ export class TaskRepository {
       data: {
         userId,
         ...data,
+        category: (data.category as TaskCategory | undefined) ?? TaskCategory.PERSONAL,
         endTime,
         status: 'PENDING'
       },
@@ -183,35 +184,17 @@ export class TaskRepository {
   }
 
   // Bulk operations
-  static async bulkCreate1(userId: string, tasks: BulkTaskDTO[]) {
-    const tasksWithEndTime = tasks.map(task => ({
-      userId,
-      ...task,
-      endTime: this.calculateEndTime(task.startTime, task.duration),
-      status: 'PENDING' as const
-    }))
-    
-    return prisma.task.createManyAndReturn({
-      data: tasksWithEndTime,
-      include: {
-        goal: true,
-        milestone: true,
-        fixedTime: true
-      }
-    })
-  }
- 
-
-
-
-  static async bulkCreate(userId: string, tasks: BulkTaskDTO[]) {
+static async bulkCreate(userId: string, tasks: BulkTaskDTO[]) {
   const tasksWithEndTime = tasks.map(task => ({
     userId,
     ...task,
+    category: task.category
+      ? (task.category as TaskCategory)
+      : TaskCategory.ACADEMIC,
     endTime: this.calculateEndTime(task.startTime, task.duration),
     status: 'PENDING' as const
   }))
-  
+
   return prisma.task.createManyAndReturn({
     data: tasksWithEndTime,
     include: {

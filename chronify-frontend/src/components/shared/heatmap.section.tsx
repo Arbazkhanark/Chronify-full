@@ -1,185 +1,7 @@
-// 'use client'
-
-// import { motion } from 'framer-motion'
-// import { Calendar, TrendingUp } from 'lucide-react'
-
-// export function HeatmapSection() {
-//   const weeks = Array.from({ length: 12 }, (_, i) => i + 1)
-//   const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-  
-//   const getIntensity = (week: number, day: number) => {
-//     // Simulate different intensity levels
-//     const base = (week * 7 + day) % 10
-//     if (base < 3) return 'bg-green-100 dark:bg-green-900/30'
-//     if (base < 6) return 'bg-green-300 dark:bg-green-700/50'
-//     if (base < 8) return 'bg-green-500 dark:bg-green-600'
-//     return 'bg-green-700 dark:bg-green-500'
-//   }
-
-//   return (
-//     <section className="py-20 px-4 sm:px-6 lg:px-8">
-//       <div className="max-w-7xl mx-auto">
-//         <motion.div
-//           initial={{ opacity: 0, y: 20 }}
-//           whileInView={{ opacity: 1, y: 0 }}
-//           viewport={{ once: true }}
-//           className="mb-12"
-//         >
-//           <div className="flex items-center gap-3 mb-4">
-//             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-//               <TrendingUp className="w-5 h-5 text-white" />
-//             </div>
-//             <h2 className="text-4xl font-bold">
-//               Visualize Your
-//               <span className="block gradient-text">Progress Heatmap</span>
-//             </h2>
-//           </div>
-//           <p className="text-xl text-muted-foreground max-w-3xl">
-//             Track your consistency with a GitHub-style heatmap. Darker colors show higher productivity days.
-//           </p>
-//         </motion.div>
-
-//         <div className="bg-card rounded-2xl border border-border p-6 md:p-8 shadow-lg">
-//           <div className="flex items-center justify-between mb-6">
-//             <div>
-//               <h3 className="text-xl font-bold">3-Month DSA Progress</h3>
-//               <p className="text-muted-foreground">Goal: 180 questions in 90 days</p>
-//             </div>
-//             <div className="flex items-center gap-4">
-//               <div className="flex items-center gap-2">
-//                 <div className="w-4 h-4 rounded-sm bg-green-100 dark:bg-green-900/30" />
-//                 <span className="text-sm">1-3 questions</span>
-//               </div>
-//               <div className="flex items-center gap-2">
-//                 <div className="w-4 h-4 rounded-sm bg-green-500 dark:bg-green-600" />
-//                 <span className="text-sm">4-6 questions</span>
-//               </div>
-//               <div className="flex items-center gap-2">
-//                 <div className="w-4 h-4 rounded-sm bg-green-700 dark:bg-green-500" />
-//                 <span className="text-sm">7+ questions</span>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="overflow-x-auto">
-//             <div className="flex gap-2 min-w-max">
-//               {/* Day labels */}
-//               <div className="flex flex-col gap-2 pt-8">
-//                 {days.map((day) => (
-//                   <div key={day} className="h-8 w-8 flex items-center justify-center text-sm text-muted-foreground">
-//                     {day}
-//                   </div>
-//                 ))}
-//               </div>
-
-//               {/* Heatmap grid */}
-//               {weeks.map((week) => (
-//                 <div key={week} className="flex flex-col gap-2">
-//                   <div className="h-8 flex items-center justify-center text-sm text-muted-foreground">
-//                     W{week}
-//                   </div>
-//                   {days.map((_, dayIndex) => {
-//                     const intensity = getIntensity(week, dayIndex)
-//                     const hasData = Math.random() > 0.3 // 70% filled
-                    
-//                     return (
-//                       <motion.div
-//                         key={`${week}-${dayIndex}`}
-//                         initial={{ scale: 0 }}
-//                         whileInView={{ scale: 1 }}
-//                         viewport={{ once: true }}
-//                         transition={{ duration: 0.3, delay: (week * 7 + dayIndex) * 0.01 }}
-//                         className={`w-8 h-8 rounded-md border border-border/50 ${hasData ? intensity : 'bg-secondary/30'} 
-//                           hover:scale-110 transition-transform cursor-pointer relative group`}
-//                       >
-//                         {hasData && (
-//                           <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 
-//                             transition-opacity bg-card border border-border rounded-lg px-3 py-2 shadow-lg whitespace-nowrap z-10">
-//                             <div className="text-sm font-medium">Week {week}, Day {dayIndex + 1}</div>
-//                             <div className="text-xs text-muted-foreground">5 DSA questions solved</div>
-//                           </div>
-//                         )}
-//                       </motion.div>
-//                     )
-//                   })}
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-
-//           {/* Stats below heatmap */}
-//           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-//             {[
-//               { label: 'Current Streak', value: '14 days', icon: '🔥' },
-//               { label: 'Total Questions', value: '67/180', icon: '📊' },
-//               { label: 'Consistency', value: '85%', icon: '📈' },
-//             ].map((stat, index) => (
-//               <motion.div
-//                 key={stat.label}
-//                 initial={{ opacity: 0, x: -20 }}
-//                 whileInView={{ opacity: 1, x: 0 }}
-//                 viewport={{ once: true }}
-//                 transition={{ duration: 0.5, delay: index * 0.1 }}
-//                 className="p-4 rounded-xl bg-secondary/30 border border-border"
-//               >
-//                 <div className="flex items-center justify-between">
-//                   <div>
-//                     <div className="text-sm text-muted-foreground">{stat.label}</div>
-//                     <div className="text-2xl font-bold mt-1">{stat.value}</div>
-//                   </div>
-//                   <div className="text-2xl">{stat.icon}</div>
-//                 </div>
-//               </motion.div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   )
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, Variants } from 'framer-motion'
 import { Calendar, TrendingUp, Flame, Target, Zap, ChevronRight, Sparkles, Award } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -252,7 +74,7 @@ export function HeatmapSection() {
       icon: Flame,
       change: '+3 days',
       progress: 70
-    },
+    }, 
     { 
       label: 'Questions Solved', 
       value: '67/180', 
@@ -278,8 +100,9 @@ export function HeatmapSection() {
 
   const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-  // Animation variants
-  const containerVariants = {
+  // Animation variants — explicitly typed as Variants so TypeScript accepts the
+  // `ease` string literals (e.g. "easeOut") without widening to `string`.
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -290,7 +113,7 @@ export function HeatmapSection() {
     }
   }
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
@@ -302,7 +125,7 @@ export function HeatmapSection() {
     }
   }
 
-  const cellVariants = {
+  const cellVariants: Variants = {
     hidden: { scale: 0, opacity: 0 },
     visible: (custom: number) => ({
       scale: 1,

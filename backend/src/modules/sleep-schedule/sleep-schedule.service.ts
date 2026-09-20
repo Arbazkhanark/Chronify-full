@@ -5,7 +5,8 @@ import {
   CreateSleepScheduleDTO,
   UpdateSleepScheduleDTO,
   SleepStats,
-  ApplyToAllDTO
+  ApplyToAllDTO,
+  SleepType
 } from "./sleep-schedule.types"
 import { AppError } from "../../utils/AppError"
 import { logger } from "patal-log"
@@ -94,7 +95,7 @@ export class SleepScheduleService {
 
     logger.info("Sleep schedules bulk created successfully", {
       functionName: "SleepScheduleService.bulkCreateSleepSchedules",
-      metadata: { userId, count: createdSchedules.length }
+      metadata: { userId, count: createdSchedules.count }
     })
 
     return createdSchedules
@@ -109,9 +110,9 @@ static async bulkUpdateSleepSchedules(
     bedtime?: string;
     wakeTime?: string;
     isActive?: boolean;
-    type?: 'REGULAR' | 'POWER_NAP' | 'RECOVERY' | 'EARLY' | 'LATE';
+    type?: SleepType;
     notes?: string | null;
-    color?: string | null;
+    color?: string;
   }>
 ) {
   logger.info("Bulk updating sleep schedules", {
@@ -247,8 +248,8 @@ static async bulkDeleteSleepSchedules(userId: string, scheduleIds: string[]) {
 
     // Validate sleep duration if times changed
     if (data.bedtime || data.wakeTime) {
-      const bedtime = data.bedtime || existing.bedtime
-      const wakeTime = data.wakeTime || existing.wakeTime
+      const bedtime = data.bedtime || existing[0].bedtime
+      const wakeTime = data.wakeTime || existing[0].wakeTime
       this.validateSleepDuration(bedtime, wakeTime)
     }
 

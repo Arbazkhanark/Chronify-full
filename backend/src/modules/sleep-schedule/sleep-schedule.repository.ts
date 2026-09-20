@@ -6,7 +6,12 @@ import {
   CreateSleepScheduleDTO, 
   UpdateSleepScheduleDTO 
 } from "./sleep-schedule.types"
-import { Prisma } from "@prisma/client"
+// import { Prisma } from "@prisma/client"
+import {
+  Prisma,
+  SleepDay,
+  SleepType,
+} from "../../generated/prisma/client"
 
 export class SleepScheduleRepository {
   // Create sleep schedule
@@ -118,48 +123,63 @@ static async bulkUpdate(
     bedtime?: string;
     wakeTime?: string;
     isActive?: boolean;
-    type?: string;
+    type?: SleepType;
     notes?: string | null;
-    color?: string | null;
+    color?: string;
   }>
 ) {
-  return prisma.$transaction(async (tx) => {
-    const updated: any[] = [];
+  return prisma.$transaction(
+    async (tx) => {
+      const updated = [];
 
-    for (const update of updates) {
-      const { scheduleId, ...data } = update;
+      for (const update of updates) {
+        const { scheduleId, ...data } = update;
 
-      // Ownership + existence check
-      const existing = await tx.sleepSchedule.findFirst({
-        where: { id: scheduleId, userId }
-      });
+        // Ownership + existence check
+        const existing = await tx.sleepSchedule.findFirst({
+          where: {
+            id: scheduleId,
+            userId,
+          },
+        });
 
-      if (!existing) {
-        throw new AppError(`Sleep schedule not found or not owned: ${scheduleId}`, 404);
-      }
-
-      // Recalculate duration if times changed
-      let duration = existing.duration;
-      if (data.bedtime || data.wakeTime) {
-        const bedtime = data.bedtime || existing.bedtime;
-        const wakeTime = data.wakeTime || existing.wakeTime;
-        duration = this.calculateDuration(bedtime, wakeTime);
-      }
-
-      const updatedSchedule = await tx.sleepSchedule.update({
-        where: { id: scheduleId },
-        data: {
-          ...data,
-          duration,
-          updatedAt: new Date()
+        if (!existing) {
+          throw new AppError(
+            `Sleep schedule not found or not owned: ${scheduleId}`,
+            404
+          );
         }
-      });
 
-      updated.push(updatedSchedule);
+        // Recalculate duration if times changed
+        let duration = existing.duration;
+
+        if (data.bedtime || data.wakeTime) {
+          const bedtime = data.bedtime ?? existing.bedtime;
+          const wakeTime = data.wakeTime ?? existing.wakeTime;
+
+          duration = this.calculateDuration(bedtime, wakeTime);
+        }
+
+        const updatedSchedule = await tx.sleepSchedule.update({
+          where: {
+            id: scheduleId,
+          },
+          data: {
+            ...data,
+            duration,
+            updatedAt: new Date(),
+          },
+        });
+
+        updated.push(updatedSchedule);
+      }
+
+      return updated;
+    },
+    {
+      timeout: 30000,
     }
-
-    return updated;
-  }, { timeout: 30000 });
+  );
 }
 
 // Bulk delete
@@ -272,32 +292,42 @@ static async bulkDelete(userId: string, scheduleIds: string[]) {
   }
 
   // Update by day
-  static async updateByDay(userId: string, day: string, data: UpdateSleepScheduleDTO) {
-    const updateData: any = { ...data }
-    
-    // Recalculate duration if times changed
-    if (data.bedtime || data.wakeTime) {
-      const existing = await this.findByDay(userId, day)
-      if (existing) {
-        const bedtime = data.bedtime || existing.bedtime
-        const wakeTime = data.wakeTime || existing.wakeTime
-        updateData.duration = this.calculateDuration(bedtime, wakeTime)
-      }
+static async updateByDay(
+  userId: string,
+  day: string,
+  data: UpdateSleepScheduleDTO
+) {
+  const updateData: any = { ...data }
+
+  // Recalculate duration if times changed
+  if (data.bedtime || data.wakeTime) {
+    const existingSchedules = await this.findByDay(userId, day)
+    const existing = existingSchedules[0]
+
+    if (existing) {
+      const bedtime = data.bedtime ?? existing.bedtime
+      const wakeTime = data.wakeTime ?? existing.wakeTime
+
+      updateData.duration = this.calculateDuration(
+        bedtime,
+        wakeTime
+      )
     }
-    
-    return prisma.sleepSchedule.updateMany({
-      where: {
-          userId,
-          day: day as any
-      },
-      data: {
-        ...updateData,
-        day: data.day as any,
-        type: data.type as any,
-        updatedAt: new Date()
-      }
-    })
   }
+
+  return prisma.sleepSchedule.updateMany({
+    where: {
+      userId,
+      day: day as any
+    },
+    data: {
+      ...updateData,
+      day: data.day as any,
+      type: data.type as any,
+      updatedAt: new Date()
+    }
+  })
+}
 
   // Delete sleep schedule
   static async delete(id: string, userId: string) {

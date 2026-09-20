@@ -1,27 +1,3 @@
-// import { ChangePasswordForm } from '@/components/features/auth/change-password'
-// import type { Metadata } from 'next'
-
-// export const metadata: Metadata = {
-//   title: 'Change Password - Chronify AI',
-//   description: 'Change your Chronify AI account password',
-// }
-
-// export default function ChangePasswordPage() {
-//   return <ChangePasswordForm />
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
 // src/app/auth/change-password/page.tsx
 import { ChangePasswordForm } from '@/components/features/auth/change-password'
 import type { Metadata } from 'next'

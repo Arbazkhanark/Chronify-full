@@ -43,8 +43,10 @@ export class TaskController {
     } catch (err: any) {
       logger.error(`Create task failed: ${err.message}`, {
         functionName: "TaskController.createTask",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -88,8 +90,10 @@ export class TaskController {
     } catch (err: any) {
       logger.error(`Get task failed: ${err.message}`, {
         functionName: "TaskController.getTask",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -129,8 +133,10 @@ export class TaskController {
     } catch (err: any) {
       logger.error(`Get tasks failed: ${err.message}`, {
         functionName: "TaskController.getTasks",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -157,7 +163,7 @@ export class TaskController {
         metadata: { userId, taskId }
       })
 
-      const task = await TaskService.updateTask(userId, taskId, payload)
+      const task = await TaskService.updateTask(userId, taskId as string, payload)
 
       logger.info("Task updated successfully", {
         functionName: "TaskController.updateTask",
@@ -172,8 +178,10 @@ export class TaskController {
     } catch (err: any) {
       logger.error(`Update task failed: ${err.message}`, {
         functionName: "TaskController.updateTask",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -191,14 +199,20 @@ export class TaskController {
 
   static async deleteTask(req: AuthRequest, res: Response) {
     try {
-      const { taskId } = req.params
+      const { taskId:rawTaskId } = req.params
       const userId = req.user!.id
+
+      
+      const taskId = Array.isArray(rawTaskId)
+      ? rawTaskId[0]
+      : rawTaskId
+
 
       logger.info("Delete task API called", {
         functionName: "TaskController.deleteTask",
         metadata: { userId, taskId }
       })
-
+      
       await TaskService.deleteTask(userId, taskId)
 
       logger.info("Task deleted successfully", {
@@ -213,8 +227,10 @@ export class TaskController {
     } catch (err: any) {
       logger.error(`Delete task failed: ${err.message}`, {
         functionName: "TaskController.deleteTask",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -232,8 +248,12 @@ export class TaskController {
 
   static async completeTask(req: AuthRequest, res: Response) {
     try {
-      const { taskId } = req.params
+      const { taskId:rawTaskId } = req.params
       const userId = req.user!.id
+    
+      const taskId = Array.isArray(rawTaskId)
+      ? rawTaskId[0]
+      : rawTaskId
 
       logger.info("Complete task API called", {
         functionName: "TaskController.completeTask",
@@ -255,8 +275,10 @@ export class TaskController {
     } catch (err: any) {
       logger.error(`Complete task failed: ${err.message}`, {
         functionName: "TaskController.completeTask",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -362,7 +384,7 @@ static async bulkUpdateTasks(req: AuthRequest, res: Response) {
       return res.status(400).json({
         success: false,
         message: "Validation failed",
-        errors: err.errors
+        errors: err.message
       });
     }
 
@@ -427,7 +449,7 @@ static async bulkDeleteTasks(req: AuthRequest, res: Response) {
       return res.status(400).json({
         success: false,
         message: "Validation failed",
-        errors: err.errors
+        errors: err.stack
       });
     }
 
@@ -438,110 +460,15 @@ static async bulkDeleteTasks(req: AuthRequest, res: Response) {
   }
 }
 
-  static async handleDragDrop1(req: AuthRequest, res: Response) {
-    try {
-      const payload = dragDropSchema.parse(req.body)
-      const userId = req.user!.id
-
-      logger.info("Drag drop API called", {
-        functionName: "TaskController.handleDragDrop",
-        metadata: { userId, taskId: payload.taskId, day: payload.day }
-      })
-
-      const task = await TaskService.handleDragDrop(userId, payload)
-
-      logger.info("Drag drop handled successfully", {
-        functionName: "TaskController.handleDragDrop",
-        metadata: { userId, taskId: task.id }
-      })
-
-      res.status(200).json({
-        success: true,
-        message: "Task moved successfully",
-        data: task,
-      })
-    } catch (err: any) {
-      logger.error(`Drag drop failed: ${err.message}`, {
-        functionName: "TaskController.handleDragDrop",
-        error: err.message,
-        stack: err.stack,
-      })
-
-      if (err instanceof AppError) {
-        return res
-          .status(err.statusCode)
-          .json({ success: false, message: err.message })
-      }
-
-      return res.status(500).json({
-        success: false,
-        message: "Internal server error",
-      })
-    }
-  }
-
-
-
-  static async handleDragDrop(req: AuthRequest, res: Response) {
-  try {
-    console.log("📦 Request body received:", JSON.stringify(req.body, null, 2)) // DEBUG
-    console.log("📦 Headers:", req.headers) // DEBUG
-    
-    const payload = dragDropSchema.parse(req.body)
-    const userId = req.user!.id
-
-    logger.info("Drag drop API called", {
-      functionName: "TaskController.handleDragDrop",
-      metadata: { 
-        userId, 
-        taskId: payload.taskId, 
-        day: payload.day,
-        time: payload.time,
-        duration: payload.duration 
-      }
-    })
-
-    const task = await TaskService.handleDragDrop(userId, payload)
-
-    logger.info("Drag drop handled successfully", {
-      functionName: "TaskController.handleDragDrop",
-      metadata: { userId, taskId: task.id }
-    })
-
-    res.status(200).json({
-      success: true,
-      message: "Task moved successfully",
-      data: task,
-    })
-  } catch (err: any) {
-    console.error("❌ Drag drop error details:", err) // DEBUG
-    
-    logger.error(`Drag drop failed: ${err.message}`, {
-      functionName: "TaskController.handleDragDrop",
-      metadata:{
-          error: err.message,
-          stack: err.stack,
-          requestBody: req.body // Log request body
-      }
-    })
-
-    if (err instanceof AppError) {
-      return res
-        .status(err.statusCode)
-        .json({ success: false, message: err.message })
-    }
-
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    })
-  }
-}
 
   static async getTasksByDay(req: AuthRequest, res: Response) {
     try {
-      const { day } = req.params
+      const { day: rawDay } = req.params
       const userId = req.user!.id
+
+      const day = Array.isArray(rawDay)
+      ? rawDay[0]
+      : rawDay
 
       logger.info("Get tasks by day API called", {
         functionName: "TaskController.getTasksByDay",
@@ -562,8 +489,10 @@ static async bulkDeleteTasks(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Get tasks by day failed: ${err.message}`, {
         functionName: "TaskController.getTasksByDay",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -581,8 +510,12 @@ static async bulkDeleteTasks(req: AuthRequest, res: Response) {
 
   static async getTasksByGoal(req: AuthRequest, res: Response) {
     try {
-      const { goalId } = req.params
+      const { goalId: rawGoalId } = req.params
       const userId = req.user!.id
+
+      const goalId = Array.isArray(rawGoalId)
+        ? rawGoalId[0]
+        : rawGoalId
 
       logger.info("Get tasks by goal API called", {
         functionName: "TaskController.getTasksByGoal",
@@ -603,8 +536,10 @@ static async bulkDeleteTasks(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Get tasks by goal failed: ${err.message}`, {
         functionName: "TaskController.getTasksByGoal",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -643,8 +578,10 @@ static async bulkDeleteTasks(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Get statistics failed: ${err.message}`, {
         functionName: "TaskController.getStatistics",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+            error: err.message,
+            stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {

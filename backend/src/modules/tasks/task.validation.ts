@@ -47,7 +47,7 @@ export const createTaskSchema = z.object({
 export const updateTaskSchema = createTaskSchema.partial().extend({
   status: z.enum(['PENDING', 'ONGOING', 'COMPLETED', 'MISSED']).optional(),
   isCompleted: z.boolean().optional(),
-  completedAt: z.string().datetime().optional(),
+  completedAt: z.coerce.date().optional(),
   endTime: z.string().regex(timeRegex, 'Invalid time format (HH:MM)').optional(),
 })
 
@@ -88,7 +88,7 @@ export const bulkUpdateTaskSchema = z.object({
       // Status / completion fields
       status: z.enum(['PENDING', 'ONGOING', 'COMPLETED', 'MISSED']).optional(),
       isCompleted: z.boolean().optional(),
-      completedAt: z.string().datetime().optional(),
+      completedAt: z.coerce.date().optional(),
 
       // Relations (can be updated / cleared)
       goalId: z.string().uuid().nullable().optional(),     // null = remove relation
@@ -141,8 +141,8 @@ export const taskFilterSchema = z.object({
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).optional(),
   isCompleted: z.boolean().optional(),
   search: z.string().optional(),
-  fromDate: z.string().datetime().optional(),
-  toDate: z.string().datetime().optional(),
+  fromDate: z.coerce.date().optional(),
+  toDate: z.coerce.date().optional(),
   sort: z.enum(['time', 'priority', 'day', 'created']).optional(),
   limit: z.number().int().min(1).max(100).default(50),
   page: z.number().int().min(1).default(1),

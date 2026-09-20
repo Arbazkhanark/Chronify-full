@@ -1,16 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { GraduationCap, Briefcase, Search, ArrowLeft, ArrowRight } from 'lucide-react'
+import { GraduationCap, Briefcase, Search, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { AuthService } from '@/hooks/useAuth'
 
-export default function DetailsPage() {
+// ==================== INNER COMPONENT ====================
+// Contains all the actual page logic, including useSearchParams().
+function DetailsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const role = searchParams.get('role') || 'student'
@@ -399,5 +401,27 @@ export default function DetailsPage() {
         </Card>
       </motion.div>
     </div>
+  )
+}
+
+// ==================== DEFAULT EXPORT (SUSPENSE WRAPPER) ====================
+// Wraps the content in <Suspense> so Next.js can prerender
+// the page statically without crashing on `useSearchParams()`.
+export default function DetailsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-secondary/30 p-4">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">
+              Loading details form...
+            </p>
+          </div>
+        </div>
+      }
+    >
+      <DetailsContent />
+    </Suspense>
   )
 }

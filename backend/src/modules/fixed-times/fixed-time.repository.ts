@@ -13,21 +13,39 @@ import {
 
 export class FixedTimeRepository {
   // Fixed Time CRUD operations
-  static async create(userId: string, data: CreateFixedTimeDTO) {
-    return prisma.fixedTime.create({
-      data: {
-        userId,
-        ...data,
-        freePeriods: {
-          create: data.freePeriods || []
-        }
+static async create(userId: string, data: CreateFixedTimeDTO) {
+  return prisma.fixedTime.create({
+    data: {
+      userId,
+      title: data.title,
+      description: data.description,
+      days: data.days,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      type: data.type,
+      color: data.color,
+      isEditable: data.isEditable,
+
+      freePeriods: {
+        create: (data.freePeriods || []).map((freePeriod) => ({
+          title: freePeriod.title ?? 'Free Period',
+          startTime: freePeriod.startTime,
+          endTime: freePeriod.endTime,
+          day: freePeriod.day,
+          duration: this.calculateDuration(
+            freePeriod.startTime,
+            freePeriod.endTime
+          ),
+        })),
       },
-      include: {
-        freePeriods: true,
-        tasks: true
-      }
-    })
-  }
+    },
+
+    include: {
+      freePeriods: true,
+      tasks: true,
+    },
+  })
+}
 
   static async findById(id: string, userId: string) {
     return prisma.fixedTime.findFirst({
@@ -59,22 +77,48 @@ export class FixedTimeRepository {
     })
   }
 
-  static async update(id: string, userId: string, data: UpdateFixedTimeDTO) {
-    return prisma.fixedTime.update({
-      where: { id, userId },
-      data: {
-        ...data,
-        freePeriods: data.freePeriods ? {
-          deleteMany: {},
-          create: data.freePeriods
-        } : undefined
-      },
-      include: {
-        freePeriods: true,
-        tasks: true
-      }
-    })
-  }
+
+  static async update(
+  id: string,
+  userId: string,
+  data: UpdateFixedTimeDTO
+) {
+  return prisma.fixedTime.update({
+    where: { id, userId },
+
+    data: {
+      title: data.title,
+      description: data.description,
+      days: data.days,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      type: data.type,
+      color: data.color,
+      isEditable: data.isEditable,
+
+      freePeriods: data.freePeriods
+        ? {
+            deleteMany: {},
+            create: data.freePeriods.map((freePeriod) => ({
+              title: freePeriod.title ?? 'Free Period',
+              startTime: freePeriod.startTime,
+              endTime: freePeriod.endTime,
+              day: freePeriod.day,
+              duration: this.calculateDuration(
+                freePeriod.startTime,
+                freePeriod.endTime
+              ),
+            })),
+          }
+        : undefined,
+    },
+
+    include: {
+      freePeriods: true,
+      tasks: true,
+    },
+  })
+}
 
   static async delete(id: string, userId: string) {
     return prisma.fixedTime.delete({
@@ -144,8 +188,17 @@ static async bulkCreate(userId: string, items: CreateFixedTimeDTO[]) {
           color: item.color ?? '#6B7280',
           isEditable: item.isEditable ?? false,
           freePeriods: {
-            create: item.freePeriods || []
-          }
+            create: (item.freePeriods || []).map((freePeriod) => ({
+              title: freePeriod.title ?? 'Free Period',
+              startTime: freePeriod.startTime,
+              endTime: freePeriod.endTime,
+              day: freePeriod.day,
+              duration: this.calculateDuration(
+                freePeriod.startTime,
+                freePeriod.endTime
+              ),
+            })),
+          },
         },
         include: {
           freePeriods: true

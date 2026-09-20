@@ -22,7 +22,6 @@ router.post("/:taskId/complete", rateLimiter, TaskController.completeTask)  // M
 router.post("/bulk", rateLimiter, TaskController.bulkCreateTasks)           // Bulk create tasks
 router.patch('/bulk-update',rateLimiter, TaskController.bulkUpdateTasks)
 router.post('/bulk-delete',rateLimiter, authMiddleware, TaskController.bulkDeleteTasks);
-router.post("/drag-drop", rateLimiter, TaskController.handleDragDrop)       // Handle drag and drop
 
 // Filtered endpoints
 router.get("/day/:day", rateLimiter, TaskController.getTasksByDay)          // Get tasks by day

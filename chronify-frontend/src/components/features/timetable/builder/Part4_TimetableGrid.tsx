@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
 import { 
   Coffee, Moon, Plus, MoreVertical, Edit2, Copy, Trash2, 
-  Badge, CheckCircle2, GripVertical,
+  CheckCircle2, GripVertical,
   Clock
 } from 'lucide-react'
 import {
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 interface TimeSlot {
   id: string
@@ -584,19 +585,3 @@ const SleepTaskComponent = ({
     </motion.div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

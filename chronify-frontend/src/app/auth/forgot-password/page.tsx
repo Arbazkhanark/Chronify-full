@@ -1,24 +1,3 @@
-// import { ForgotPasswordForm } from '@/components/features/auth/forgot-password'
-// import type { Metadata } from 'next'
-
-// export const metadata: Metadata = {
-//   title: 'Forgot Password - Chronify AI',
-//   description: 'Reset your Chronify AI account password',
-// }
-
-// export default function ForgotPasswordPage() {
-//   return <ForgotPasswordForm />
-// }
-
-
-
-
-
-
-
-
-
-
 // src/app/auth/forgot-password/page.tsx
 import { ForgotPasswordForm } from '@/components/features/auth/forgot-password'
 import type { Metadata } from 'next'

@@ -1,16 +1,17 @@
+// src/components/features/dashboard/sidebar.tsx
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Home, 
-  Target, 
-  Calendar, 
-  TrendingUp, 
-  CheckSquare, 
-  BarChart3, 
+import {
+  Home,
+  Target,
+  Calendar,
+  TrendingUp,
+  CheckSquare,
+  BarChart3,
   Settings,
   Award,
   Clock,
@@ -21,43 +22,176 @@ import {
   ChevronRight,
   LogOut,
   Menu,
-  X
+  X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { AuthService } from '@/hooks/useAuth'
+import { AuthService, type User } from '@/hooks/useAuth'
 
 interface SidebarProps {
   collapsed?: boolean
   onToggle?: () => void
 }
 
-export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
+export function Sidebar({
+  collapsed = false,
+  onToggle,
+}: SidebarProps) {
   const pathname = usePathname()
+
   const [isCollapsed, setIsCollapsed] = useState(collapsed)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const user = AuthService.getCurrentUser()
+  const [user, setUser] = useState<User | null>(null)
+
+  /**
+   * Load the authenticated user.
+   *
+   * AuthService.getCurrentUser() is asynchronous,
+   * so we must await it before accessing user properties.
+   */
+  useEffect(() => {
+    let isMounted = true
+
+    const loadUser = async () => {
+      try {
+        const currentUser = await AuthService.getCurrentUser()
+
+        if (isMounted) {
+          setUser(currentUser)
+        }
+      } catch (error: unknown) {
+        console.error(
+          'Failed to load current user:',
+          error
+        )
+
+        if (isMounted) {
+          setUser(null)
+        }
+      }
+    }
+
+    void loadUser()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  /**
+   * Keep internal collapsed state synchronized
+   * with the value received from the parent.
+   */
+  useEffect(() => {
+    setIsCollapsed(collapsed)
+  }, [collapsed])
 
   const navItems = [
-    { icon: Home, label: 'Dashboard', href: '/dashboard' },
-    { icon: Calendar, label: 'Timetable', href: '/dashboard/planner' },
-    { icon: Target, label: 'Goals', href: '/dashboard/goals' },
-    { icon: CheckSquare, label: 'Tasks', href: '/dashboard/tasks' },
-    { icon: TrendingUp, label: 'Progress', href: '/dashboard/progress' },
-    { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics' },
-    { icon: BookOpen, label: 'Learning', href: '/dashboard/learning' },
-    { icon: Users, label: 'Community', href: '/dashboard/community' },
-    { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
+    {
+      icon: Home,
+      label: 'Dashboard',
+      href: '/dashboard',
+    },
+    {
+      icon: Calendar,
+      label: 'Timetable',
+      href: '/dashboard/planner',
+    },
+    {
+      icon: Target,
+      label: 'Goals',
+      href: '/dashboard/goals',
+    },
+    {
+      icon: CheckSquare,
+      label: 'Tasks',
+      href: '/dashboard/tasks',
+    },
+    {
+      icon: TrendingUp,
+      label: 'Progress',
+      href: '/dashboard/progress',
+    },
+    {
+      icon: BarChart3,
+      label: 'Analytics',
+      href: '/dashboard/analytics',
+    },
+    {
+      icon: BookOpen,
+      label: 'Learning',
+      href: '/dashboard/learning',
+    },
+    {
+      icon: Users,
+      label: 'Community',
+      href: '/dashboard/community',
+    },
+    {
+      icon: Settings,
+      label: 'Settings',
+      href: '/dashboard/settings',
+    },
   ]
 
   const quickStats = [
-    { label: 'Streak', value: '7 days', icon: Zap, color: 'text-orange-500' },
-    { label: 'Focus Time', value: '32h', icon: Clock, color: 'text-blue-500' },
-    { label: 'Tasks Done', value: '24', icon: CheckSquare, color: 'text-green-500' },
+    {
+      label: 'Streak',
+      value: '7 days',
+      icon: Zap,
+      color: 'text-orange-500',
+    },
+    {
+      label: 'Focus Time',
+      value: '32h',
+      icon: Clock,
+      color: 'text-blue-500',
+    },
+    {
+      label: 'Tasks Done',
+      value: '24',
+      icon: CheckSquare,
+      color: 'text-green-500',
+    },
   ]
+
+  const handleSidebarToggle = () => {
+    setIsCollapsed((previous) => !previous)
+    onToggle?.()
+  }
+
+  const handleMobileClose = () => {
+    setIsMobileOpen(false)
+  }
 
   const handleLogout = () => {
     AuthService.logout()
     window.location.href = '/auth/login'
+  }
+
+  /**
+   * Generate initials from the actual User type.
+   *
+   * The User interface contains `name`, not `firstName`
+   * and `lastName`.
+   */
+  const getUserInitials = () => {
+    const name = user?.name?.trim()
+
+    if (name) {
+      const nameParts = name.split(/\s+/)
+
+      if (nameParts.length >= 2) {
+        const firstInitial = nameParts[0]?.[0] ?? ''
+        const lastInitial =
+          nameParts[nameParts.length - 1]?.[0] ?? ''
+
+        return `${firstInitial}${lastInitial}`.toUpperCase()
+      }
+
+      return name[0]?.toUpperCase() ?? 'U'
+    }
+
+    return user?.email?.[0]?.toUpperCase() ?? 'U'
   }
 
   const SidebarContent = () => (
@@ -65,25 +199,44 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       {/* Header */}
       <div className="p-6 border-b border-border/50">
         <div className="flex items-center gap-3">
-          <motion.div 
+          <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center"
           >
             <Award className="w-5 h-5 text-white" />
           </motion.div>
+
           {!isCollapsed && (
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{
+                opacity: 0,
+                x: -20,
+              }}
+              animate={{
+                opacity: 1,
+                x: 0,
+              }}
               className="flex-1"
             >
-              <h2 className="font-bold text-lg">Chronify AI</h2>
-              <p className="text-xs text-muted-foreground">Consistency Dashboard</p>
+              <h2 className="font-bold text-lg">
+                Chronify AI
+              </h2>
+
+              <p className="text-xs text-muted-foreground">
+                Consistency Dashboard
+              </p>
             </motion.div>
           )}
+
           <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            type="button"
+            onClick={handleSidebarToggle}
+            aria-label={
+              isCollapsed
+                ? 'Expand sidebar'
+                : 'Collapse sidebar'
+            }
             className="ml-auto p-1 hover:bg-secondary rounded-lg transition-colors"
           >
             {isCollapsed ? (
@@ -98,28 +251,43 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       {/* User Profile */}
       {!isCollapsed && user && (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{
+            opacity: 0,
+            y: 10,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
           className="p-6 border-b border-border/50"
         >
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center overflow-hidden">
-                {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt={user.firstName} className="w-full h-full object-cover" />
+                {user.profile?.avatarUrl ? (
+                  <img
+                    src={user.profile.avatarUrl}
+                    alt={user.name ?? 'User avatar'}
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <span className="text-white font-bold">
-                    {user.firstName?.[0]}{user.lastName?.[0]}
+                    {getUserInitials()}
                   </span>
                 )}
               </div>
+
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
             </div>
+
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold truncate">
-                {user.firstName} {user.lastName}
+                {user.name ?? 'User'}
               </h3>
-              <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+
+              <p className="text-sm text-muted-foreground truncate">
+                {user.email}
+              </p>
             </div>
           </div>
         </motion.div>
@@ -128,25 +296,48 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       {/* Quick Stats */}
       {!isCollapsed && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{
+            opacity: 0,
+          }}
+          animate={{
+            opacity: 1,
+          }}
           className="p-6 border-b border-border/50"
         >
-          <h4 className="text-sm font-semibold mb-3 text-muted-foreground">Quick Stats</h4>
+          <h4 className="text-sm font-semibold mb-3 text-muted-foreground">
+            Quick Stats
+          </h4>
+
           <div className="space-y-3">
             {quickStats.map((stat, index) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
+                initial={{
+                  opacity: 0,
+                  x: -10,
+                }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                }}
+                transition={{
+                  delay: index * 0.1,
+                }}
                 className="flex items-center justify-between p-2 rounded-lg hover:bg-secondary/50 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                  <span className="text-sm">{stat.label}</span>
+                  <stat.icon
+                    className={`w-4 h-4 ${stat.color}`}
+                  />
+
+                  <span className="text-sm">
+                    {stat.label}
+                  </span>
                 </div>
-                <span className="font-bold">{stat.value}</span>
+
+                <span className="font-bold">
+                  {stat.value}
+                </span>
               </motion.div>
             ))}
           </div>
@@ -158,28 +349,44 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         <nav className="space-y-1">
           {navItems.map((item, index) => {
             const isActive = pathname === item.href
+
             return (
               <motion.div
                 key={item.label}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
+                initial={{
+                  opacity: 0,
+                  x: -20,
+                }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                }}
+                transition={{
+                  delay: index * 0.05,
+                }}
               >
                 <Link
                   href={item.href}
+                  onClick={handleMobileClose}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200",
+                    'flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200',
                     isActive
-                      ? "bg-gradient-to-r from-primary/20 to-accent/20 text-primary border border-primary/20"
-                      : "hover:bg-secondary/50 text-muted-foreground hover:text-foreground"
+                      ? 'bg-gradient-to-r from-primary/20 to-accent/20 text-primary border border-primary/20'
+                      : 'hover:bg-secondary/50 text-muted-foreground hover:text-foreground',
+                    isCollapsed && 'justify-center'
                   )}
                 >
-                  <item.icon className={cn(
-                    "w-5 h-5 flex-shrink-0",
-                    isActive && "text-primary"
-                  )} />
+                  <item.icon
+                    className={cn(
+                      'w-5 h-5 flex-shrink-0',
+                      isActive && 'text-primary'
+                    )}
+                  />
+
                   {!isCollapsed && (
-                    <span className="font-medium">{item.label}</span>
+                    <span className="font-medium">
+                      {item.label}
+                    </span>
                   )}
                 </Link>
               </motion.div>
@@ -191,14 +398,20 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       {/* Footer */}
       <div className="p-6 border-t border-border/50">
         <button
+          type="button"
           onClick={handleLogout}
           className={cn(
-            "flex items-center gap-3 w-full px-3 py-3 rounded-xl transition-all hover:bg-destructive/10 hover:text-destructive",
-            isCollapsed && "justify-center"
+            'flex items-center gap-3 w-full px-3 py-3 rounded-xl transition-all hover:bg-destructive/10 hover:text-destructive',
+            isCollapsed && 'justify-center'
           )}
         >
           <LogOut className="w-5 h-5" />
-          {!isCollapsed && <span className="font-medium">Logout</span>}
+
+          {!isCollapsed && (
+            <span className="font-medium">
+              Logout
+            </span>
+          )}
         </button>
       </div>
     </>
@@ -208,7 +421,9 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
     <>
       {/* Mobile Menu Button */}
       <button
+        type="button"
         onClick={() => setIsMobileOpen(true)}
+        aria-label="Open sidebar"
         className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-card border border-border shadow-lg"
       >
         <Menu className="w-5 h-5" />
@@ -216,11 +431,15 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
 
       {/* Desktop Sidebar */}
       <motion.aside
-        initial={{ x: -300 }}
-        animate={{ x: 0 }}
+        initial={{
+          x: -300,
+        }}
+        animate={{
+          x: 0,
+        }}
         className={cn(
-          "hidden lg:flex flex-col h-screen bg-card/50 backdrop-blur-sm border-r border-border/50 sticky top-0",
-          isCollapsed ? "w-20" : "w-64"
+          'hidden lg:flex flex-col h-screen bg-card/50 backdrop-blur-sm border-r border-border/50 sticky top-0',
+          isCollapsed ? 'w-20' : 'w-64'
         )}
       >
         <SidebarContent />
@@ -231,26 +450,45 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         {isMobileOpen && (
           <>
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileOpen(false)}
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              onClick={handleMobileClose}
               className="fixed inset-0 bg-black/50 z-40 lg:hidden"
             />
+
             <motion.aside
-              initial={{ x: -300 }}
-              animate={{ x: 0 }}
-              exit={{ x: -300 }}
-              transition={{ type: "spring", damping: 25 }}
+              initial={{
+                x: -300,
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: -300,
+              }}
+              transition={{
+                type: 'spring',
+                damping: 25,
+              }}
               className="fixed left-0 top-0 h-screen w-64 bg-card border-r border-border z-50 lg:hidden"
             >
               <div className="relative h-full">
                 <button
-                  onClick={() => setIsMobileOpen(false)}
-                  className="absolute top-4 right-4 p-2 rounded-lg hover:bg-secondary"
+                  type="button"
+                  onClick={handleMobileClose}
+                  aria-label="Close sidebar"
+                  className="absolute top-4 right-4 p-2 rounded-lg hover:bg-secondary z-10"
                 >
                   <X className="w-5 h-5" />
                 </button>
+
                 <SidebarContent />
               </div>
             </motion.aside>

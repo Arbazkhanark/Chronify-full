@@ -1,38 +1,3 @@
-// import { LoginForm } from '@/components/features/auth/login'
-// import { RegisterForm } from '@/components/features/auth/register'
-// import type { Metadata } from 'next'
-
-// export const metadata: Metadata = {
-//   title: 'Sign In - Chronify AI',
-//   description: 'Sign in to your Chronify AI account',
-// }
-
-// export default function SignUpPage() {
-//   return <RegisterForm />
-// }
-
-
-
-// 'use client';
-
-// import { RegisterForm } from '@/components/features/auth/register';
-// import { Toaster } from 'sonner';
-
-// export default function RegisterPage() {
-//   return (
-//     <>
-//       <Toaster position="top-center" richColors />
-//       <RegisterForm />
-//     </>
-//   );
-// }
-
-
-
-
-
-
-
 // src/app/auth/register/page.tsx
 import { RegisterForm } from '@/components/features/auth/register';
 import { Toaster } from 'sonner';
@@ -87,7 +52,7 @@ export const metadata: Metadata = {
   verification: {
     google: 'YOUR_GOOGLE_VERIFICATION_CODE',
     yandex: 'YOUR_YANDEX_VERIFICATION_CODE',
-    bing: 'YOUR_BING_VERIFICATION_CODE',
+    // bing: 'YOUR_BING_VERIFICATION_CODE',
   },
   authors: [{ name: 'Chronify Team', url: 'https://chronify.com/about' }],
   category: 'productivity',

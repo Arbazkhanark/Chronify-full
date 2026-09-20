@@ -1,20 +1,3 @@
-// import { LoginForm } from '@/components/features/auth/login'
-// import type { Metadata } from 'next'
-
-// export const metadata: Metadata = {
-//   title: 'Sign In - Chronify AI',
-//   description: 'Sign in to your Chronify AI account',
-// }
-
-// export default function LoginPage() {
-//   return <LoginForm />
-// }
-
-
-
-
-
-
 // src/app/auth/login/page.tsx
 import { LoginForm } from '@/components/features/auth/login'
 import type { Metadata } from 'next'

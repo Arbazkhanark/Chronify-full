@@ -11,8 +11,6 @@ import {
   bulkCreateFixedTimeSchema,
   bulkDeleteFreePeriodSchema,
   bulkUpdateFreePeriodSchema,
-  bulkCreateFreePeriodSchema,
-  bulkAddFreePeriodsToMultipleSchema,
   bulkAddMultipleFreePeriodsSchema,
   getFreePeriodsQuerySchema,
 } from "./fixed-time.validation"
@@ -47,7 +45,6 @@ export class FixedTimeController {
       logger.error(`Create fixed time failed: ${err.message}`, {
         functionName: "FixedTimeController.createFixedTime",
         error: err.message,
-        stack: err.stack,
       })
 
       if (err instanceof AppError) {
@@ -132,7 +129,6 @@ export class FixedTimeController {
       logger.error(`Get fixed times failed: ${err.message}`, {
         functionName: "FixedTimeController.getFixedTimes",
         error: err.message,
-        stack: err.stack,
       })
 
       if (err instanceof AppError) {
@@ -150,7 +146,7 @@ export class FixedTimeController {
 
   static async updateFixedTime(req: AuthRequest, res: Response) {
     try {
-      const { fixedTimeId } = req.params
+      const { fixedTimeId } = req.params 
       const payload = updateFixedTimeSchema.parse(req.body)
       const userId = req.user!.id
 
@@ -159,7 +155,7 @@ export class FixedTimeController {
         metadata: { userId, fixedTimeId }
       })
 
-      const fixedTime = await FixedTimeService.updateFixedTime(userId, fixedTimeId, payload)
+      const fixedTime = await FixedTimeService.updateFixedTime(userId, fixedTimeId as string, payload)
 
       logger.info("Fixed time updated successfully", {
         functionName: "FixedTimeController.updateFixedTime",
@@ -175,7 +171,6 @@ export class FixedTimeController {
       logger.error(`Update fixed time failed: ${err.message}`, {
         functionName: "FixedTimeController.updateFixedTime",
         error: err.message,
-        stack: err.stack,
       })
 
       if (err instanceof AppError) {
@@ -201,7 +196,7 @@ export class FixedTimeController {
         metadata: { userId, fixedTimeId }
       })
 
-      await FixedTimeService.deleteFixedTime(userId, fixedTimeId)
+      await FixedTimeService.deleteFixedTime(userId, fixedTimeId as string)
 
       logger.info("Fixed time deleted successfully", {
         functionName: "FixedTimeController.deleteFixedTime",
@@ -216,7 +211,6 @@ export class FixedTimeController {
       logger.error(`Delete fixed time failed: ${err.message}`, {
         functionName: "FixedTimeController.deleteFixedTime",
         error: err.message,
-        stack: err.stack,
       })
 
       if (err instanceof AppError) {
@@ -243,7 +237,7 @@ export class FixedTimeController {
         metadata: { userId, fixedTimeId, day: payload.day }
       })
 
-      const freePeriod = await FixedTimeService.addFreePeriod(userId, fixedTimeId, payload)
+      const freePeriod = await FixedTimeService.addFreePeriod(userId, fixedTimeId as string, payload)
 
       logger.info("Free period added successfully", {
         functionName: "FixedTimeController.addFreePeriod",
@@ -259,7 +253,6 @@ export class FixedTimeController {
       logger.error(`Add free period failed: ${err.message}`, {
         functionName: "FixedTimeController.addFreePeriod",
         error: err.message,
-        stack: err.stack,
       })
 
       if (err instanceof AppError) {
@@ -286,7 +279,7 @@ export class FixedTimeController {
         metadata: { userId, fixedTimeId, freePeriodId }
       })
 
-      const freePeriod = await FixedTimeService.updateFreePeriod(userId, fixedTimeId, freePeriodId, payload)
+      const freePeriod = await FixedTimeService.updateFreePeriod(userId, fixedTimeId as string, freePeriodId as string, payload)
 
       logger.info("Free period updated successfully", {
         functionName: "FixedTimeController.updateFreePeriod",
@@ -302,7 +295,6 @@ export class FixedTimeController {
       logger.error(`Update free period failed: ${err.message}`, {
         functionName: "FixedTimeController.updateFreePeriod",
         error: err.message,
-        stack: err.stack,
       })
 
       if (err instanceof AppError) {
@@ -328,7 +320,7 @@ export class FixedTimeController {
         metadata: { userId, fixedTimeId, freePeriodId }
       })
 
-      await FixedTimeService.deleteFreePeriod(userId, fixedTimeId, freePeriodId)
+      await FixedTimeService.deleteFreePeriod(userId, fixedTimeId as string, freePeriodId as string)
 
       logger.info("Free period deleted successfully", {
         functionName: "FixedTimeController.deleteFreePeriod",
@@ -343,7 +335,6 @@ export class FixedTimeController {
       logger.error(`Delete free period failed: ${err.message}`, {
         functionName: "FixedTimeController.deleteFreePeriod",
         error: err.message,
-        stack: err.stack,
       })
 
       if (err instanceof AppError) {
@@ -369,7 +360,7 @@ export class FixedTimeController {
         metadata: { userId, fixedTimeId }
       })
 
-      const tasks = await FixedTimeService.getTasksInFixedTime(userId, fixedTimeId)
+      const tasks = await FixedTimeService.getTasksInFixedTime(userId, fixedTimeId as string)
 
       logger.info("Tasks in fixed time fetched successfully", {
         functionName: "FixedTimeController.getTasksInFixedTime",
@@ -384,7 +375,6 @@ export class FixedTimeController {
       logger.error(`Get tasks in fixed time failed: ${err.message}`, {
         functionName: "FixedTimeController.getTasksInFixedTime",
         error: err.message,
-        stack: err.stack,
       })
 
       if (err instanceof AppError) {
@@ -427,7 +417,10 @@ static async bulkCreateFixedTimes(req: AuthRequest, res: Response) {
       data: created
     });
   } catch (err: any) {
-    logger.error("Bulk create fixed times failed", { error: err.message, stack: err.stack });
+    logger.error("Bulk create fixed times failed", {
+      functionName: "FixedTimeController.bulkCreateFixedTimes",
+      error: err.message,
+    });
     if (err instanceof AppError) {
       return res.status(err.statusCode).json({ success: false, message: err.message });
     }
@@ -459,7 +452,10 @@ static async bulkUpdateFixedTimes(req: AuthRequest, res: Response) {
       data: updated
     });
   } catch (err: any) {
-    logger.error("Bulk update fixed times failed", { error: err.message, stack: err.stack });
+    logger.error("Bulk update fixed times failed", {
+      functionName: "FixedTimeController.bulkUpdateFixedTimes",
+      error: err.message,
+    });
     if (err instanceof AppError) {
       return res.status(err.statusCode).json({ success: false, message: err.message });
     }
@@ -491,7 +487,10 @@ static async bulkDeleteFixedTimes(req: AuthRequest, res: Response) {
       data: { deletedCount: result.count, deletedIds: payload.fixedTimeIds }
     });
   } catch (err: any) {
-    logger.error("Bulk delete fixed times failed", { error: err.message, stack: err.stack });
+    logger.error("Bulk delete fixed times failed", {
+      functionName: "FixedTimeController.bulkDeleteFixedTimes",
+      error: err.message,
+    });
     if (err instanceof AppError) {
       return res.status(err.statusCode).json({ success: false, message: err.message });
     }
@@ -506,7 +505,7 @@ static async bulkDeleteFixedTimes(req: AuthRequest, res: Response) {
 
 // Bulk Add Free Periods to a Fixed Time
 static async bulkAddMultipleFreePeriods(req: AuthRequest, res: Response) {
-  console.log(req.body,"BODY aa rahi h Free Periods ki ")
+
   try {
     const payload = bulkAddMultipleFreePeriodsSchema.parse(req.body);
     const userId = req.user!.id;
@@ -561,7 +560,7 @@ static async bulkDeleteFreePeriods(req: AuthRequest, res: Response) {
       }
     });
   } catch (err: any) {
-    logger.error("Bulk delete free periods failed", { error: err.message, stack: err.stack });
+    logger.error("Bulk delete free periods failed", { error: err.message, functionName: "FixedTimeController.bulkDeleteFreePeriods" });
     if (err instanceof AppError) return res.status(err.statusCode).json({ success: false, message: err.message });
     return res.status(500).json({ success: false, message: "Internal server error" });
   }

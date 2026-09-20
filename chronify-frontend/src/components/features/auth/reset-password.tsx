@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,7 +8,7 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { KeyRound, Eye, EyeOff, CheckCircle } from 'lucide-react'
+import { KeyRound, Eye, EyeOff, CheckCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { motion } from 'framer-motion'
@@ -24,7 +24,10 @@ const resetPasswordSchema = z.object({
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>
 
-export function ResetPasswordForm() {
+// ==================== INNER COMPONENT ====================
+// This is where all the logic lives. It uses `useSearchParams()`
+// which requires a Suspense boundary during static prerendering.
+function ResetPasswordFormContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
@@ -119,9 +122,102 @@ export function ResetPasswordForm() {
           <CardContent>
             {!isSuccess ? (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                {/* Password fields similar to change password */}
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Resetting...' : 'Reset password'}
+                {/* Password field */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="password"
+                    className="text-sm font-medium"
+                  >
+                    New Password
+                  </label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter new password"
+                      {...register('password')}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPassword(!showPassword)
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      aria-label={
+                        showPassword
+                          ? 'Hide password'
+                          : 'Show password'
+                      }
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-sm text-destructive">
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Confirm password field */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="text-sm font-medium"
+                  >
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={
+                        showConfirmPassword ? 'text' : 'password'
+                      }
+                      placeholder="Confirm new password"
+                      {...register('confirmPassword')}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(
+                          !showConfirmPassword,
+                        )
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      aria-label={
+                        showConfirmPassword
+                          ? 'Hide password'
+                          : 'Show password'
+                      }
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-destructive">
+                      {errors.confirmPassword.message}
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading
+                    ? 'Resetting...'
+                    : 'Reset password'}
                 </Button>
               </form>
             ) : (
@@ -140,5 +236,27 @@ export function ResetPasswordForm() {
         </Card>
       </motion.div>
     </div>
+  )
+}
+
+// ==================== OUTER WRAPPER ====================
+// Wraps the content in <Suspense> so Next.js can prerender
+// the page statically without crashing on `useSearchParams()`.
+export function ResetPasswordForm() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-secondary/30 p-4">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">
+              Loading reset form...
+            </p>
+          </div>
+        </div>
+      }
+    >
+      <ResetPasswordFormContent />
+    </Suspense>
   )
 }

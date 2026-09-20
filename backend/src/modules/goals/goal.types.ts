@@ -1,6 +1,6 @@
 // src/modules/goals/goal.types.ts
 export type GoalPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
-export type GoalStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'DELAYED'
+export type GoalStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'DELAYED' | 'FAILED'
 export type GoalCategory = 'ACADEMIC' | 'PROFESSIONAL' | 'HEALTH' | 'PERSONAL' | 'SKILL_DEVELOPMENT' | 'FINANCIAL' | 'SOCIAL' | 'CREATIVE'
 export type GoalType = 'SHORT_TERM' | 'LONG_TERM'
 

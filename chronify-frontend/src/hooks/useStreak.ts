@@ -28,7 +28,7 @@ export function useStreaks() {
 
   const fetchStreaks = async () => {
     try {
-      const user = AuthService.getCurrentUser()
+      const user = await AuthService.getCurrentUser()
       if (!user) return
 
       // Mock data
@@ -95,7 +95,7 @@ export function useStreaks() {
         // Save to localStorage
         AuthService.updateUserStats({
           streak: newCurrent,
-          best_streak: newBest
+          bestStreak: newBest
         })
       }
 

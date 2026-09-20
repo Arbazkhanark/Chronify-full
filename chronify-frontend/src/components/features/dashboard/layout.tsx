@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Sidebar } from '@/components/dashboard/sidebar'
-import { DashboardHeader } from '@/components/dashboard/header'
+import { Sidebar } from '../newdashboard/sidebar'
+// import { Sidebar } from '@/components/dashboard/sidebar'
+// import { DashboardHeader } from '@/components/dashboard/header'
 
 export default function DashboardLayout({
   children,
@@ -18,7 +19,7 @@ export default function DashboardLayout({
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
       <div className={sidebarCollapsed ? "lg:ml-20" : "lg:ml-64"}>
-        <DashboardHeader />
+        {/* <DashboardHeader /> */}
         <main className="p-6">
           {children}
         </main>

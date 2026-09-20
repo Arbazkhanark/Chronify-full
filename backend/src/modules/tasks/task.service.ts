@@ -267,40 +267,6 @@ static async bulkDeleteTasks(userId: string, taskIds: string[]) {
   return result;
 }
 
-  static async handleDragDrop(userId: string, data: DragDropDTO) {
-    logger.info("Handling drag drop operation", {
-      functionName: "TaskService.handleDragDrop",
-      metadata: { userId, ...data }
-    })
-
-    // Check if task exists
-    const existingTask = await TaskRepository.findById(data.taskId, userId)
-    if (!existingTask) {
-      throw new AppError("Task not found", 404)
-    }
-
-    // Validate time slot
-    await this.validateTimeSlot(userId, data.day, data.time, data.duration, data.taskId, data.fixedTimeId)
-
-    // Calculate end time
-    const endTime = this.calculateEndTime(data.time, data.duration)
-
-    const task = await TaskRepository.update(data.taskId, userId, {
-      day: data.day,
-      startTime: data.time,
-      endTime,
-      duration: data.duration,
-      fixedTimeId: data.fixedTimeId
-    })
-
-    logger.info("Drag drop handled successfully", {
-      functionName: "TaskService.handleDragDrop",
-      metadata: { userId, taskId: task.id }
-    })
-
-    return task
-  }
-
   static async getTasksByDay(userId: string, day: string) {
     logger.info("Fetching tasks by day", {
       functionName: "TaskService.getTasksByDay",
@@ -350,14 +316,22 @@ static async bulkDeleteTasks(userId: string, taskIds: string[]) {
     const today = new Date()
     const todayStr = today.toISOString().split('T')[0]
 
+    const taskEntries = (stats.tasks ?? []) as Array<{
+      day?: string
+      isCompleted?: boolean
+      completedAt?: Date | null
+    }>
+
     // Calculate additional stats
-    const completedToday = stats.tasks.filter(t => 
+    const completedToday = taskEntries.filter((t) => 
       t.isCompleted && t.completedAt && 
       t.completedAt.toISOString().split('T')[0] === todayStr
     ).length
 
-    const upcomingTasks = stats.tasks.filter(t => {
+    const upcomingTasks = taskEntries.filter((t) => {
       if (t.isCompleted) return false
+      if (!t.day) return false
+
       const taskDate = new Date(`${todayStr.split('-')[0]}-${this.getDayMonth(t.day)}`)
       return taskDate >= today
     }).length
@@ -365,6 +339,8 @@ static async bulkDeleteTasks(userId: string, taskIds: string[]) {
     const statsData: TaskStats = {
       total: stats.total,
       completed: stats.completed,
+      isCompleted: stats.isCompleted,
+      completedAt: stats.completedAt,
       pending: stats.pending,
       overdue: stats.overdue,
       totalHours: stats.totalHours,
@@ -483,8 +459,10 @@ static async bulkDeleteTasks(userId: string, taskIds: string[]) {
     } catch (error) {
       logger.error("Failed to update goal progress", {
         functionName: "TaskService.updateGoalProgress",
-        error: error instanceof Error ? error.message : 'Unknown error',
-        goalId
+        metadata: {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          goalId
+        }
       })
     }
   }

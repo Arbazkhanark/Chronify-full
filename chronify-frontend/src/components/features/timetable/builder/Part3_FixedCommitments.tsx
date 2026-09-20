@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
+import { JSX } from 'react/jsx-dev-runtime'
 
 interface FixedTime {
   id: string

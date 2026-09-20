@@ -121,6 +121,7 @@ enum TimeSlotType {
   MEAL
   ENTERTAINMENT
   SLEEP
+  OTHER
 }
 
 model User {

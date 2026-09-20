@@ -27,9 +27,9 @@ import { TaskRepository } from '../tasks/task.repository'
 import { SleepScheduleRepository } from '../sleep-schedule/sleep-schedule.repository'
 import { FixedTimeRepository } from '../fixed-times/fixed-time.repository'
 import { GoalRepository } from '../goals/goal.repository'
-import { TaskStatus } from '../../utils/enums'
 import z from 'zod'
 import { lockTimetableSchema, timetableFilterSchema } from './timetable.validation'
+import { TaskStatus } from '../../generated/prisma/enums'
 
 
 
@@ -70,7 +70,7 @@ interface TimeSlot {
   endTime: string;
   type: "SLEEP" | "FIXED" | "FREE" | "TASK" | "BREAK" | "OTHER";
   title: string;
-  description?: string;
+  description?: string | null;
   fixedTimeId?: string;
   freePeriodId?: string;
   taskId?: string;
@@ -302,166 +302,7 @@ static async getFullTimetable(
   return timetable;
 }
 
-/**
- * Fill gaps between slots with "OTHER" type
- */
-private static fillGapsWithOther(slots: TimeSlot[]): TimeSlot[] {
-  if (slots.length === 0) {
-    return [{
-      startTime: "00:00",
-      endTime: "24:00",
-      type: "OTHER",
-      title: "Unscheduled Time",
-      color: "#9CA3AF" // Gray for unscheduled
-    }];
-  }
 
-  const fullSlots: TimeSlot[] = [];
-  let currentTime = "00:00";
-
-  for (const slot of slots) {
-    // If there's a gap between current time and this slot's start
-    if (currentTime !== slot.startTime) {
-      const gapStart = currentTime;
-      const gapEnd = slot.startTime;
-      
-      // Only add gap if it's at least 15 minutes
-      const gapDuration = this.timeToMinutes(gapEnd) - this.timeToMinutes(gapStart);
-      if (gapDuration >= 15) {
-        fullSlots.push({
-          startTime: gapStart,
-          endTime: gapEnd,
-          type: "OTHER",
-          title: "Free Time",
-          color: "#9CA3AF"
-        });
-      }
-    }
-    
-    fullSlots.push(slot);
-    currentTime = slot.endTime;
-  }
-
-  // Add gap after last slot until midnight
-  if (currentTime !== "24:00") {
-    const gapDuration = this.timeToMinutes("24:00") - this.timeToMinutes(currentTime);
-    if (gapDuration >= 15) {
-      fullSlots.push({
-        startTime: currentTime,
-        endTime: "24:00",
-        type: "OTHER",
-        title: "Free Time",
-        color: "#9CA3AF"
-      });
-    }
-  }
-
-  return fullSlots;
-}
-
-
-
-    static async getFullTimetable1(userId: string, filters: TimetableFilter) {
-      logger.info("Fetching full timetable", {
-        functionName: "TimetableService.getFullTimetable",
-        metadata: { userId, filters }
-      });
-  
-      // Default to full week if no day filter
-      const days = filters.day ? [filters.day] : ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-  
-      const timetable: DayTimetable[] = [];
-  
-      // Fetch all data in parallel
-      const [fixedTimes, sleepSchedules, tasks] = await Promise.all([
-        FixedTimeRepository.findAll(userId),
-        SleepScheduleRepository.findAll(userId, { isActive: true }),
-        TaskRepository.findAll(userId, { day: { in: days } })  // Filter tasks by days
-      ]);
-
-      console.log(fixedTimes,"Fixed -- Times");
-      console.log(sleepSchedules,"Sleep--Schedules");
-      console.log(tasks,"Tasks")
-  
-      for (const day of days) {
-        const daySlots: TimeSlot[] = [];
-  
-        // 1. Add sleep schedule
-        const daySleep = sleepSchedules.find(s => s.day === day);
-        if (daySleep) {
-          daySlots.push({
-            startTime: daySleep.bedtime,
-            endTime: daySleep.wakeTime,
-            type: "SLEEP",
-            title: `${daySleep.type} Sleep`,
-            description: daySleep.notes,
-            sleepScheduleId: daySleep.id
-          });
-        }
-  
-        // 2. Add fixed times + free periods
-        const dayFixedTimes = fixedTimes.filter(ft => ft.days.includes(day));
-        for (const ft of dayFixedTimes) {
-          daySlots.push({
-            startTime: ft.startTime,
-            endTime: ft.endTime,
-            type: "FIXED",
-            title: ft.title,
-            description: ft.description,
-            fixedTimeId: ft.id
-          });
-  
-          // Add free periods within fixed time
-          const dayFreePeriods = ft.freePeriods.filter(fp => fp.day === day);
-          for (const fp of dayFreePeriods) {
-            daySlots.push({
-              startTime: fp.startTime,
-              endTime: fp.endTime,
-              type: "FREE",
-              title: fp.title,
-              fixedTimeId: ft.id,
-              freePeriodId: fp.id
-            });
-          }
-        }
-  
-
-        // 3. Add tasks (including breaks, commute, etc.)
-        const dayTasks = tasks.tasks.filter(t => t.day === day);
-        for (const task of dayTasks) {
-          daySlots.push({
-            startTime: task.startTime,
-            endTime: task.endTime,
-            type: "TASK",
-            title: task.title,
-            description: task.notes,
-            taskId: task.id
-          });
-        }
-  
-        // 4. Sort slots by startTime
-        daySlots.sort((a, b) => this.timeToMinutes(a.startTime) - this.timeToMinutes(b.startTime));
-  
-        // 5. Fill gaps with "OTHER" or "BREAK" if needed (simple 24-hour flow)
-        const fullDaySlots = this.fillGapsWithOther(daySlots);
-  
-        timetable.push({ day, slots: fullDaySlots });
-      }
-  
-      logger.info("Full timetable generated successfully", {
-        functionName: "TimetableService.getFullTimetable",
-        metadata: { userId, daysProcessed: days.length }
-      });
-  
-      return timetable;
-    }
-
-
-
-    private static timeToMinutes1(time: string): number {
-    const [h, m] = time.split(':').map(Number);
-    return h * 60 + m;
-  }
 
   private static fillGapsWithOther(slots: TimeSlot[]): TimeSlot[] {
     if (slots.length === 0) {
@@ -696,7 +537,7 @@ private static fillGapsWithOther(slots: TimeSlot[]): TimeSlot[] {
       status: 'COMPLETED',
       isCompleted: true,
       completedAt: now,
-      actualDuration,
+      actualDuration: actualDuration || task.duration,
     })
 
     // Create feedback
@@ -738,7 +579,7 @@ private static fillGapsWithOther(slots: TimeSlot[]): TimeSlot[] {
     const updatedTask = await TaskRepository.update(taskId, userId, {
       status: TaskStatus.SKIPPED,
       isCompleted: false,
-      notes: notes ? `${task.note || ''}\nSkipped: ${notes}`.trim() : (task.note || 'Skipped by user')
+      notes: notes ? `${task.notes || ''}\nSkipped: ${notes}`.trim() : (task.notes || 'Skipped by user')
     })
 
     const todayBedtime = await this.getTodayBedtime(userId)
@@ -762,7 +603,7 @@ private static fillGapsWithOther(slots: TimeSlot[]): TimeSlot[] {
     const updatedTask = await TaskRepository.update(taskId, userId, {
       status: 'MISSED',
       isCompleted: false,
-      notes: notes ? `${task.note || ''}\nMissed: ${notes}`.trim() : (task.note || 'Task was missed')
+      notes: notes ? `${task.notes || ''}\nMissed: ${notes}`.trim() : (task.notes || 'Task was missed')
     })
 
     const todayBedtime = await this.getTodayBedtime(userId)
@@ -800,7 +641,7 @@ private static fillGapsWithOther(slots: TimeSlot[]): TimeSlot[] {
     }
 
     if (payload.notes) {
-      updateData.notes = `${task.note || ''}\nStatus update: ${payload.notes}`.trim()
+      updateData.notes = `${task.notes || ''}\nStatus update: ${payload.notes}`.trim()
     }
 
     const updatedTask = await TaskRepository.update(payload.taskId, userId, updateData)
@@ -992,7 +833,7 @@ private static fillGapsWithOther(slots: TimeSlot[]): TimeSlot[] {
       isRescheduled: true,
       originalStartTime: task.startTime,
       originalEndTime: task.endTime,
-      notes: `${task.note || ''}\nDelayed by ${payload.minutes} minutes`.trim()
+      notes: `${task.notes || ''}\nDelayed by ${payload.minutes} minutes`.trim()
     })
 
     const todayBedtime = await this.getTodayBedtime(userId)
@@ -1217,7 +1058,8 @@ private static fillGapsWithOther(slots: TimeSlot[]): TimeSlot[] {
       // Task is missed if:
       // 1. It's past the grace period (> 1 hour after end time)
       // 2. OR it's marked as missed
-      if (task.status === TaskStatus.MISSED || (timeSinceEnd > gracePeriodMinutes && task.status !== TaskStatus.COMPLETED)) {
+      // if (task.status === TaskStatus.MISSED || (timeSinceEnd > gracePeriodMinutes && task.status !== TaskStatus.COMPLETED)) {
+      if (task.status === TaskStatus.MISSED) {
         // Check if can still complete before bedtime
         const timeUntilBedtime = bedtimeMinutes - nowMinutes
         const canCompleteBeforeBedtime = timeUntilBedtime >= task.duration
@@ -1543,7 +1385,7 @@ private static fillGapsWithOther(slots: TimeSlot[]): TimeSlot[] {
           isRescheduled: true,
           originalStartTime: task.startTime,
           originalEndTime: task.endTime,
-          notes: `${task.note || ''}\nDelayed by ${payload.minutes} minutes (bulk)`.trim()
+          notes: `${task.notes || ''}\nDelayed by ${payload.minutes} minutes (bulk)`.trim()
         })
 
         const transformedTask = await this.transformToTimetableTask(updatedTask, bedtime)
@@ -1908,8 +1750,9 @@ private static fillGapsWithOther(slots: TimeSlot[]): TimeSlot[] {
     } catch (error) {
       logger.error('Failed to update goal progress', {
         functionName: 'TimetableService.updateGoalProgress',
-        error: error instanceof Error ? error.message : 'Unknown error',
-        goalId
+        metadata:{
+                error: error instanceof Error ? error.message : 'Unknown error',goalId
+        }
       })
     }
   }

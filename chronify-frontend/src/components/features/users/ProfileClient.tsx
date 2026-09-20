@@ -56,7 +56,8 @@ import {
   Medal,
   Flame,
   Rocket,
-  Brain as BrainIcon
+  Brain as BrainIcon,
+  HdIcon
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -167,6 +168,11 @@ interface StudyPattern {
   activity: string
   period: 'early' | 'morning' | 'afternoon' | 'evening' | 'night'
 }
+
+type GoalEntry = UserData['goals'][keyof UserData['goals']]
+
+const isDsaGoal = (goal: GoalEntry): goal is UserData['goals']['dsa'] => 'topics' in goal
+const isProjectsGoal = (goal: GoalEntry): goal is UserData['goals']['projects'] => 'names' in goal
 
 export default function ProfileClient() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -752,7 +758,7 @@ export default function ProfileClient() {
                                 <span className="font-medium capitalize dark:text-gray-300">{key}</span>
                               </div>
                               <div className="flex items-center gap-2">
-                                {key === 'college' && goal.gpa && (
+                                {key === 'college' && 'gpa' in goal && goal.gpa !== undefined && (
                                   <Badge variant="outline" className="border-blue-200 dark:border-blue-800">
                                     GPA: {goal.gpa}
                                   </Badge>
@@ -845,7 +851,7 @@ export default function ProfileClient() {
                             <Progress value={goal.progress} className="h-3" />
                           </div>
                           
-                          {key === 'dsa' && goal.topics && (
+                          {key === 'dsa' && isDsaGoal(goal) && goal.topics && (
                             <div className="space-y-3 mt-4">
                               <h4 className="text-sm font-medium dark:text-gray-300">Topic Breakdown</h4>
                               {Object.entries(goal.topics).map(([topic, count], idx) => (
@@ -860,7 +866,7 @@ export default function ProfileClient() {
                             </div>
                           )}
 
-                          {key === 'projects' && goal.names && (
+                          {key === 'projects' && isProjectsGoal(goal) && goal.names && (
                             <div className="mt-4 space-y-2">
                               {goal.names.map((project, idx) => (
                                 <div key={idx} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -1372,7 +1378,7 @@ export default function ProfileClient() {
                     setShowShareModal(false)
                   }}
                 >
-                  <Icon className="w-4 h-4" />
+                  <HdIcon className="w-4 h-4" />
                   Share on {option.platform}
                 </Button>
               )

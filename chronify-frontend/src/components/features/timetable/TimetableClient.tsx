@@ -116,9 +116,7 @@ import {
   Box,
   Archive,
   Inbox,
-  Outbox,
   Send,
-  Receive,
   Upload,
   Download as DownloadIcon,
   Save,
@@ -131,8 +129,6 @@ import {
   FileAudio,
   FileCode,
   FileSpreadsheet,
-  FilePresentation,
-  FilePdf,
   FileArchive,
   Folder,
   FolderPlus,
@@ -180,20 +176,15 @@ import {
   Headphones,
   Headset,
   Ear,
-  Hearing,
   Speaker,
   Radio,
   Podcast,
   Disc,
-  Vinyl,
-  Tape,
   CassetteTape,
   Album,
   Play,
   Pause,
-  Stop,
   Forward,
-  Backward,
   SkipForward,
   SkipBack,
   Repeat,
@@ -202,8 +193,6 @@ import {
   PauseCircle,
   StopCircle,
   PlaySquare,
-  PauseSquare,
-  StopSquare,
   Video as VideoIcon2,
   Camera as CameraIcon,
   CameraOff,
@@ -235,14 +224,11 @@ import {
   Snowflake,
   Wind,
   Tornado,
-  Hurricane,
   Thermometer,
   ThermometerSun,
   ThermometerSnowflake,
   Waves,
   WavesLadder,
-  WavesSinusoid,
-  WavesSquare,
   Zap as ZapIcon,
   ZapOff,
   Sparkle,
@@ -251,7 +237,6 @@ import {
   FlameKindling,
   FireExtinguisher,
   Siren,
-  SirenOff,
   AlarmCheck,
   AlarmClockOff,
   AlarmClockMinus,
@@ -298,20 +283,13 @@ import {
   TimerOff,
   TimerReset,
   Hourglass as HourglassIcon,
-  HourglassOff,
   Timer as TimerIcon2,
-  Stopwatch,
-  StopwatchIcon,
   Watch,
   WatchIcon,
   Activity as ActivityIcon,
   ActivitySquare,
   ActivitySquareIcon,
   Gauge as GaugeIcon,
-  Speedometer,
-  SpeedometerIcon,
-  Tachometer,
-  TachometerIcon,
   Compass as CompassIcon,
   CompassIcon as CompassIcon2,
   Navigation as NavigationIcon,
@@ -324,8 +302,6 @@ import {
   MapPinnedIcon,
   MapPlus,
   MapMinus,
-  MapX,
-  MapCheck,
   MapPinOff,
   MapPinX,
   MapPinCheck,
@@ -356,9 +332,7 @@ import {
   Box as BoxIcon,
   Archive as ArchiveIcon,
   Inbox as InboxIcon,
-  Outbox as OutboxIcon,
   Send as SendIcon,
-  Receive as ReceiveIcon,
   Upload as UploadIcon,
   Download as DownloadIcon2,
   Save as SaveIcon,
@@ -371,8 +345,6 @@ import {
   FileAudio as FileAudioIcon,
   FileCode as FileCodeIcon,
   FileSpreadsheet as FileSpreadsheetIcon,
-  FilePresentation as FilePresentationIcon,
-  FilePdf as FilePdfIcon,
   FileArchive as FileArchiveIcon,
   Folder as FolderIcon,
   FolderPlus as FolderPlusIcon,
@@ -443,11 +415,45 @@ import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from 'sonner'
-import { format, parse, differenceInMinutes, addMinutes, isToday, isPast, isFuture, formatDistanceToNow, isSameDay } from 'date-fns'
+// import { format, parse, differenceInMinutes, addMinutes, isToday, isPast, isFuture, formatDistanceToNow, isSameDay } from 'date-fns'
+
+import { format } from 'date-fns'
 
 // Utility function for className merging
 const cn = (...classes: (string | boolean | undefined | null)[]): string => {
   return classes.filter(Boolean).join(' ')
+}
+
+// Local fallback for formatDistanceToNow since it may not be available in all date-fns versions
+const formatDistanceToNow = (date: Date, options?: { addSuffix?: boolean }): string => {
+  const now = new Date()
+  const diffMs = date.getTime() - now.getTime()
+  const diffSec = Math.round(diffMs / 1000)
+  const diffMin = Math.round(diffSec / 60)
+  const diffHr = Math.round(diffMin / 60)
+  const diffDay = Math.round(diffHr / 24)
+
+  const absSec = Math.abs(diffSec)
+  const absMin = Math.abs(diffMin)
+  const absHr = Math.abs(diffHr)
+  const absDay = Math.abs(diffDay)
+
+  let value: string
+  if (absSec < 60) {
+    value = 'less than a minute'
+  } else if (absMin < 60) {
+    value = `${absMin} minute${absMin === 1 ? '' : 's'}`
+  } else if (absHr < 24) {
+    value = `${absHr} hour${absHr === 1 ? '' : 's'}`
+  } else if (absDay < 30) {
+    value = `${absDay} day${absDay === 1 ? '' : 's'}`
+  } else {
+    const months = Math.round(absDay / 30)
+    value = `${months} month${months === 1 ? '' : 's'}`
+  }
+
+  if (!options?.addSuffix) return value
+  return diffMs >= 0 ? `in ${value}` : `${value} ago`
 }
 
 // Types
@@ -3283,7 +3289,7 @@ function VerticalTimetable({
   isTimeInFreePeriod: (day: string, time: string) => {fixedTime: FixedTime, freePeriod: any} | null
   formatTimeDisplay: (time: string) => string
   getTimeSlotColor: (type: string) => string
-  getIconByType: (type: string) => JSX.Element
+  getIconByType: (type: string) => React.ReactElement
   formatDurationShort: (minutes: number) => string
   onTaskClick: (taskId?: string) => void
   onComplete: (taskId: string) => void
@@ -3557,7 +3563,7 @@ function HorizontalTimetable({
   isTimeInFreePeriod: (day: string, time: string) => {fixedTime: FixedTime, freePeriod: any} | null
   formatTimeDisplay: (time: string) => string
   getTimeSlotColor: (type: string) => string
-  getIconByType: (type: string) => JSX.Element
+  getIconByType: (type: string) => React.ReactElement
   formatDurationShort: (minutes: number) => string
   onTaskClick: (taskId?: string) => void
   onComplete: (taskId: string) => void
@@ -3795,7 +3801,7 @@ function TaskComponent({
   onComplete: (taskId: string) => void
   isCompleting: string | null
   formatDurationShort: (minutes: number) => string
-  getIconByType: (type: string) => JSX.Element
+  getIconByType: (type: string) => React.ReactNode
   cn: (...classes: (string | boolean | undefined | null)[]) => string
 }) {
   const isOverdue = task.gracePeriodEndsAt && new Date(task.gracePeriodEndsAt) < new Date() && task.status !== 'COMPLETED'
@@ -3911,7 +3917,7 @@ function SleepTaskComponent({
   cellWidth: number
   taskSpan: number
   formatDurationShort: (minutes: number) => string
-  getIconByType: (type: string) => JSX.Element
+  getIconByType: (type: string) => React.ReactNode
   cn: (...classes: (string | boolean | undefined | null)[]) => string
 }) {
   const Icon = getIconByType('SLEEP')

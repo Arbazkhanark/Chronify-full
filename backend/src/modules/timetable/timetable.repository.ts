@@ -1,15 +1,12 @@
 // src/modules/timetable/timetable.repository.ts
 
 import { prisma } from '../../config/prisma'
-import { FixedTimeRepository } from '../fixed-times/fixed-time.repository'
 import { DayOfWeek, TaskFeedbackDTO, TaskFeedbackResponse } from './timetable.types'
-import { Prisma } from '@prisma/client'
-import { lockTimetableSchema } from './timetable.validation'
-import z from 'zod'
-import { UpdateTaskDTO } from '../tasks/task.types'
+// import { Prisma } from '@prisma/client'
 import { FixedTimeType, Priority, SleepDay, SleepType, TaskCategory, TaskStatus, TimeSlotType } from '../../generated/prisma/enums'
 import { logger } from 'patal-log'
 import { AppError } from '../../utils/AppError'
+import { Prisma } from '../../generated/prisma/client'
 
 
 

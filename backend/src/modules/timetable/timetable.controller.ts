@@ -501,7 +501,8 @@ export class TimetableController {
         metadata: { userId, taskId: payload.taskId, day: payload.day, time: payload.startTime }
       })
 
-      const task = await TimetableService.applySmartDelay(userId, payload as ApplySmartDelayDTO)
+      const smartDelayPayload = payload as unknown as ApplySmartDelayDTO
+      const task = await TimetableService.applySmartDelay(userId, smartDelayPayload)
 
       res.status(200).json({
         success: true,
@@ -867,6 +868,27 @@ export class TimetableController {
    */
   static async lockTimetable(req: AuthRequest, res: Response) {
     try {
+
+
+        console.log(
+          "========== LOCK TIMETABLE REQUEST =========="
+        )
+
+        console.log(
+          JSON.stringify(req.body, null, 2)
+        )
+
+        console.log(
+          "========== TASK TYPES =========="
+        )
+
+        console.log(
+          req.body.tasks?.map((task: any, index: number) => ({
+            index,
+            title: task.title,
+            type: task.type,
+          }))
+        )
       const payload = lockTimetableSchema.parse(req.body);
       const userId = req.user!.id;
 
@@ -888,13 +910,9 @@ export class TimetableController {
         }
       });
     } catch (err: any) {
-          // Log the FULL error object
-    console.error("Full error:", err);
-    console.error("Error name:", err.name);
-    console.error("Error message:", err.message);
-    console.error("Error stack:", err.stack);
-      logger.error("Lock timetable failed", { error: err.message, stack: err.stack });
-
+      logger.error("Lock timetable failed", {functionName: "TimetableController.lockTimetable", 
+        metadata: { error: err.message, stack: err.stack }
+      });
       if (err instanceof AppError) {
         return res.status(err.statusCode).json({ success: false, message: err.message });
       }

@@ -17,7 +17,7 @@ const TaskStatusEnum = z.enum(['PENDING', 'ONGOING', 'COMPLETED', 'MISSED', 'SKI
 // Time slot type enum
 const TimeSlotTypeEnum = z.enum([
   'TASK', 'FIXED', 'BREAK', 'COMMUTE', 'FREE', 'CLASS', 'STUDY', 
-  'HEALTH', 'PROJECT', 'MEETING', 'WORKOUT', 'MEAL', 'ENTERTAINMENT', 'SLEEP'
+  'HEALTH', 'PROJECT', 'MEETING', 'WORKOUT', 'MEAL', 'ENTERTAINMENT', 'SLEEP', 'OTHER'
 ])
 
 // Task category enum
@@ -125,7 +125,7 @@ export const createTaskSchema1 = z.object({
 
 export const createTaskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200),
-  subject: z.string().optional(),
+  subject: z.string().optional().nullable(),
   note: z.string().optional(),
   startTime: z.string().regex(timeRegex, 'Invalid time format (HH:MM)'),
   endTime: z.string().regex(timeRegex, 'Invalid time format (HH:MM)').optional(),
@@ -137,8 +137,8 @@ export const createTaskSchema = z.object({
   category: TaskCategoryEnum.default('ACADEMIC'),
   icon: z.string().optional(),
   goalId: z.string().uuid('Invalid goal ID').optional().nullable(),
-  milestoneId: z.string().uuid('Invalid milestone ID').optional().nullable(),
-  fixedTimeId: z.string().uuid('Invalid fixed time ID').optional().nullable(),
+  // milestoneId: z.string().uuid('Invalid milestone ID').optional().nullable(),
+  // fixedTimeId: z.string().uuid('Invalid fixed time ID').optional().nullable(),
   status: TaskStatusEnum.optional().default('PENDING'),
   isCompleted: z.boolean().optional().default(false),
   completedAt: z.string().datetime().optional().nullable(),

@@ -31,9 +31,16 @@ export interface CreateTaskDTO {
 
 export interface UpdateTaskDTO extends Partial<CreateTaskDTO> {
   status?: TaskStatus
+  startedAt?: Date
   isCompleted?: boolean
+  isRescheduled?:boolean
   completedAt?: Date
   endTime?: string
+  notes?: string
+  originalStartTime?: string
+  originalEndTime?: string
+  originalDay?: string
+  actualDuration?: number
 }
 
 export interface BulkTaskDTO extends Omit<CreateTaskDTO, 'userId'> {}
@@ -65,6 +72,8 @@ export interface TaskFilterDTO {
 export interface TaskStats {
   total: number
   completed: number
+  isCompleted: boolean
+  completedAt?: Date
   pending: number
   overdue: number
   totalHours: number

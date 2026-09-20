@@ -1,21 +1,3 @@
-// import { ResetPasswordForm } from '@/components/features/auth/reset-password'
-// import type { Metadata } from 'next'
-
-// export const metadata: Metadata = {
-//   title: 'Reset Password - Chronify AI',
-//   description: 'Reset your Chronify AI account password',
-// }
-
-// export default function ResetPasswordPage() {
-//   return <ResetPasswordForm />
-// }
-
-
-
-
-
-
-
 // src/app/auth/reset-password/page.tsx
 import { ResetPasswordForm } from '@/components/features/auth/reset-password'
 import type { Metadata } from 'next'

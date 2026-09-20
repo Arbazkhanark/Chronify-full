@@ -1,25 +1,3 @@
-// import { VerifyEmail } from '@/components/features/auth/verify.email'
-// import type { Metadata } from 'next'
-
-// export const metadata: Metadata = {
-//   title: 'Verify Email - Chronify AI',
-//   description: 'Verify your email address to complete your Chronify AI account setup',
-// }
-
-// export default function VerifyEmailPage() {
-//   return <VerifyEmail />
-// }
-
-
-
-
-
-
-
-
-
-
-
 // src/app/auth/verify-email/page.tsx
 import { VerifyEmail } from '@/components/features/auth/verify.email'
 import type { Metadata } from 'next'

@@ -241,8 +241,10 @@ interface ApiTask {
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
   color?: string
   day: string
-  type: 'STUDY' | 'CLASS' | 'PROJECT' | 'HEALTH' | 'MEETING' | 'WORKOUT' | 'MEAL' | 'ENTERTAINMENT' | 'SLEEP' | 'OTHER'
-  category?: 'ACADEMIC' | 'PROFESSIONAL' | 'PERSONAL' | 'HEALTH' | 'OTHER'
+  // Must match backend Prisma `TimeSlotType` enum exactly — no 'OTHER' member exists.
+  type: 'TASK' | 'FIXED' | 'BREAK' | 'COMMUTE' | 'FREE' | 'CLASS' | 'STUDY' | 'HEALTH' | 'PROJECT' | 'MEETING' | 'WORKOUT' | 'MEAL' | 'ENTERTAINMENT' | 'SLEEP'
+  // Must match backend Prisma `TaskCategory` enum exactly.
+  category?: 'ACADEMIC' | 'PROFESSIONAL' | 'HEALTH' | 'PERSONAL' | 'LEARNING' | 'BREAK' | 'COMMUTE' | 'PROJECT' | 'SLEEP'
   goalId?: string | null
   milestoneId?: string | null
   fixedTimeId?: string | null
@@ -389,6 +391,11 @@ const TASK_TYPES = [
 
 // Map UI task type to API task type (UPPERCASE)
 const mapUITypeToAPIType = (uiType: TimeSlot['type']): ApiTask['type'] => {
+  // IMPORTANT: This must only ever return a value that exists in the
+  // backend's Prisma `TimeSlotType` enum: TASK, FIXED, BREAK, COMMUTE,
+  // FREE, CLASS, STUDY, HEALTH, PROJECT, MEETING, WORKOUT, MEAL,
+  // ENTERTAINMENT, SLEEP. There is NO "OTHER" member — sending it causes
+  // the backend's Zod validation to reject the whole /lock request.
   switch(uiType) {
     case 'study': return 'STUDY'
     case 'class': return 'CLASS'
@@ -399,13 +406,13 @@ const mapUITypeToAPIType = (uiType: TimeSlot['type']): ApiTask['type'] => {
     case 'meal': return 'MEAL'
     case 'entertainment': return 'ENTERTAINMENT'
     case 'sleep': return 'SLEEP'
-    case 'task': return 'STUDY' // Default to STUDY
-    case 'break': return 'OTHER'
-    case 'commute': return 'OTHER'
-    case 'free': return 'OTHER'
-    case 'fixed': return 'OTHER'
-    case 'other': return 'OTHER'
-    default: return 'OTHER'
+    case 'task': return 'TASK'
+    case 'break': return 'BREAK'
+    case 'commute': return 'COMMUTE'
+    case 'free': return 'FREE'
+    case 'fixed': return 'FIXED'
+    case 'other': return 'TASK' // No OTHER in backend enum — fall back to TASK
+    default: return 'TASK'
   }
 }
 
@@ -467,6 +474,10 @@ export default function TimetableBuilderPage() {
   const [showSleepScheduleModal, setShowSleepScheduleModal] = useState(false)
   const [selectedFixedTimeForFreePeriod, setSelectedFixedTimeForFreePeriod] = useState<FixedTime | null>(null)
   const [selectedCell, setSelectedCell] = useState<{day: string, time: string} | null>(null)
+
+  // NEW: Quick "Add Free Period" flow — carries the exact day/time the user clicked on
+  const [showQuickFreePeriodModal, setShowQuickFreePeriodModal] = useState(false)
+  const [quickFreePeriodContext, setQuickFreePeriodContext] = useState<{day: string, time: string, fixedTime: FixedTime} | null>(null)
   const [editingTask, setEditingTask] = useState<TimeSlot | null>(null)
   const [selectedFixedTime, setSelectedFixedTime] = useState<FixedTime | null>(null)
   const [showGoalsModal, setShowGoalsModal] = useState(false)
@@ -536,8 +547,130 @@ export default function TimetableBuilderPage() {
     return token ? `Bearer ${token}` : ''
   }
 
+  // ==================== NEW: Local Draft Persistence (per-user) ====================
+  // Prevents loss of unsaved timetable changes on refresh / network issues.
+  // Each user gets their own localStorage key (derived from their auth token),
+  // so multiple users on the same browser/device never see each other's drafts.
+
+  const getUserIdentifier = (): string | null => {
+    if (typeof window === 'undefined') return null
+    const token = localStorage.getItem('access_token')
+    if (!token) return null
+
+    // Try to pull a stable user id (sub/id/email) out of a JWT payload
+    try {
+      const parts = token.split('.')
+      if (parts.length === 3) {
+        const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
+        const payload = JSON.parse(decodeURIComponent(escape(atob(base64))))
+        const id = payload.sub || payload.userId || payload.id || payload.user_id || payload.email
+        if (id) return String(id)
+      }
+    } catch (e) {
+      // Not a decodable JWT — fall back to hashing the raw token below
+    }
+
+    // Fallback: stable hash of the token itself, so at least different
+    // logins/users still end up with different, isolated draft keys.
+    let hash = 0
+    for (let i = 0; i < token.length; i++) {
+      hash = ((hash << 5) - hash) + token.charCodeAt(i)
+      hash |= 0
+    }
+    return `token-${hash}`
+  }
+
+  const getDraftStorageKey = (): string | null => {
+    const userId = getUserIdentifier()
+    if (!userId) return null
+    return `chronify_timetable_draft_${userId}`
+  }
+
+  const saveDraftLocally = (
+    draftFixedTimes: FixedTime[],
+    draftSleepSchedules: SleepSchedule[],
+    draftTasks: TimeSlot[],
+    draftTimeSettings: TimeSettings
+  ) => {
+    if (typeof window === 'undefined') return
+    const key = getDraftStorageKey()
+    if (!key) return
+    try {
+      const draft = {
+        fixedTimes: draftFixedTimes,
+        sleepSchedules: draftSleepSchedules,
+        // Sleep-time blocks are regenerated automatically from sleepSchedules,
+        // so we don't need to persist them separately.
+        tasks: draftTasks.filter(t => !t.isSleepTime),
+        timeSettings: draftTimeSettings,
+        savedAt: new Date().toISOString()
+      }
+      localStorage.setItem(key, JSON.stringify(draft))
+    } catch (e) {
+      console.error('Failed to save local timetable draft:', e)
+    }
+  }
+
+  const loadDraftLocally = (): {
+    fixedTimes: FixedTime[]
+    sleepSchedules: SleepSchedule[]
+    tasks: TimeSlot[]
+    timeSettings?: TimeSettings
+  } | null => {
+    if (typeof window === 'undefined') return null
+    const key = getDraftStorageKey()
+    if (!key) return null
+    try {
+      const raw = localStorage.getItem(key)
+      if (!raw) return null
+      return JSON.parse(raw)
+    } catch (e) {
+      console.error('Failed to load local timetable draft:', e)
+      return null
+    }
+  }
+
+  const clearDraftLocally = () => {
+    if (typeof window === 'undefined') return
+    const key = getDraftStorageKey()
+    if (!key) return
+    try {
+      localStorage.removeItem(key)
+    } catch (e) {
+      console.error('Failed to clear local timetable draft:', e)
+    }
+  }
+  // ==================== END NEW ====================
+
+  // NEW: On mount, prefer restoring an unsaved local draft (per logged-in user)
+  // over re-fetching from the server. This protects against losing in-progress
+  // work on refresh or network hiccups, until the user actually locks/saves
+  // the timetable to the server.
+  const initializeTimetable = async () => {
+    setIsLoading(true)
+    const draft = loadDraftLocally()
+    const hasDraftContent = !!draft && (
+      (draft.fixedTimes && draft.fixedTimes.length > 0) ||
+      (draft.sleepSchedules && draft.sleepSchedules.length > 0) ||
+      (draft.tasks && draft.tasks.length > 0)
+    )
+
+    if (hasDraftContent && draft) {
+      setFixedTimes(draft.fixedTimes || [])
+      setSleepSchedules(draft.sleepSchedules || [])
+      setTasks(draft.tasks || [])
+      if (draft.timeSettings) {
+        setTimeSettings(draft.timeSettings)
+      }
+      setIsLoading(false)
+      toast.info('Restored your unsaved timetable from this device. Lock it to save permanently.')
+    } else {
+      await fetchFullTimeTable()
+    }
+  }
+
   useEffect(() => {
-    fetchFullTimeTable()
+    initializeTimetable()
     fetchGoals()
   }, [])
 
@@ -563,6 +696,17 @@ export default function TimetableBuilderPage() {
   useEffect(() => {
     setHasUnsavedChanges(tasks.length > 0 || fixedTimes.length > 0 || sleepSchedules.length > 0)
   }, [tasks, fixedTimes, sleepSchedules])
+
+  // NEW: Auto-save the in-progress timetable to localStorage (per user) any
+  // time it changes, so nothing is lost on refresh or a dropped connection.
+  // Skipped while the initial data is still loading (to avoid overwriting a
+  // draft with empty state) and while the timetable is locked (locked state
+  // mirrors the server and doesn't need a local draft).
+  useEffect(() => {
+    if (isLoading) return
+    if (isLocked) return
+    saveDraftLocally(fixedTimes, sleepSchedules, tasks, timeSettings)
+  }, [tasks, fixedTimes, sleepSchedules, timeSettings, isLoading, isLocked])
 
   const fetchFullTimeTable = async () => {
     setIsLoading(true)
@@ -920,7 +1064,7 @@ export default function TimetableBuilderPage() {
   useEffect(() => {
     const scheduledHoursByGoal = getScheduledHoursByGoal()
     
-    const updatedGoals = goals.map(goal => {
+    const updatedGoals: Goal[] = goals.map((goal): Goal => {
       const completedHours = scheduledHoursByGoal[goal.id] || 0
       
       const updatedMilestones = goal.milestones.map(milestone => {
@@ -948,13 +1092,18 @@ export default function TimetableBuilderPage() {
       const today = new Date().toDateString()
       const lastUpdated = new Date(goal.lastUpdated).toDateString()
       const newStreak = today === lastUpdated ? goal.streak : goal.streak + 1
-      
+      const nextStatus: Goal['status'] = totalProgress >= 100
+        ? 'COMPLETED'
+        : totalProgress > 0
+          ? 'IN_PROGRESS'
+          : 'NOT_STARTED'
+
       return {
         ...goal,
         completedHours,
         progress: Math.round(totalProgress),
         milestones: updatedMilestones,
-        status: totalProgress >= 100 ? 'COMPLETED' : totalProgress > 0 ? 'IN_PROGRESS' : 'NOT_STARTED',
+        status: nextStatus,
         streak: newStreak,
         lastUpdated: new Date()
       }
@@ -1120,7 +1269,20 @@ export default function TimetableBuilderPage() {
       )
       
       if (!isInFreePeriod) {
-        setSelectedFixedTime(fixedTime)
+        // FIXED: Instead of opening the generic "Fixed Commitment Details" modal
+        // (which always defaulted the Free Period form to Monday), open a quick
+        // "Add Free Period" modal that is pre-filled with the EXACT day and time
+        // slot the user just clicked on.
+        const defaultEnd = getNextTimeSlot(time)
+        setNewFreePeriod({
+          title: 'Free Period',
+          startTime: time,
+          endTime: defaultEnd,
+          duration: timeSettings.interval,
+          day: day
+        })
+        setQuickFreePeriodContext({ day, time, fixedTime })
+        setShowQuickFreePeriodModal(true)
         return
       }
     }
@@ -1406,6 +1568,58 @@ export default function TimetableBuilderPage() {
     toast.success('Free period added')
   }
 
+  // NEW: Adds the free period using the exact day/time that was clicked
+  // (from quickFreePeriodContext), then immediately opens the Add Task
+  // dialog for that same slot so the user can add their task right away.
+  const handleQuickAddFreePeriod = () => {
+    if (!quickFreePeriodContext) return
+
+    const { fixedTime, day, time } = quickFreePeriodContext
+
+    if (!newFreePeriod.title.trim()) {
+      toast.error('Please enter a title for the free period')
+      return
+    }
+
+    if (convertTimeToMinutes(newFreePeriod.endTime) <= convertTimeToMinutes(newFreePeriod.startTime)) {
+      toast.error('End time must be after start time')
+      return
+    }
+
+    const freePeriod = {
+      id: `free-${Date.now()}-${day}`,
+      title: newFreePeriod.title,
+      startTime: newFreePeriod.startTime,
+      endTime: newFreePeriod.endTime,
+      duration: calculateDuration(newFreePeriod.startTime, newFreePeriod.endTime),
+      day: day
+    }
+
+    const updatedFixedTime = {
+      ...fixedTime,
+      freePeriods: [...(fixedTime.freePeriods || []), freePeriod]
+    }
+
+    setFixedTimes(fixedTimes.map(ft =>
+      ft.id === fixedTime.id ? updatedFixedTime : ft
+    ))
+
+    toast.success(`Free period added on ${day.charAt(0) + day.slice(1).toLowerCase()} at ${formatTimeDisplay(newFreePeriod.startTime)}`)
+
+    setShowQuickFreePeriodModal(false)
+    setQuickFreePeriodContext(null)
+
+    // Immediately let the user add a task into the free period they just created
+    setTaskCreationContext({ day, time: newFreePeriod.startTime })
+    setNewTask({
+      ...newTask,
+      day,
+      startTime: newFreePeriod.startTime,
+      duration: Math.min(timeSettings.interval, calculateDuration(newFreePeriod.startTime, newFreePeriod.endTime))
+    })
+    setShowTaskCreationDialog(true)
+  }
+
   const handleOpenFreePeriodModal = (fixedTime: FixedTime, day: string) => {
     setSelectedFixedTimeForFreePeriod(fixedTime)
     setNewFreePeriod({
@@ -1512,7 +1726,11 @@ export default function TimetableBuilderPage() {
         setIsLocked(true)
         setHasUnsavedChanges(false)
         toast.success(result.message || 'Timetable locked and saved successfully!')
-        
+
+        // NEW: The server now holds the authoritative saved timetable —
+        // the local draft is no longer needed, so remove it.
+        clearDraftLocally()
+
         await fetchFullTimeTable()
       } else {
         throw new Error(result.message || 'Failed to save timetable')
@@ -1534,6 +1752,11 @@ export default function TimetableBuilderPage() {
   // ==================== FIXED: prepareLockPayload with proper type mapping ====================
   const prepareLockPayload = () => {
     const apiFixedTimes: any[] = fixedTimes.map(ft => ({
+      // NEW: The backend uses this to link tasks (sent with the same
+      // fixedTimeId value) to the FixedTime it creates/finds in this same
+      // request, since at this point the FixedTime doesn't have a real
+      // database id yet.
+      clientId: ft.id,
       title: ft.title,
       description: ft.description,
       days: ft.days,
@@ -1679,6 +1902,10 @@ export default function TimetableBuilderPage() {
         setFixedTimes([])
         setSleepSchedules([])
         setHasUnsavedChanges(false)
+
+        // NEW: Also remove any locally saved draft so it doesn't come back
+        // on the next refresh after an intentional reset.
+        clearDraftLocally()
         
         toast.success(data.message || `Timetable reset successfully! Deleted ${data.data.totalDeleted} items.`)
         
@@ -1695,7 +1922,10 @@ export default function TimetableBuilderPage() {
     }
   }
 
-  const getTaskPool = () => {
+  // Explicit TimeSlot[] return type: without it TS infers a narrow literal
+  // union, and `.find()` on the result collapses to `never`, which is what
+  // caused "Property 'priority' does not exist on type 'never'".
+  const getTaskPool = (): TimeSlot[] => {
     return [
       {
         id: 'pool-1',
@@ -2007,6 +2237,14 @@ export default function TimetableBuilderPage() {
     }
   }
 
+  // Safely formats a day constant ("MONDAY" -> "Monday"). Previously the JSX
+  // did `taskCreationContext?.day.charAt(0) + taskCreationContext?.day.slice(1)`,
+  // which is `string | undefined` on both sides of `+` and fails typechecking.
+  const formatDayLabel = (day?: string): string => {
+    if (!day) return ''
+    return day.charAt(0) + day.slice(1).toLowerCase()
+  }
+
   const cn = (...classes: (string | boolean | undefined)[]) => {
     return classes.filter(Boolean).join(' ')
   }
@@ -2252,7 +2490,7 @@ export default function TimetableBuilderPage() {
       <div
         className={cn(
           "relative border-r border-b border-gray-200 dark:border-gray-700 group transition-all duration-150",
-          fixedTime && !isFreePeriod && getTimeSlotColor(fixedTime.type),
+          fixedTime && !isFreePeriod ? getTimeSlotColor(fixedTime.type) : undefined,
           isFreePeriod && "bg-green-50/50 dark:bg-green-900/20 border-green-200 dark:border-green-800/30",
           isExtendedTime(time) && !fixedTime && !isSleepTime && "bg-yellow-50/30 dark:bg-yellow-900/10",
           isSleepTime && "bg-gray-100/50 dark:bg-gray-800/50 border-gray-300 dark:border-gray-700",
@@ -2468,7 +2706,7 @@ export default function TimetableBuilderPage() {
           "absolute top-0.5 left-0.5 rounded border shadow-sm z-30 overflow-hidden cursor-pointer",
           "hover:shadow-md hover:border-blue-300 dark:hover:border-blue-500 transition-all",
           task.fixedCommitmentId && "border-green-300 dark:border-green-700",
-          milestone && "border-purple-300 dark:border-purple-700"
+          milestone ? "border-purple-300 dark:border-purple-700" : undefined
         )}
         style={{ 
           height: `${timeSettings.cellHeight - 4}px`,
@@ -2576,6 +2814,16 @@ export default function TimetableBuilderPage() {
                 <Badge className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
                   <AlertCircle className="w-3 h-3 mr-1" />
                   Unsaved Changes
+                </Badge>
+              )}
+              {hasUnsavedChanges && !isLocked && !isLoading && (
+                <Badge 
+                  variant="outline" 
+                  className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800/30"
+                  title="Your changes are automatically saved on this device until you lock the timetable"
+                >
+                  <Save className="w-3 h-3 mr-1" />
+                  Saved on this device
                 </Badge>
               )}
               <Button
@@ -3519,7 +3767,7 @@ export default function TimetableBuilderPage() {
                             animate={{ opacity: 1, scale: 1 }}
                             className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-move hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-sm transition-all"
                             draggable={!isLocked}
-                            onDragStart={(e) => {
+                            onDragStartCapture={(e: React.DragEvent<HTMLDivElement>) => {
                               e.dataTransfer.setData('text/plain', goal.id)
                               e.dataTransfer.setData('type', 'goal')
                               e.dataTransfer.effectAllowed = 'move'
@@ -3557,7 +3805,7 @@ export default function TimetableBuilderPage() {
                                 animate={{ opacity: 1, x: 0 }}
                                 className="p-2 rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 cursor-move hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-sm transition-all"
                                 draggable={!isLocked}
-                                onDragStart={(e) => {
+                                onDragStartCapture={(e: React.DragEvent<HTMLDivElement>) => {
                                   e.dataTransfer.setData('text/plain', milestone.id)
                                   e.dataTransfer.setData('goalId', goal.id)
                                   e.dataTransfer.setData('type', 'milestone')
@@ -3602,7 +3850,7 @@ export default function TimetableBuilderPage() {
                           transition={{ delay: index * 0.1 }}
                           className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-move hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-sm transition-all"
                           draggable={!isLocked}
-                          onDragStart={(e) => {
+                          onDragStartCapture={(e: React.DragEvent<HTMLDivElement>) => {
                             e.dataTransfer.setData('text/plain', task.id)
                             e.dataTransfer.setData('duration', task.duration.toString())
                             e.dataTransfer.effectAllowed = 'move'
@@ -3715,7 +3963,10 @@ export default function TimetableBuilderPage() {
             
             <div className="space-y-3">
               {days.map(day => {
-                const schedule = sleepSchedules.find(s => s.day === day) || {
+                // Explicitly typed as SleepSchedule: otherwise TS infers a
+                // union between the found schedule and this literal (which has
+                // no `notes`), making `schedule.notes` a type error below.
+                const schedule: SleepSchedule = sleepSchedules.find(s => s.day === day) || {
                   id: `temp-${day}`,
                   day,
                   bedtime: '23:00',
@@ -3723,7 +3974,7 @@ export default function TimetableBuilderPage() {
                   duration: 480,
                   isActive: true,
                   color: '#4B5563',
-                  type: 'REGULAR' as const
+                  type: 'REGULAR'
                 }
                 
                 return (
@@ -3841,7 +4092,7 @@ export default function TimetableBuilderPage() {
         <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800">
           <DialogHeader>
             <DialogTitle className="dark:text-gray-100">
-              Add Task to {taskCreationContext?.day.charAt(0) + taskCreationContext?.day.slice(1).toLowerCase()} at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
+              Add Task to {formatDayLabel(taskCreationContext?.day)} at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
             </DialogTitle>
             <DialogDescription className="dark:text-gray-400">
               Choose how you want to add this task
@@ -3852,7 +4103,7 @@ export default function TimetableBuilderPage() {
             <div className="space-y-4 py-4">
               <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg mb-4">
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Time Slot:</span> {taskCreationContext?.day.charAt(0) + taskCreationContext?.day.slice(1).toLowerCase()} at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
+                  <span className="font-medium">Time Slot:</span> {formatDayLabel(taskCreationContext?.day)} at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                   Task will be scheduled starting at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
@@ -3959,7 +4210,7 @@ export default function TimetableBuilderPage() {
             <div className="space-y-4 py-4">
               <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg mb-4">
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Time Slot:</span> {taskCreationContext?.day.charAt(0) + taskCreationContext?.day.slice(1).toLowerCase()} at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
+                  <span className="font-medium">Time Slot:</span> {formatDayLabel(taskCreationContext?.day)} at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                   Link this task to a goal or milestone to track progress
@@ -4968,6 +5219,99 @@ export default function TimetableBuilderPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Quick Add Free Period Modal - opens directly when clicking a Fixed Commitment cell,
+          pre-filled with the exact day + time slot that was clicked */}
+      <Dialog open={showQuickFreePeriodModal} onOpenChange={(open) => {
+        setShowQuickFreePeriodModal(open)
+        if (!open) setQuickFreePeriodContext(null)
+      }}>
+        <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800">
+          <DialogHeader>
+            <DialogTitle className="dark:text-gray-100 flex items-center gap-2">
+              <Coffee className="w-5 h-5 text-green-600 dark:text-green-400" />
+              Add Free Period
+            </DialogTitle>
+            <DialogDescription className="dark:text-gray-400">
+              {quickFreePeriodContext && (
+                <>This slot is inside "{quickFreePeriodContext.fixedTime.title}". Add a free period here so you can schedule a task.</>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          {quickFreePeriodContext && (
+            <div className="space-y-4 py-4">
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">Day:</span> {quickFreePeriodContext.day.charAt(0) + quickFreePeriodContext.day.slice(1).toLowerCase()}
+                </p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-medium">Clicked Time:</span> {formatTimeDisplay(quickFreePeriodContext.time)}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  Fixed Commitment: {quickFreePeriodContext.fixedTime.title} ({formatTimeDisplay(quickFreePeriodContext.fixedTime.startTime)} - {formatTimeDisplay(quickFreePeriodContext.fixedTime.endTime)})
+                </p>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Free Period Title *</label>
+                <Input
+                  placeholder="e.g., Lunch Break, Study Gap"
+                  value={newFreePeriod.title}
+                  onChange={(e) => setNewFreePeriod({...newFreePeriod, title: e.target.value})}
+                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block dark:text-gray-300">Start Time *</label>
+                  <Input
+                    type="time"
+                    value={newFreePeriod.startTime}
+                    onChange={(e) => setNewFreePeriod({...newFreePeriod, startTime: e.target.value})}
+                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block dark:text-gray-300">End Time *</label>
+                  <Input
+                    type="time"
+                    value={newFreePeriod.endTime}
+                    onChange={(e) => setNewFreePeriod({...newFreePeriod, endTime: e.target.value})}
+                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
+                </div>
+              </div>
+
+              <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800/30 text-sm text-green-700 dark:text-green-400">
+                After adding, you'll be able to immediately add a task into this free period — for {quickFreePeriodContext.day.charAt(0) + quickFreePeriodContext.day.slice(1).toLowerCase()}.
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Fall back to the full details view if the user wants more control
+                if (quickFreePeriodContext) {
+                  setSelectedFixedTime(quickFreePeriodContext.fixedTime)
+                }
+                setShowQuickFreePeriodModal(false)
+                setQuickFreePeriodContext(null)
+              }}
+              className="dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              View Full Commitment
+            </Button>
+            <Button onClick={handleQuickAddFreePeriod}>
+              <Coffee className="w-4 h-4 mr-2" />
+              Add Free Period & Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Time Settings Modal */}
       <Dialog open={showTimeSettingsModal} onOpenChange={setShowTimeSettingsModal}>
         <DialogContent className="sm:max-w-lg bg-white dark:bg-gray-800 max-h-[90vh] overflow-hidden flex flex-col">
@@ -5314,9 +5658,23 @@ export default function TimetableBuilderPage() {
             </Button>
             <Button onClick={() => {
               if (editingTask) {
-                const updatedTask = {
+                // Copy fields explicitly instead of spreading `newTask`:
+                // newTask.type is the UPPERCASE API form ('STUDY') while
+                // TimeSlot.type is lowercase ('study'), so spreading it made
+                // the result not assignable to TimeSlot. The task's own type
+                // and category are preserved here.
+                const updatedTask: TimeSlot = {
                   ...editingTask,
-                  ...newTask,
+                  title: newTask.title,
+                  subject: newTask.subject,
+                  note: newTask.note,
+                  duration: newTask.duration,
+                  priority: newTask.priority,
+                  color: newTask.color,
+                  day: newTask.day,
+                  startTime: newTask.startTime,
+                  goalId: newTask.goalId || undefined,
+                  milestoneId: newTask.milestoneId || undefined,
                   endTime: calculateEndTime(newTask.startTime, newTask.duration)
                 }
                 setTasks(tasks.map(t => t.id === editingTask.id ? updatedTask : t))
@@ -5510,4 +5868,3 @@ export default function TimetableBuilderPage() {
     </div>
   )
 }
-

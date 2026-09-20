@@ -17,6 +17,7 @@ import { GoalFilterDTO, UpdateGoalDTO } from "./goal.types"
 export class GoalController {
   static async createGoal(req: AuthRequest, res: Response) {
     try {
+      console.log("req.body", req.body,"INPUT BODY-------");
       const payload = createGoalSchema.parse(req.body)
       const userId = req.user!.id
 
@@ -25,6 +26,10 @@ export class GoalController {
         metadata: { userId }
       })
 
+      logger.info("Payload after validation", {
+        functionName: "GoalController.createGoal",
+        metadata: { userId, payload }
+      });
       const goal = await GoalService.createGoal(userId, payload)
 
       logger.info("Goal created successfully", {

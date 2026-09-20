@@ -132,19 +132,18 @@ export class SleepScheduleController {
 
       logger.info("Sleep schedules bulk created successfully", {
         functionName: "SleepScheduleController.bulkCreateSleepSchedules",
-        metadata: { userId, count: schedules.length }
+        metadata: { userId, count: schedules.count }
       })
 
       res.status(201).json({
         success: true,
-        message: `${schedules.length} sleep schedules created successfully`,
+        message: `${schedules.count} sleep schedules created successfully`,
         data: schedules,
       })
     } catch (err: any) {
       logger.error(`Bulk create sleep schedules failed: ${err.message}`, {
         functionName: "SleepScheduleController.bulkCreateSleepSchedules",
-        error: err.message,
-        stack: err.stack,
+        metadata: { error: err.message, stack: err.stack }
       })
 
       if (err instanceof AppError) {
@@ -289,8 +288,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Get sleep schedule failed: ${err.message}`, {
         functionName: "SleepScheduleController.getSleepSchedule",
-        error: err.message,
-        stack: err.stack,
+        metadata: { error: err.message, stack: err.stack }
       })
 
       if (err instanceof AppError) {
@@ -331,8 +329,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Get sleep schedule by day failed: ${err.message}`, {
         functionName: "SleepScheduleController.getSleepScheduleByDay",
-        error: err.message,
-        stack: err.stack,
+        metadata: { error: err.message, stack: err.stack }
       })
 
       if (err instanceof AppError) {
@@ -397,6 +394,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   static async updateSleepSchedule(req: AuthRequest, res: Response) {
     try {
       const { scheduleId } = req.params
+      // const scheduleId = this.getParam(req.params.scheduleId, "scheduleId")
       const payload = updateSleepScheduleSchema.parse(req.body)
       const userId = req.user!.id
 
@@ -405,7 +403,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
         metadata: { userId, scheduleId }
       })
 
-      const schedule = await SleepScheduleService.updateSleepSchedule(userId, scheduleId, payload)
+      const schedule = await SleepScheduleService.updateSleepSchedule(userId, scheduleId as string, payload)
 
       logger.info("Sleep schedule updated successfully", {
         functionName: "SleepScheduleController.updateSleepSchedule",
@@ -420,8 +418,10 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Update sleep schedule failed: ${err.message}`, {
         functionName: "SleepScheduleController.updateSleepSchedule",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -449,7 +449,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
         metadata: { userId, day }
       })
 
-      const schedule = await SleepScheduleService.updateSleepScheduleByDay(userId, day, payload)
+      const schedule = await SleepScheduleService.updateSleepScheduleByDay(userId, day as string, payload)
 
       logger.info("Sleep schedule by day updated successfully", {
         functionName: "SleepScheduleController.updateSleepScheduleByDay",
@@ -464,8 +464,10 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Update sleep schedule by day failed: ${err.message}`, {
         functionName: "SleepScheduleController.updateSleepScheduleByDay",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -492,7 +494,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
         metadata: { userId, scheduleId }
       })
 
-      await SleepScheduleService.deleteSleepSchedule(userId, scheduleId)
+      await SleepScheduleService.deleteSleepSchedule(userId, scheduleId as string)
 
       logger.info("Sleep schedule deleted successfully", {
         functionName: "SleepScheduleController.deleteSleepSchedule",
@@ -506,8 +508,10 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Delete sleep schedule failed: ${err.message}`, {
         functionName: "SleepScheduleController.deleteSleepSchedule",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -534,7 +538,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
         metadata: { userId, day }
       })
 
-      await SleepScheduleService.deleteSleepScheduleByDay(userId, day)
+      await SleepScheduleService.deleteSleepScheduleByDay(userId, day as string)
 
       logger.info("Sleep schedule by day deleted successfully", {
         functionName: "SleepScheduleController.deleteSleepScheduleByDay",
@@ -548,8 +552,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Delete sleep schedule by day failed: ${err.message}`, {
         functionName: "SleepScheduleController.deleteSleepScheduleByDay",
-        error: err.message,
-        stack: err.stack,
+        metadata: { error: err.message, stack: err.stack }
       })
 
       if (err instanceof AppError) {
@@ -581,7 +584,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
         metadata: { userId, scheduleId, isActive }
       })
 
-      const schedule = await SleepScheduleService.toggleSleepSchedule(userId, scheduleId, isActive)
+      const schedule = await SleepScheduleService.toggleSleepSchedule(userId, scheduleId as string, isActive)
 
       logger.info("Sleep schedule toggled successfully", {
         functionName: "SleepScheduleController.toggleSleepSchedule",
@@ -596,8 +599,10 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Toggle sleep schedule failed: ${err.message}`, {
         functionName: "SleepScheduleController.toggleSleepSchedule",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -628,7 +633,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
 
       logger.info("Applied schedule to all days successfully", {
         functionName: "SleepScheduleController.applyToAllDays",
-        metadata: { userId, count: schedules.length }
+        metadata: { userId, count: schedules.count }
       })
 
       res.status(200).json({
@@ -639,8 +644,10 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Apply to all days failed: ${err.message}`, {
         functionName: "SleepScheduleController.applyToAllDays",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -681,8 +688,10 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Get sleep statistics failed: ${err.message}`, {
         functionName: "SleepScheduleController.getSleepStatistics",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {
@@ -722,8 +731,10 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
     } catch (err: any) {
       logger.error(`Regenerate sleep tasks failed: ${err.message}`, {
         functionName: "SleepScheduleController.regenerateSleepTasks",
-        error: err.message,
-        stack: err.stack,
+        metadata:{
+          error: err.message,
+          stack: err.stack,
+        }
       })
 
       if (err instanceof AppError) {

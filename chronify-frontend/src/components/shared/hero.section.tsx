@@ -1,657 +1,4 @@
-// 'use client'
-
-// import { Button } from '@/components/ui/button'
-// import { ArrowRight, CheckCircle, Sparkles } from 'lucide-react'
-// import { motion } from 'framer-motion'
-// import Link from 'next/link'
-
-// export function HeroSection() {
-//   return (
-//     <section className="relative overflow-hidden pt-24 pb-20 px-4 sm:px-6 lg:px-8">
-//       {/* Background effects */}
-//       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-//       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse-glow" />
-//       <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse-glow" />
-      
-//       <div className="relative max-w-7xl mx-auto">
-//         <motion.div
-//           initial={{ opacity: 0, y: 20 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 0.6 }}
-//           className="text-center max-w-4xl mx-auto"
-//         >
-//           {/* Badge */}
-//           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 animate-slide-up">
-//             <Sparkles className="w-4 h-4 text-accent" />
-//             <span className="text-sm font-medium gradient-text">AI-Powered Student Productivity</span>
-//           </div>
-          
-//           {/* Main heading */}
-//           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-//             Master Your Time,
-//             <span className="block gradient-text">Master Your Future</span>
-//           </h1>
-          
-//           {/* Subheading */}
-//           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-//             Chronify AI creates personalized timetables that balance DSA, college studies, projects, 
-//             and life—helping you achieve placement goals with smart time management.
-//           </p>
-          
-//           {/* CTA Buttons */}
-//           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-//             <Link href="/dashboard">
-//               <Button size="lg" className="rounded-xl px-8 py-6 text-lg gap-2">
-//                 Create Your Timetable
-//                 <ArrowRight className="w-5 h-5" />
-//               </Button>
-//             </Link>
-//             <Link href="/features">
-//               <Button size="lg" variant="outline" className="rounded-xl px-8 py-6 text-lg">
-//                 See How It Works
-//               </Button>
-//             </Link>
-//           </div>
-          
-//           {/* Features list */}
-//           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-//             {[
-//               'Smart DSA Schedule with 180+ questions',
-//               'College Studies + Project Management',
-//               'AI/ML Learning Path Included'
-//             ].map((feature, index) => (
-//               <motion.div
-//                 key={feature}
-//                 initial={{ opacity: 0, y: 10 }}
-//                 animate={{ opacity: 1, y: 0 }}
-//                 transition={{ duration: 0.5, delay: index * 0.1 }}
-//                 className="flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-all"
-//               >
-//                 <CheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
-//                 <span className="text-sm font-medium">{feature}</span>
-//               </motion.div>
-//             ))}
-//           </div>
-//         </motion.div>
-        
-//         {/* Hero image/illustration */}
-//         <motion.div
-//           initial={{ opacity: 0, scale: 0.9 }}
-//           animate={{ opacity: 1, scale: 1 }}
-//           transition={{ duration: 0.8, delay: 0.2 }}
-//           className="mt-16 relative"
-//         >
-//           <div className="relative rounded-2xl overflow-hidden border border-border shadow-2xl">
-//             <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-8">
-//               {/* Mock timetable */}
-//               <div className="bg-card rounded-xl p-6 shadow-lg">
-//                 <div className="flex items-center justify-between mb-6">
-//                   <div>
-//                     <h3 className="font-bold text-lg">Your Smart Timetable</h3>
-//                     <p className="text-sm text-muted-foreground">Week of Oct 27 - Nov 2</p>
-//                   </div>
-//                   <div className="flex gap-2">
-//                     <div className="w-3 h-3 rounded-full bg-green-500" />
-//                     <div className="w-3 h-3 rounded-full bg-yellow-500" />
-//                     <div className="w-3 h-3 rounded-full bg-red-500" />
-//                   </div>
-//                 </div>
-                
-//                 <div className="grid grid-cols-7 gap-2 mb-4">
-//                   {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-//                     <div key={day} className="text-center">
-//                       <div className="text-xs font-medium text-muted-foreground">{day}</div>
-//                       <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mx-auto mt-1">
-//                         <span className="text-sm">{27 + ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(day)}</span>
-//                       </div>
-//                     </div>
-//                   ))}
-//                 </div>
-                
-//                 <div className="space-y-2">
-//                   {[
-//                     { time: '6:30-7:00', task: 'Wake Up + Plan', color: 'bg-blue-100 dark:bg-blue-900/30' },
-//                     { time: '7:10-9:10', task: 'Bus: DSA Audio', color: 'bg-purple-100 dark:bg-purple-900/30' },
-//                     { time: '9:30-4:45', task: 'College + DSA', color: 'bg-green-100 dark:bg-green-900/30' },
-//                     { time: '9:00-10:30', task: 'DSA Problems', color: 'bg-red-100 dark:bg-red-900/30' },
-//                   ].map((item, index) => (
-//                     <div key={index} className="flex items-center gap-3 p-2 rounded-lg bg-secondary/30">
-//                       <div className={`w-3 h-3 rounded-full ${item.color}`} />
-//                       <span className="text-sm font-medium">{item.time}</span>
-//                       <span className="text-sm text-muted-foreground flex-1">{item.task}</span>
-//                       <div className="w-4 h-4 rounded border border-border" />
-//                     </div>
-//                   ))}
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-          
-//           {/* Floating elements */}
-//           <div className="absolute -top-4 -left-4 w-24 h-24 bg-accent/20 rounded-full blur-xl animate-float" />
-//           <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-primary/20 rounded-full blur-xl animate-float" style={{ animationDelay: '1s' }} />
-//         </motion.div>
-//       </div>
-//     </section>
-//   )
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 'use client'
-
-// import { useState } from 'react'
-// import { Button } from '@/components/ui/button'
-// import { ArrowRight, CheckCircle, Sparkles, ChevronLeft, ChevronRight, Zap, Target, Brain, Calendar, Clock, TrendingUp, BookOpen } from 'lucide-react'
-// import { motion, AnimatePresence } from 'framer-motion'
-// import Link from 'next/link'
-
-// const timetableDesigns = [
-//   {
-//     id: 'academic',
-//     title: 'Academic Focus',
-//     icon: BookOpen,
-//     color: 'from-blue-500/20 to-cyan-500/20',
-//     borderColor: 'border-blue-200 dark:border-blue-700',
-//     schedule: [
-//       { time: '7:00-8:30', task: 'Morning Revision', type: 'Study', progress: 85 },
-//       { time: '9:00-12:00', task: 'Core Subjects', type: 'Lecture', progress: 70 },
-//       { time: '1:00-3:00', task: 'Lab Work', type: 'Practical', progress: 60 },
-//       { time: '4:00-6:00', task: 'Self Study', type: 'Study', progress: 90 },
-//       { time: '7:00-9:00', task: 'Project Work', type: 'Project', progress: 40 }
-//     ]
-//   },
-//   {
-//     id: 'dsa',
-//     title: 'DSA Intensive',
-//     icon: Brain,
-//     color: 'from-purple-500/20 to-pink-500/20',
-//     borderColor: 'border-purple-200 dark:border-purple-700',
-//     schedule: [
-//       { time: '6:30-8:30', task: 'Warm-up Problems', type: 'DSA', progress: 100 },
-//       { time: '10:00-12:00', task: 'Algorithm Study', type: 'DSA', progress: 80 },
-//       { time: '2:00-4:00', task: 'Problem Solving', type: 'DSA', progress: 65 },
-//       { time: '5:00-7:00', task: 'Mock Interview', type: 'Practice', progress: 50 },
-//       { time: '8:00-9:30', task: 'Revision & Notes', type: 'Review', progress: 95 }
-//     ]
-//   },
-//   {
-//     id: 'balanced',
-//     title: 'Balanced Schedule',
-//     icon: Target,
-//     color: 'from-green-500/20 to-emerald-500/20',
-//     borderColor: 'border-green-200 dark:border-green-700',
-//     schedule: [
-//       { time: '6:00-7:00', task: 'Exercise & Breakfast', type: 'Health', progress: 100 },
-//       { time: '8:00-12:00', task: 'College Classes', type: 'Academic', progress: 75 },
-//       { time: '2:00-4:00', task: 'DSA Practice', type: 'Coding', progress: 60 },
-//       { time: '5:00-7:00', task: 'Personal Project', type: 'Project', progress: 45 },
-//       { time: '8:00-9:00', task: 'Skill Development', type: 'Learning', progress: 85 }
-//     ]
-//   },
-//   {
-//     id: 'placement',
-//     title: 'Placement Prep',
-//     icon: Zap,
-//     color: 'from-orange-500/20 to-red-500/20',
-//     borderColor: 'border-orange-200 dark:border-orange-700',
-//     schedule: [
-//       { time: '7:00-9:00', task: 'Aptitude Practice', type: 'Test', progress: 70 },
-//       { time: '10:00-1:00', task: 'Technical Subjects', type: 'Study', progress: 65 },
-//       { time: '3:00-5:00', task: 'Communication Skills', type: 'Soft Skills', progress: 55 },
-//       { time: '6:00-8:00', task: 'Company Research', type: 'Research', progress: 40 },
-//       { time: '9:00-10:00', task: 'Daily Assessment', type: 'Review', progress: 90 }
-//     ]
-//   }
-// ]
-
-// export function HeroSection() {
-//   const [currentDesign, setCurrentDesign] = useState(0)
-//   const [isAnimating, setIsAnimating] = useState(false)
-
-//   const nextDesign = () => {
-//     if (isAnimating) return
-//     setIsAnimating(true)
-//     setCurrentDesign((prev) => (prev + 1) % timetableDesigns.length)
-//     setTimeout(() => setIsAnimating(false), 500)
-//   }
-
-//   const prevDesign = () => {
-//     if (isAnimating) return
-//     setIsAnimating(true)
-//     setCurrentDesign((prev) => (prev - 1 + timetableDesigns.length) % timetableDesigns.length)
-//     setTimeout(() => setIsAnimating(false), 500)
-//   }
-
-//   const currentTimetable = timetableDesigns[currentDesign]
-
-//   return (
-//     <section className="relative overflow-hidden pt-24 pb-20 px-4 sm:px-6 lg:px-8">
-//       {/* Enhanced background effects */}
-//       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-//       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse-glow" />
-//       <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse-glow" />
-      
-//       {/* Animated grid background */}
-//       <div className="absolute inset-0 opacity-5">
-//         <div className="absolute inset-0" style={{
-//           backgroundImage: `linear-gradient(to right, #8882 1px, transparent 1px),
-//                           linear-gradient(to bottom, #8882 1px, transparent 1px)`,
-//           backgroundSize: '40px 40px'
-//         }} />
-//       </div>
-
-//       <div className="relative max-w-7xl mx-auto">
-//         <motion.div
-//           initial={{ opacity: 0, y: 20 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 0.6 }}
-//           className="text-center max-w-4xl mx-auto"
-//         >
-//           {/* Enhanced Badge */}
-//           <motion.div
-//             initial={{ opacity: 0, scale: 0.9 }}
-//             animate={{ opacity: 1, scale: 1 }}
-//             transition={{ duration: 0.5 }}
-//             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 mb-6 animate-slide-up"
-//           >
-//             <Sparkles className="w-4 h-4 text-accent" />
-//             <span className="text-sm font-medium bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-//               AI-Powered Student Productivity
-//             </span>
-//           </motion.div>
-          
-//           {/* Main heading with enhanced animation */}
-//           <motion.h1
-//             initial={{ opacity: 0, y: 20 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             transition={{ duration: 0.7, delay: 0.1 }}
-//             className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
-//           >
-//             <span className="block">Master Your Time,</span>
-//             <span className="block bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-//               Master Your Future
-//             </span>
-//           </motion.h1>
-          
-//           {/* Subheading */}
-//           <motion.p
-//             initial={{ opacity: 0, y: 20 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             transition={{ duration: 0.7, delay: 0.2 }}
-//             className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto"
-//           >
-//             Chronify AI creates personalized timetables that balance DSA, college studies, projects, 
-//             and life—helping you achieve placement goals with smart time management.
-//           </motion.p>
-          
-//           {/* CTA Buttons */}
-//           <motion.div
-//             initial={{ opacity: 0, y: 20 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             transition={{ duration: 0.7, delay: 0.3 }}
-//             className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
-//           >
-//             <Link href="/dashboard">
-//               <Button size="lg" className="rounded-xl px-8 py-6 text-lg gap-2 group">
-//                 <span>Create Your Timetable</span>
-//                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-//               </Button>
-//             </Link>
-//             <Link href="/features">
-//               <Button size="lg" variant="outline" className="rounded-xl px-8 py-6 text-lg">
-//                 See How It Works
-//               </Button>
-//             </Link>
-//           </motion.div>
-          
-//           {/* Features list with enhanced animations */}
-//           <motion.div
-//             initial={{ opacity: 0, y: 20 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             transition={{ duration: 0.7, delay: 0.4 }}
-//             className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-12"
-//           >
-//             {[
-//               { text: 'Smart DSA Schedule with 180+ questions', icon: TrendingUp },
-//               { text: 'College Studies + Project Management', icon: Calendar },
-//               { text: 'Personalized AI Learning Path', icon: Brain }
-//             ].map((feature, index) => (
-//               <motion.div
-//                 key={feature.text}
-//                 initial={{ opacity: 0, y: 10 }}
-//                 animate={{ opacity: 1, y: 0 }}
-//                 transition={{ duration: 0.5, delay: index * 0.1 }}
-//                 whileHover={{ scale: 1.05, y: -5 }}
-//                 className="flex items-center gap-3 p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border hover:border-primary/50 transition-all hover:shadow-lg"
-//               >
-//                 <div className="p-2 rounded-lg bg-primary/10">
-//                   <feature.icon className="w-5 h-5 text-accent" />
-//                 </div>
-//                 <span className="text-sm font-medium">{feature.text}</span>
-//               </motion.div>
-//             ))}
-//           </motion.div>
-//         </motion.div>
-        
-//         {/* Interactive Timetable Showcase */}
-//         <motion.div
-//           initial={{ opacity: 0, y: 40 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 0.8, delay: 0.5 }}
-//           className="mt-16 relative"
-//         >
-//           {/* Design selector */}
-//           <div className="flex flex-col items-center mb-8">
-//             <h3 className="text-2xl font-bold mb-4 text-center">
-//               Explore Different Timetable Styles
-//             </h3>
-            
-//             <div className="flex items-center gap-4 mb-6">
-//               <Button
-//                 variant="outline"
-//                 size="icon"
-//                 onClick={prevDesign}
-//                 disabled={isAnimating}
-//                 className="rounded-full"
-//               >
-//                 <ChevronLeft className="h-4 w-4" />
-//               </Button>
-              
-//               <div className="flex gap-2">
-//                 {timetableDesigns.map((design, index) => (
-//                   <button
-//                     key={design.id}
-//                     onClick={() => {
-//                       if (!isAnimating) {
-//                         setIsAnimating(true)
-//                         setCurrentDesign(index)
-//                         setTimeout(() => setIsAnimating(false), 500)
-//                       }
-//                     }}
-//                     className={`relative px-4 py-2 rounded-full transition-all ${index === currentDesign 
-//                       ? 'bg-primary text-primary-foreground shadow-lg' 
-//                       : 'bg-secondary hover:bg-secondary/80'}`}
-//                   >
-//                     <span className="flex items-center gap-2 text-sm font-medium">
-//                       <design.icon className="w-4 h-4" />
-//                       {design.title}
-//                     </span>
-//                   </button>
-//                 ))}
-//               </div>
-              
-//               <Button
-//                 variant="outline"
-//                 size="icon"
-//                 onClick={nextDesign}
-//                 disabled={isAnimating}
-//                 className="rounded-full"
-//               >
-//                 <ChevronRight className="h-4 w-4" />
-//               </Button>
-//             </div>
-//           </div>
-          
-//           {/* Timetable Display */}
-//           <AnimatePresence mode="wait">
-//             <motion.div
-//               key={currentDesign}
-//               initial={{ opacity: 0, x: 20 }}
-//               animate={{ opacity: 1, x: 0 }}
-//               exit={{ opacity: 0, x: -20 }}
-//               transition={{ duration: 0.3 }}
-//               className="relative"
-//             >
-//               <div className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}>
-//                 <div className={`bg-gradient-to-r ${currentTimetable.color} p-8`}>
-//                   {/* Timetable header */}
-//                   <div className="bg-card/80 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-//                     <div className="flex items-center justify-between mb-8">
-//                       <div className="flex items-center gap-3">
-//                         <div className="p-3 rounded-lg bg-primary/10">
-//                           <currentTimetable.icon className="w-6 h-6 text-primary" />
-//                         </div>
-//                         <div>
-//                           <h3 className="font-bold text-xl">{currentTimetable.title}</h3>
-//                           <p className="text-sm text-muted-foreground">
-//                             Week of {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - 
-//                             {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-//                           </p>
-//                         </div>
-//                       </div>
-//                       <div className="flex items-center gap-2">
-//                         <div className="text-right">
-//                           <div className="text-sm font-medium">Productivity</div>
-//                           <div className="text-2xl font-bold text-primary">92%</div>
-//                         </div>
-//                         <div className="relative w-12 h-12">
-//                           <svg className="w-12 h-12 transform -rotate-90">
-//                             <circle
-//                               cx="24"
-//                               cy="24"
-//                               r="20"
-//                               fill="none"
-//                               stroke="currentColor"
-//                               strokeWidth="4"
-//                               className="text-secondary"
-//                             />
-//                             <circle
-//                               cx="24"
-//                               cy="24"
-//                               r="20"
-//                               fill="none"
-//                               stroke="currentColor"
-//                               strokeWidth="4"
-//                               strokeDasharray="125.6"
-//                               strokeDashoffset="10"
-//                               className="text-accent"
-//                             />
-//                           </svg>
-//                         </div>
-//                       </div>
-//                     </div>
-                    
-//                     {/* Schedule days */}
-//                     <div className="grid grid-cols-7 gap-2 mb-6">
-//                       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
-//                         <motion.div
-//                           key={day}
-//                           initial={{ opacity: 0, y: 10 }}
-//                           animate={{ opacity: 1, y: 0 }}
-//                           transition={{ delay: index * 0.05 }}
-//                           whileHover={{ scale: 1.1 }}
-//                           className="text-center cursor-pointer"
-//                         >
-//                           <div className="text-xs font-medium text-muted-foreground mb-1">{day}</div>
-//                           <div className={`w-10 h-10 rounded-full flex items-center justify-center mx-auto transition-all ${
-//                             index === 2 
-//                               ? 'bg-primary text-primary-foreground shadow-lg' 
-//                               : 'bg-secondary hover:bg-secondary/80'
-//                           }`}>
-//                             <span className="text-sm font-medium">
-//                               {new Date(Date.now() + index * 24 * 60 * 60 * 1000).getDate()}
-//                             </span>
-//                           </div>
-//                         </motion.div>
-//                       ))}
-//                     </div>
-                    
-//                     {/* Schedule items */}
-//                     <div className="space-y-3">
-//                       {currentTimetable.schedule.map((item, index) => (
-//                         <motion.div
-//                           key={index}
-//                           initial={{ opacity: 0, x: -20 }}
-//                           animate={{ opacity: 1, x: 0 }}
-//                           transition={{ delay: index * 0.1 }}
-//                           whileHover={{ x: 5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-//                           className="flex items-center gap-4 p-4 rounded-xl bg-secondary/50 backdrop-blur-sm hover:bg-secondary/70 transition-all group"
-//                         >
-//                           <div className="flex items-center gap-3 min-w-32">
-//                             <Clock className="w-4 h-4 text-muted-foreground" />
-//                             <span className="font-medium">{item.time}</span>
-//                           </div>
-//                           <div className="flex-1">
-//                             <div className="font-medium mb-1">{item.task}</div>
-//                             <div className="text-xs text-muted-foreground">{item.type}</div>
-//                           </div>
-//                           <div className="flex items-center gap-3">
-//                             <div className="w-32 h-2 bg-secondary rounded-full overflow-hidden">
-//                               <motion.div
-//                                 initial={{ width: 0 }}
-//                                 animate={{ width: `${item.progress}%` }}
-//                                 transition={{ delay: index * 0.1 + 0.3, duration: 0.5 }}
-//                                 className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-//                               />
-//                             </div>
-//                             <span className="text-sm font-medium min-w-10">{item.progress}%</span>
-//                           </div>
-//                           <Button size="sm" variant="ghost" className="opacity-0 group-hover:opacity-100 transition-opacity">
-//                             Start
-//                           </Button>
-//                         </motion.div>
-//                       ))}
-//                     </div>
-                    
-//                     {/* Stats footer */}
-//                     <div className="mt-6 pt-6 border-t border-border">
-//                       <div className="grid grid-cols-3 gap-4">
-//                         <div className="text-center">
-//                           <div className="text-2xl font-bold text-primary">6.5h</div>
-//                           <div className="text-xs text-muted-foreground">Study Time</div>
-//                         </div>
-//                         <div className="text-center">
-//                           <div className="text-2xl font-bold text-accent">12</div>
-//                           <div className="text-xs text-muted-foreground">Tasks Completed</div>
-//                         </div>
-//                         <div className="text-center">
-//                           <div className="text-2xl font-bold text-green-500">92%</div>
-//                           <div className="text-xs text-muted-foreground">Focus Score</div>
-//                         </div>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-              
-//               {/* Enhanced floating elements */}
-//               <motion.div
-//                 animate={{
-//                   y: [0, -20, 0],
-//                   rotate: [0, 5, 0],
-//                 }}
-//                 transition={{
-//                   duration: 4,
-//                   repeat: Infinity,
-//                   ease: "easeInOut"
-//                 }}
-//                 className="absolute -top-6 -left-6 w-24 h-24 bg-accent/20 rounded-full blur-xl"
-//               />
-//               <motion.div
-//                 animate={{
-//                   y: [0, 20, 0],
-//                   rotate: [0, -5, 0],
-//                 }}
-//                 transition={{
-//                   duration: 5,
-//                   repeat: Infinity,
-//                   ease: "easeInOut",
-//                   delay: 1
-//                 }}
-//                 className="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/20 rounded-full blur-xl"
-//               />
-//             </motion.div>
-//           </AnimatePresence>
-          
-//           {/* Design indicator */}
-//           <div className="flex justify-center mt-8 gap-2">
-//             {timetableDesigns.map((_, index) => (
-//               <button
-//                 key={index}
-//                 onClick={() => {
-//                   if (!isAnimating) {
-//                     setIsAnimating(true)
-//                     setCurrentDesign(index)
-//                     setTimeout(() => setIsAnimating(false), 500)
-//                   }
-//                 }}
-//                 className={`w-2 h-2 rounded-full transition-all ${index === currentDesign ? 'w-8 bg-primary' : 'bg-secondary hover:bg-primary/50'}`}
-//               />
-//             ))}
-//           </div>
-//         </motion.div>
-//       </div>
-      
-//       {/* Add custom CSS for animations */}
-//       <style jsx global>{`
-//         @keyframes gradient {
-//           0% { background-position: 0% 50%; }
-//           50% { background-position: 100% 50%; }
-//           100% { background-position: 0% 50%; }
-//         }
-        
-//         .animate-gradient {
-//           animation: gradient 3s ease infinite;
-//           background-size: 200% auto;
-//         }
-        
-//         @keyframes pulse-glow {
-//           0%, 100% { opacity: 0.5; }
-//           50% { opacity: 0.8; }
-//         }
-        
-//         .animate-pulse-glow {
-//           animation: pulse-glow 4s ease-in-out infinite;
-//         }
-        
-//         @keyframes slide-up {
-//           from {
-//             opacity: 0;
-//             transform: translateY(10px);
-//           }
-//           to {
-//             opacity: 1;
-//             transform: translateY(0);
-//           }
-//         }
-        
-//         .animate-slide-up {
-//           animation: slide-up 0.5s ease-out;
-//         }
-//       `}</style>
-//     </section>
-//   )
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// src/components/shared/hero.section.tsx
 'use client'
 
 import { useState } from 'react'
@@ -660,7 +7,77 @@ import { ArrowRight, CheckCircle, Sparkles, ChevronLeft, ChevronRight, Zap, Targ
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 
-const timetableDesigns = [
+// ==================== FIXED: Discriminated union types for each design ====================
+
+interface CollegeStyleData {
+  days: string[]
+  periods: Array<{ time: string; period?: string; break?: string }>
+  schedule: string[][]
+}
+
+interface WeeklyScheduleData {
+  days: string[]
+  slots: Array<{ time: string; type: string; icon: any }>
+  activities: Array<Array<{ task: string; emoji: string }>>
+}
+
+interface TimeBreakdownData {
+  categories: Array<{ name: string; hours: string; percentage: number; color: string; icon: any }>
+  total: string
+  stats: Array<{ label: string; value: string; icon: any }>
+}
+
+interface KanbanData {
+  columns: Array<{
+    title: string
+    color: string
+    tasks: Array<{
+      task: string
+      time: string
+      priority?: string
+      type?: string
+      progress?: number
+      completed?: boolean
+    }>
+  }>
+}
+
+interface PriorityMatrixData {
+  quadrants: Array<{
+    title: string
+    color: string
+    tasks: Array<{ task: string; time: string; emoji: string }>
+  }>
+}
+
+interface TimeBlocksData {
+  blocks: Array<{
+    time: string
+    activity: string
+    type: string
+    color: string
+    duration: string
+  }>
+}
+
+interface CircularWheelData {
+  categories: Array<{ name: string; value: number; color: string; hours: number }>
+  total: string
+}
+
+// Discriminated union type for each design
+type TimetableDesign =
+  | { id: 'college-style'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: CollegeStyleData }
+  | { id: 'weekly-schedule'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: WeeklyScheduleData }
+  | { id: 'time-breakdown'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: TimeBreakdownData }
+  | { id: 'kanban'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: KanbanData }
+  | { id: 'priority-matrix'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: PriorityMatrixData }
+  | { id: 'time-blocks'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: TimeBlocksData }
+  | { id: 'circular-wheel'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: CircularWheelData }
+
+// ==================== END FIXED ====================
+
+const timetableDesigns: TimetableDesign[] = [
   {
     id: 'college-style',
     title: 'College TimeTable',
@@ -1831,7 +1248,7 @@ export function HeroSection() {
                               
                               acc.prev = newValue;
                               return acc;
-                            }, { prev: 0, paths: [] }).paths}
+                            }, { prev: 0, paths: [] as React.ReactElement[] }).paths}
                             
                             {/* Center circle */}
                             <circle cx="128" cy="128" r="50" fill="white" className="dark:bg-gray-900" />

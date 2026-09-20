@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 // app/dashboard/timetable/builder/page.tsx (Server Component)
 import TimetableBuilderClient from '@/components/features/timetable/builder/TimeTableBuilder'
 import type { Metadata } from 'next'
