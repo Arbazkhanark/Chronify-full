@@ -3,7 +3,7 @@ import routes from "./routes";
 import { logger,httpLogger } from 'patal-log'
 import cors from "cors"
 
-export const app = express();
+const app = express();
 
 
 
@@ -68,5 +68,5 @@ app.get("/v0/api/test", (req, res) => {
 
 
 
-
+export default app;
 
