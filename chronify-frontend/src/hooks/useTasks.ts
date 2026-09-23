@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
 import { AuthService } from './useAuth'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8181/v0/api'
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8181/v0/api'}`
 
 // ============= TYPES =============
 export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'

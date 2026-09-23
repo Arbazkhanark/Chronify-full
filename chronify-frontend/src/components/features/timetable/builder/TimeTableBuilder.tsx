@@ -434,7 +434,7 @@ const mapAPITypeToUIType = (apiType: string): TimeSlot['type'] => {
 
 // ==================== END FIXED ====================
 
-const API_BASE_URL = 'http://localhost:8181/v0/api'
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8181/v0/api'}`
 
 export default function TimetableBuilderPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'pdf'>('grid')

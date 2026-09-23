@@ -624,7 +624,7 @@ interface CachedData<T> {
   userId?: string
 }
 
-const API_BASE_URL = 'http://localhost:8181/v0/api'
+const API_BASE_URL =`${process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8181/v0/api'}`
 
 const DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
 const DAY_DISPLAY = {
