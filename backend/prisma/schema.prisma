@@ -237,6 +237,8 @@ enum SocialPlatform {
   LINKEDIN
   YOUTUBE
   TIKTOK
+  GITHUB
+  OTHER
 }
 
 model PrivacySettings {

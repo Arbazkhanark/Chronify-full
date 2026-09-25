@@ -16,6 +16,8 @@ router.post("/reset-password", UserController.resetPassword);                   
 router.post("/change-password", authMiddleware, UserController.changePassword);     //Tested
 router.put("/profile", authMiddleware, UserController.updateProfile);
 router.get("/me", authMiddleware, UserController.profile);                          //Tested
+router.post("/logout", authMiddleware, UserController.logout);
+router.get('full-profile',authMiddleware, UserController.getFullDetailedProfile)
 
 router.post("/save-fcm-token", authMiddleware, UserController.saveFcmToken);
 

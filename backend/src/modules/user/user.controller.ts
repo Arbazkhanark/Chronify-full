@@ -255,13 +255,19 @@ export class UserController {
 
       logger.info("Update profile API called", {
         functionName: "UserController.updateProfile",
-        metadata: { userId: req.user!.id },
+        metadata: {
+          userId: req.user!.id,
+        },
       });
 
-      const profile = await UserService.updateProfile(req.user!.id, data);
+      const profile = await UserService.updateProfile(
+        req.user!.id,
+        data
+      );
 
-      res.json({
+      return res.status(200).json({
         success: true,
+        message: "Profile updated successfully",
         data: profile,
       });
     } catch (err: any) {
@@ -271,9 +277,10 @@ export class UserController {
       });
 
       if (err instanceof AppError) {
-        return res
-          .status(err.statusCode)
-          .json({ success: false, message: err.message });
+        return res.status(err.statusCode).json({
+          success: false,
+          message: err.message,
+        });
       }
 
       return res.status(500).json({
@@ -316,6 +323,94 @@ export class UserController {
   }
 
 
+
+
+  static async logout(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized",
+        });
+      }
+
+      logger.info("Logout API called", {
+        functionName: "UserController.logout",
+        metadata: { userId },
+      });
+
+      await UserService.logout(userId);
+
+      return res.status(200).json({
+        success: true,
+        message: "Logout successful",
+      });
+    } catch (err: any) {
+      logger.error(`Logout failed: ${err.message}`, {
+        functionName: "UserController.logout",
+        error: err.message,
+      });
+
+      if (err instanceof AppError) {
+        return res.status(err.statusCode).json({
+          success: false,
+          message: err.message,
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  }
+
+
+
+
+  static async getFullDetailedProfile(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized",
+        });
+      }
+
+      logger.info("Get full detailed profile API called", {
+        functionName: "UserController.getFullDetailedProfile",
+        metadata: { userId },
+      });
+
+      const profile = await UserService.getFullDetailedProfile(userId);
+
+      return res.status(200).json({
+        success: true,
+        data: profile,
+      });
+    } catch (err: any) {
+      logger.error(`Get full detailed profile failed: ${err.message}`, {
+        functionName: "UserController.getFullDetailedProfile",
+        error: err.message,
+      });
+
+      if (err instanceof AppError) {
+        return res.status(err.statusCode).json({
+          success: false,
+          message: err.message,
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  }
 
 
   static async saveFcmToken(req: AuthRequest, res: Response) {

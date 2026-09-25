@@ -37103,3 +37103,2433 @@ Metadata: {"signal":"SIGINT"}
 Trace Id: 44b718ac-52f3-457a-b38a-72826b50a616
 Function Name: gracefulShutdown
 Metadata: {"signal":"SIGINT"}
+2026-09-23T04:49:18.386Z: info: Database connection attempt 1
+Trace Id: 5a32675b-84c6-4881-8492-67b0a5cfb533
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T04:49:23.816Z: info: Database connected successfully
+Trace Id: 0c4f8d8e-a7a9-4887-9e6d-b9c998ebf417
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-23T04:49:23.816Z: warn: Slow database query detected
+Trace Id: e1a790a7-2b44-44a0-8939-72f57f18c7fd
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1148ms","timestamp":"2026-09-23T04:49:22.668Z","threshold":"500ms"}
+2026-09-23T04:51:21.569Z: info: Database connection attempt 1
+Trace Id: 3464579d-60e0-4248-982f-0e45078049cb
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T04:51:25.662Z: warn: Slow database query detected
+Trace Id: 06b5289f-7f0c-433a-9011-b1b9c7abb72a
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"692ms","timestamp":"2026-09-23T04:51:24.970Z","threshold":"500ms"}
+2026-09-23T04:51:25.662Z: info: Database connected successfully
+Trace Id: 6a728981-f36f-402b-98b1-99b7d03d8c05
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-23T04:51:39.132Z: info: Database connection attempt 1
+Trace Id: 92a25a4e-f3c1-4d76-a107-b28f1106e5eb
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T04:51:43.205Z: info: Database connected successfully
+Trace Id: cc95b2b6-ead4-49bb-ad52-676386097dc0
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-23T04:51:43.205Z: warn: Slow database query detected
+Trace Id: 4119e608-66a3-4606-bde3-370f40eaa0bd
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1079ms","timestamp":"2026-09-23T04:51:42.125Z","threshold":"500ms"}
+2026-09-23T04:51:54.942Z: info: Database connection attempt 1
+Trace Id: 5d86ca3e-d0d6-4a7d-8bb8-c2c0a394a6ba
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T04:51:59.999Z: warn: Slow database query detected
+Trace Id: 642afa4e-527a-4994-86af-d9083cb10bf6
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1060ms","timestamp":"2026-09-23T04:51:58.938Z","threshold":"500ms"}
+2026-09-23T04:51:59.999Z: info: Database connected successfully
+Trace Id: 9b507c94-4fc0-4aa4-9b46-47f71a309a7b
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-23T04:52:13.941Z: info: Database connection attempt 1
+Trace Id: 6abac8f8-0574-4469-b769-567b6a59f100
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T04:52:18.420Z: info: Database connected successfully
+Trace Id: b5554b48-d2bb-4c7f-b312-284ddb67c971
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-23T04:52:18.419Z: warn: Slow database query detected
+Trace Id: d0cb1f1b-3fc4-4584-a135-5658f551e431
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1242ms","timestamp":"2026-09-23T04:52:17.177Z","threshold":"500ms"}
+2026-09-23T04:52:19.322Z: warn: Slow database query detected
+Trace Id: 8f4d3502-9a01-4fde-8b6c-9c3d85f66a81
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"902ms","timestamp":"2026-09-23T04:52:18.420Z","threshold":"500ms"}
+2026-09-23T04:52:19.324Z: info: ServerStarted
+Trace Id: 4722d76b-3c22-4299-bab7-c3b03cd6ede4
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":28845}
+2026-09-23T04:52:27.005Z: info: OPTIONS /v0/api/users/login
+Trace Id: dac1ea46-9671-4090-8e45-d449ac00ce7b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/login","status":204,"responseTime":"3ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:52:27.035Z: info: Processing login request
+Trace Id: c8043e68-e61c-427b-9f62-00fa73f3dfaa
+Function Name: UserService.login
+Metadata: {"email":"arbaazkhanark23@gmail.com"}
+2026-09-23T04:52:27.035Z: info: Login API called
+Trace Id: c8043e68-e61c-427b-9f62-00fa73f3dfaa
+Function Name: UserController.login
+Metadata: {"email":"arbaazkhanark23@gmail.com"}
+2026-09-23T04:52:28.231Z: warn: Slow database query detected
+Trace Id: c8043e68-e61c-427b-9f62-00fa73f3dfaa
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1194ms","timestamp":"2026-09-23T04:52:27.036Z","threshold":"500ms"}
+2026-09-23T04:52:28.508Z: info: Login successful, tokens issued
+Trace Id: c8043e68-e61c-427b-9f62-00fa73f3dfaa
+Function Name: UserService.login
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:52:28.508Z: info: Login API success
+Trace Id: c8043e68-e61c-427b-9f62-00fa73f3dfaa
+Function Name: UserController.login
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:52:28.510Z: info: POST /login
+Trace Id: c8043e68-e61c-427b-9f62-00fa73f3dfaa
+Function Name: HTTP_REQUEST
+Metadata: {"method":"POST","url":"/login","status":200,"responseTime":"1476ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:52:28.536Z: info: OPTIONS /v0/api/users/me
+Trace Id: b3184121-5b5b-43a4-9906-8ef46552ba0e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:52:28.546Z: info: Profile API called
+Trace Id: 426fcf09-09ce-4867-9f52-0806c5eb4d08
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:52:28.547Z: info: Fetching user profile
+Trace Id: 426fcf09-09ce-4867-9f52-0806c5eb4d08
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:52:29.654Z: warn: Slow database query detected
+Trace Id: 426fcf09-09ce-4867-9f52-0806c5eb4d08
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1107ms","timestamp":"2026-09-23T04:52:28.547Z","threshold":"500ms"}
+2026-09-23T04:52:29.655Z: info: Profile fetched successfully
+Trace Id: 426fcf09-09ce-4867-9f52-0806c5eb4d08
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:52:29.656Z: info: GET /me
+Trace Id: 426fcf09-09ce-4867-9f52-0806c5eb4d08
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1112ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:53:10.985Z: info: OPTIONS /v0/api/auth/verify-email
+Trace Id: 491093ca-07b9-489d-a45f-ac727f8de79d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/auth/verify-email","status":204,"responseTime":"7ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:53:10.998Z: info: POST /v0/api/auth/verify-email
+Trace Id: cb1c458f-6427-4569-bf8c-37e9b20d2943
+Function Name: HTTP_REQUEST
+Metadata: {"method":"POST","url":"/v0/api/auth/verify-email","status":404,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:55:44.147Z: info: OPTIONS /v0/api/users/me
+Trace Id: 3702f805-5bbf-41ac-9fe2-47a481ca643b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"41ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:55:44.263Z: info: Profile API called
+Trace Id: 6159e1db-3d23-44b4-a812-9f52d459d353
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:55:44.267Z: info: Fetching user profile
+Trace Id: 6159e1db-3d23-44b4-a812-9f52d459d353
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:55:45.254Z: warn: Slow database query detected
+Trace Id: 6159e1db-3d23-44b4-a812-9f52d459d353
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"942ms","timestamp":"2026-09-23T04:55:44.309Z","threshold":"500ms"}
+2026-09-23T04:55:45.290Z: info: GET /me
+Trace Id: 6159e1db-3d23-44b4-a812-9f52d459d353
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":200,"responseTime":"1110ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:55:45.279Z: info: Profile fetched successfully
+Trace Id: 6159e1db-3d23-44b4-a812-9f52d459d353
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:56:01.345Z: info: OPTIONS /v0/api/users/login
+Trace Id: 51b1a4d6-68fb-4a38-9db6-1991afe83d53
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/login","status":204,"responseTime":"7ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:56:01.368Z: info: Login API called
+Trace Id: e2583bd5-e18d-4c06-b7c6-5ad6039d776e
+Function Name: UserController.login
+Metadata: {"email":"arbaazkhanark23@gmail.com"}
+2026-09-23T04:56:01.368Z: info: Processing login request
+Trace Id: e2583bd5-e18d-4c06-b7c6-5ad6039d776e
+Function Name: UserService.login
+Metadata: {"email":"arbaazkhanark23@gmail.com"}
+2026-09-23T04:56:02.157Z: warn: Slow database query detected
+Trace Id: e2583bd5-e18d-4c06-b7c6-5ad6039d776e
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"787ms","timestamp":"2026-09-23T04:56:01.369Z","threshold":"500ms"}
+2026-09-23T04:56:02.445Z: info: Login API success
+Trace Id: e2583bd5-e18d-4c06-b7c6-5ad6039d776e
+Function Name: UserController.login
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:56:02.445Z: info: POST /login
+Trace Id: e2583bd5-e18d-4c06-b7c6-5ad6039d776e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"POST","url":"/login","status":200,"responseTime":"1087ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:56:02.445Z: info: Login successful, tokens issued
+Trace Id: e2583bd5-e18d-4c06-b7c6-5ad6039d776e
+Function Name: UserService.login
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:56:02.454Z: info: OPTIONS /v0/api/users/me
+Trace Id: 9b110366-0b9b-4db1-b7fc-cee537833942
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T04:56:02.457Z: info: Profile API called
+Trace Id: 08008c29-ecdd-43b0-9577-ebd7fccc953c
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:56:02.457Z: info: Fetching user profile
+Trace Id: 08008c29-ecdd-43b0-9577-ebd7fccc953c
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:56:03.089Z: warn: Slow database query detected
+Trace Id: 08008c29-ecdd-43b0-9577-ebd7fccc953c
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"632ms","timestamp":"2026-09-23T04:56:02.457Z","threshold":"500ms"}
+2026-09-23T04:56:03.090Z: info: Profile fetched successfully
+Trace Id: 08008c29-ecdd-43b0-9577-ebd7fccc953c
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T04:56:03.092Z: info: GET /me
+Trace Id: 08008c29-ecdd-43b0-9577-ebd7fccc953c
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"636ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:08:13.654Z: info: OPTIONS /v0/api/users/me
+Trace Id: c79dea08-cfbd-4650-91e0-90680552f942
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"14ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:08:13.677Z: info: Profile API called
+Trace Id: d4f5b79d-36ff-44f3-b76f-6376f7afc1b5
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:08:13.678Z: info: Fetching user profile
+Trace Id: d4f5b79d-36ff-44f3-b76f-6376f7afc1b5
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:08:18.927Z: error: Database operation failed
+Trace Id: d4f5b79d-36ff-44f3-b76f-6376f7afc1b5
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"5238ms","timestamp":"2026-09-23T05:08:13.686Z","error":{"message":"\nInvalid `prisma.user.findUnique()` invocation in\n/Users/arbazkhan/Chronify-full/backend/src/modules/user/user.repository.ts:26:24\n\n  23 }\n  24 \n  25 static findByIdWithoutPassword(id: string) {\n→ 26   return prisma.user.findUnique(\nCan't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","name":"PrismaClientKnownRequestError","stack":"PrismaClientKnownRequestError: \nInvalid `prisma.user.findUnique()` invocation in\n/Users/arbazkhan/Chronify-full/backend/src/modules/user/user.repository.ts:26:24\n\n  23 }\n  24 \n  25 static findByIdWithoutPassword(id: string) {\n→ 26   return prisma.user.findUnique(\nCan't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.\n    at ei.handleRequestError (/Users/arbazkhan/Chronify-full/backend/node_modules/@prisma/client/src/runtime/RequestHandler.ts:228:13)\n    at ei.handleAndLogRequestError (/Users/arbazkhan/Chronify-full/backend/node_modules/@prisma/client/src/runtime/RequestHandler.ts:174:12)\n    at ei.request (/Users/arbazkhan/Chronify-full/backend/node_modules/@prisma/client/src/runtime/RequestHandler.ts:143:12)\n    at async Array.$allOperations (/Users/arbazkhan/Chronify-full/backend/src/config/prisma.ts:46:24)\n    at async a (/Users/arbazkhan/Chronify-full/backend/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:833:24)\n    at async Function.getProfile (/Users/arbazkhan/Chronify-full/backend/src/modules/user/user.service.ts:486:18)\n    at async profile (/Users/arbazkhan/Chronify-full/backend/src/modules/user/user.controller.ts:293:20)"}}
+2026-09-23T05:08:18.927Z: error: Profile fetch failed: 
+Invalid `prisma.user.findUnique()` invocation in
+/Users/arbazkhan/Chronify-full/backend/src/modules/user/user.repository.ts:26:24
+
+  23 }
+  24 
+  25 static findByIdWithoutPassword(id: string) {
+→ 26   return prisma.user.findUnique(
+Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`
+
+Please make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.
+Trace Id: d4f5b79d-36ff-44f3-b76f-6376f7afc1b5
+Function Name: UserController.profile
+Metadata: {}
+2026-09-23T05:08:18.928Z: info: GET /me
+Trace Id: d4f5b79d-36ff-44f3-b76f-6376f7afc1b5
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":500,"responseTime":"5267ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:08:42.657Z: info: OPTIONS /v0/api/users/me
+Trace Id: 06374a47-a3e8-4f81-a3c7-310b977435e3
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"11ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:08:42.681Z: info: Profile API called
+Trace Id: 33f0a6d6-66ce-451f-b05c-f6b044c748be
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:08:42.681Z: info: Fetching user profile
+Trace Id: 33f0a6d6-66ce-451f-b05c-f6b044c748be
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:08:48.542Z: info: Profile fetched successfully
+Trace Id: 33f0a6d6-66ce-451f-b05c-f6b044c748be
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:08:48.542Z: warn: Slow database query detected
+Trace Id: 33f0a6d6-66ce-451f-b05c-f6b044c748be
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"5858ms","timestamp":"2026-09-23T05:08:42.683Z","threshold":"500ms"}
+2026-09-23T05:08:48.542Z: info: GET /me
+Trace Id: 33f0a6d6-66ce-451f-b05c-f6b044c748be
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":200,"responseTime":"5864ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:11:04.041Z: info: OPTIONS /v0/api/users/me
+Trace Id: ced1594c-a29b-4b8b-bb2f-e0ffebad38d0
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"9ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:11:04.042Z: info: OPTIONS /v0/api/users/me
+Trace Id: 5e8f2e82-4a7b-41fb-b5e4-5fd37799cc6f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:11:04.073Z: info: Profile API called
+Trace Id: e3100454-33fb-426f-85e7-21f3d22c0ba9
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:04.073Z: info: Fetching user profile
+Trace Id: e3100454-33fb-426f-85e7-21f3d22c0ba9
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:05.564Z: warn: Slow database query detected
+Trace Id: e3100454-33fb-426f-85e7-21f3d22c0ba9
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1487ms","timestamp":"2026-09-23T05:11:04.076Z","threshold":"500ms"}
+2026-09-23T05:11:05.564Z: info: Profile fetched successfully
+Trace Id: e3100454-33fb-426f-85e7-21f3d22c0ba9
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:05.566Z: info: GET /me
+Trace Id: e3100454-33fb-426f-85e7-21f3d22c0ba9
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1523ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:11:05.569Z: info: Profile API called
+Trace Id: 485d825e-29d1-4536-8f27-8a2fff278b45
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:05.569Z: info: Fetching user profile
+Trace Id: 485d825e-29d1-4536-8f27-8a2fff278b45
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:06.483Z: warn: Slow database query detected
+Trace Id: 485d825e-29d1-4536-8f27-8a2fff278b45
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"914ms","timestamp":"2026-09-23T05:11:05.569Z","threshold":"500ms"}
+2026-09-23T05:11:06.484Z: info: Profile fetched successfully
+Trace Id: 485d825e-29d1-4536-8f27-8a2fff278b45
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:06.484Z: info: GET /me
+Trace Id: 485d825e-29d1-4536-8f27-8a2fff278b45
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"916ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:11:06.486Z: info: Profile API called
+Trace Id: ef86674f-5d3b-44a8-a6f7-e8823dbbbc8b
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:06.486Z: info: Fetching user profile
+Trace Id: ef86674f-5d3b-44a8-a6f7-e8823dbbbc8b
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:07.381Z: warn: Slow database query detected
+Trace Id: ef86674f-5d3b-44a8-a6f7-e8823dbbbc8b
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"894ms","timestamp":"2026-09-23T05:11:06.487Z","threshold":"500ms"}
+2026-09-23T05:11:07.382Z: info: Profile fetched successfully
+Trace Id: ef86674f-5d3b-44a8-a6f7-e8823dbbbc8b
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:07.384Z: info: GET /me
+Trace Id: ef86674f-5d3b-44a8-a6f7-e8823dbbbc8b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"897ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:11:07.392Z: info: Fetching user profile
+Trace Id: 5bea3376-f149-49d6-90d5-dcfcddd83d9f
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:07.392Z: info: Profile API called
+Trace Id: 5bea3376-f149-49d6-90d5-dcfcddd83d9f
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:08.575Z: warn: Slow database query detected
+Trace Id: 5bea3376-f149-49d6-90d5-dcfcddd83d9f
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1182ms","timestamp":"2026-09-23T05:11:07.392Z","threshold":"500ms"}
+2026-09-23T05:11:08.576Z: info: Profile fetched successfully
+Trace Id: 5bea3376-f149-49d6-90d5-dcfcddd83d9f
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:08.577Z: info: GET /me
+Trace Id: 5bea3376-f149-49d6-90d5-dcfcddd83d9f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1190ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:11:08.752Z: info: Profile API called
+Trace Id: b5d30fa1-5ce4-494a-9709-3e6ea1a3e582
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:08.752Z: info: Fetching user profile
+Trace Id: b5d30fa1-5ce4-494a-9709-3e6ea1a3e582
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:09.981Z: warn: Slow database query detected
+Trace Id: b5d30fa1-5ce4-494a-9709-3e6ea1a3e582
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1228ms","timestamp":"2026-09-23T05:11:08.752Z","threshold":"500ms"}
+2026-09-23T05:11:09.981Z: info: Profile fetched successfully
+Trace Id: b5d30fa1-5ce4-494a-9709-3e6ea1a3e582
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:09.982Z: info: GET /me
+Trace Id: b5d30fa1-5ce4-494a-9709-3e6ea1a3e582
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1231ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:11:09.985Z: info: Fetching user profile
+Trace Id: 44a7879c-d4c2-4108-9677-2c2b895bdb46
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:09.985Z: info: Profile API called
+Trace Id: 44a7879c-d4c2-4108-9677-2c2b895bdb46
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:10.525Z: warn: Slow database query detected
+Trace Id: 44a7879c-d4c2-4108-9677-2c2b895bdb46
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"540ms","timestamp":"2026-09-23T05:11:09.985Z","threshold":"500ms"}
+2026-09-23T05:11:10.525Z: info: Profile fetched successfully
+Trace Id: 44a7879c-d4c2-4108-9677-2c2b895bdb46
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:11:10.525Z: info: GET /me
+Trace Id: 44a7879c-d4c2-4108-9677-2c2b895bdb46
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"541ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:28:35.107Z: info: ShutdownSignal
+Trace Id: 65eb3aba-4441-45be-b0e3-0955487ad91e
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-23T05:28:35.632Z: info: Database connection attempt 1
+Trace Id: c1a47505-37c3-4bde-8b74-09b13ae22211
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T05:28:35.917Z: info: Database connection attempt 1
+Trace Id: 0a28369e-b4f8-4596-b599-c50d98556b34
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T05:28:40.938Z: warn: Database connection attempt 1 failed
+Trace Id: bd384996-dbfc-4cdf-8f13-ec96dc073a32
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T05:28:40.940Z: info: Retrying in 3 seconds...
+Trace Id: 0767a167-490c-43db-8963-09b0e87a77ef
+Function Name: connectWithRetry
+Metadata: {"delay":2556.9785727113212}
+2026-09-23T05:28:43.499Z: info: Database connection attempt 2
+Trace Id: f400e3d7-94e7-4b11-b7b9-803d43c5e1b4
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T05:28:49.042Z: warn: Slow database query detected
+Trace Id: 9a9c90b2-8c15-4bad-b2c8-0338c4851175
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"997ms","timestamp":"2026-09-23T05:28:48.044Z","threshold":"500ms"}
+2026-09-23T05:28:49.042Z: info: Database connected successfully
+Trace Id: e7c4cd4d-969c-4273-9898-21b8f5c87549
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"totalAttempts":2}
+2026-09-23T05:28:50.583Z: warn: Slow database query detected
+Trace Id: 4b9d8cfd-997b-4c4f-b83e-42c9829649dd
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1539ms","timestamp":"2026-09-23T05:28:49.043Z","threshold":"500ms"}
+2026-09-23T05:28:50.588Z: info: ServerStarted
+Trace Id: 5aa94dfb-ac9e-46cb-b099-baef66ef225b
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":34867}
+2026-09-23T05:28:59.754Z: info: OPTIONS /v0/api/users/me
+Trace Id: 3029c368-7674-4513-9680-490203c2b3e7
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"4ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:28:59.764Z: info: Profile API called
+Trace Id: 1fae4bee-d447-4e1d-8725-db7473306fab
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:28:59.765Z: info: Fetching user profile
+Trace Id: 1fae4bee-d447-4e1d-8725-db7473306fab
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:28:59.768Z: info: OPTIONS /v0/api/users/me
+Trace Id: 448e019e-1b2a-4122-98eb-368f5578a18e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:29:00.761Z: warn: Slow database query detected
+Trace Id: 1fae4bee-d447-4e1d-8725-db7473306fab
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"996ms","timestamp":"2026-09-23T05:28:59.765Z","threshold":"500ms"}
+2026-09-23T05:29:00.762Z: info: Profile fetched successfully
+Trace Id: 1fae4bee-d447-4e1d-8725-db7473306fab
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:29:00.763Z: info: GET /me
+Trace Id: 1fae4bee-d447-4e1d-8725-db7473306fab
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1007ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:29:00.765Z: info: Profile API called
+Trace Id: a0a27322-a4c4-43e1-a3b7-b18bed0d71d1
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:29:00.765Z: info: Fetching user profile
+Trace Id: a0a27322-a4c4-43e1-a3b7-b18bed0d71d1
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:29:00.898Z: info: OPTIONS /v0/api/goals
+Trace Id: b7036df9-fbca-4fcf-8545-65092ed60235
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:29:00.905Z: info: Get goals API called
+Trace Id: 44a14311-3069-46fc-87ab-5b86c3e7449d
+Function Name: GoalController.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","filters":{"limit":20,"page":1}}
+2026-09-23T05:29:00.905Z: info: Fetching goals with filters
+Trace Id: 44a14311-3069-46fc-87ab-5b86c3e7449d
+Function Name: GoalService.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","filters":{"limit":20,"page":1}}
+2026-09-23T05:29:01.203Z: info: Profile fetched successfully
+Trace Id: a0a27322-a4c4-43e1-a3b7-b18bed0d71d1
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T05:29:01.203Z: info: GET /me
+Trace Id: a0a27322-a4c4-43e1-a3b7-b18bed0d71d1
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"439ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:29:05.365Z: warn: Slow database query detected
+Trace Id: 44a14311-3069-46fc-87ab-5b86c3e7449d
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"4459ms","timestamp":"2026-09-23T05:29:00.906Z","threshold":"500ms"}
+2026-09-23T05:29:07.299Z: warn: Slow database query detected
+Trace Id: 44a14311-3069-46fc-87ab-5b86c3e7449d
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"6393ms","timestamp":"2026-09-23T05:29:00.906Z","threshold":"500ms"}
+2026-09-23T05:29:07.300Z: info: Goals fetched successfully
+Trace Id: 44a14311-3069-46fc-87ab-5b86c3e7449d
+Function Name: GoalService.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","count":1}
+2026-09-23T05:29:07.300Z: info: Goals fetched successfully
+Trace Id: 44a14311-3069-46fc-87ab-5b86c3e7449d
+Function Name: GoalController.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","count":1}
+2026-09-23T05:29:07.302Z: info: GET /
+Trace Id: 44a14311-3069-46fc-87ab-5b86c3e7449d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"6402ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:29:07.315Z: info: Get goals API called
+Trace Id: 0ed70fa5-5a7e-4041-a474-93f03a880346
+Function Name: GoalController.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","filters":{"limit":20,"page":1}}
+2026-09-23T05:29:07.316Z: info: Fetching goals with filters
+Trace Id: 0ed70fa5-5a7e-4041-a474-93f03a880346
+Function Name: GoalService.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","filters":{"limit":20,"page":1}}
+2026-09-23T05:29:08.240Z: warn: Slow database query detected
+Trace Id: 0ed70fa5-5a7e-4041-a474-93f03a880346
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"923ms","timestamp":"2026-09-23T05:29:07.317Z","threshold":"500ms"}
+2026-09-23T05:29:09.157Z: warn: Slow database query detected
+Trace Id: 0ed70fa5-5a7e-4041-a474-93f03a880346
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"1840ms","timestamp":"2026-09-23T05:29:07.317Z","threshold":"500ms"}
+2026-09-23T05:29:09.157Z: info: Goals fetched successfully
+Trace Id: 0ed70fa5-5a7e-4041-a474-93f03a880346
+Function Name: GoalController.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","count":1}
+2026-09-23T05:29:09.158Z: info: GET /
+Trace Id: 0ed70fa5-5a7e-4041-a474-93f03a880346
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/","status":304,"responseTime":"1847ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T05:29:09.157Z: info: Goals fetched successfully
+Trace Id: 0ed70fa5-5a7e-4041-a474-93f03a880346
+Function Name: GoalService.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","count":1}
+2026-09-23T06:28:52.630Z: info: ShutdownSignal
+Trace Id: c1f5d50d-1853-45cb-a327-c94f98cb20f3
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-23T06:29:05.097Z: info: Database connection attempt 1
+Trace Id: 099006e5-1d76-44e1-897c-4e1cfd5201f1
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:29:10.139Z: info: Retrying in 2 seconds...
+Trace Id: 30783c0c-7fc8-4493-a775-67b622d6e1c9
+Function Name: connectWithRetry
+Metadata: {"delay":2406.33022136037}
+2026-09-23T06:29:10.138Z: warn: Database connection attempt 1 failed
+Trace Id: d48f8c56-7227-42bd-87e1-33c20dc721fe
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:29:12.551Z: info: Database connection attempt 2
+Trace Id: 77ff4353-5868-4531-b766-df7d18a555a0
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:29:17.559Z: info: Retrying in 4 seconds...
+Trace Id: 478c9311-8dcf-4323-9574-a1bb63d3fa47
+Function Name: connectWithRetry
+Metadata: {"delay":4412.139230827392}
+2026-09-23T06:29:17.558Z: warn: Database connection attempt 2 failed
+Trace Id: 3b16f935-4a0c-444e-bc27-725d9e2439d9
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:29:21.972Z: info: Database connection attempt 3
+Trace Id: ec517d62-3105-4a32-b4d1-770035f64e91
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:29:26.978Z: info: Retrying in 8 seconds...
+Trace Id: 7ce5a871-9d4c-48dc-85f7-b52a0bfe37ba
+Function Name: connectWithRetry
+Metadata: {"delay":8077.3744668302215}
+2026-09-23T06:29:26.977Z: warn: Database connection attempt 3 failed
+Trace Id: 288f0bce-0b98-4c88-b7cf-8ac99a2e1a21
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:29:35.057Z: info: Database connection attempt 4
+Trace Id: b95153e4-617e-453d-a441-1f3d7b7959da
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:29:40.573Z: warn: Slow database query detected
+Trace Id: 3847a51a-ec7f-4a4c-b5b1-0a641c85f028
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1052ms","timestamp":"2026-09-23T06:29:39.521Z","threshold":"500ms"}
+2026-09-23T06:29:40.573Z: info: Database connected successfully
+Trace Id: 5820e9a1-0163-4080-b9c5-287c31af7364
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"totalAttempts":4}
+2026-09-23T06:29:41.962Z: warn: Slow database query detected
+Trace Id: 3be3f5b4-0afd-465c-bb68-a46672f26c8f
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1389ms","timestamp":"2026-09-23T06:29:40.573Z","threshold":"500ms"}
+2026-09-23T06:29:41.968Z: info: ServerStarted
+Trace Id: 575724cd-f78d-4804-ab80-10dc4cf683fa
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":38313}
+2026-09-23T06:29:54.777Z: info: ShutdownSignal
+Trace Id: e8ea76d3-e7a6-4350-9199-d2ed9142c847
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-23T06:29:55.242Z: info: Database connection attempt 1
+Trace Id: ad784e32-1149-4daa-aa2c-9ea3d3ba31fb
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:30:00.251Z: warn: Database connection attempt 1 failed
+Trace Id: b040e4e9-9b72-4d53-a189-278e0dcb9d16
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:30:00.252Z: info: Retrying in 2 seconds...
+Trace Id: 25a3e3b9-3da7-409c-b5af-c1864792a328
+Function Name: connectWithRetry
+Metadata: {"delay":2416.90615465181}
+2026-09-23T06:30:02.677Z: info: Database connection attempt 2
+Trace Id: a58bd7ca-91ff-40b7-b405-9827e90d3326
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:30:07.685Z: info: Retrying in 5 seconds...
+Trace Id: ff93899f-3efa-4744-b19e-d1b477be891b
+Function Name: connectWithRetry
+Metadata: {"delay":4863.27196825453}
+2026-09-23T06:30:07.684Z: warn: Database connection attempt 2 failed
+Trace Id: f5165619-f12d-4689-820e-3ca5b55370ff
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:30:12.550Z: info: Database connection attempt 3
+Trace Id: fa296b5e-19b9-464c-8ab7-69a6b8c22a8a
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:30:18.200Z: warn: Slow database query detected
+Trace Id: 0377a5d4-96f5-43e5-956d-07d56098251c
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1403ms","timestamp":"2026-09-23T06:30:16.797Z","threshold":"500ms"}
+2026-09-23T06:30:18.201Z: info: Database connected successfully
+Trace Id: 3452a2e4-74fb-493b-910e-462d259815d7
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"totalAttempts":3}
+2026-09-23T06:30:19.658Z: warn: Slow database query detected
+Trace Id: 88360c9a-d91e-4a3c-8b02-02fdb46fe88e
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1457ms","timestamp":"2026-09-23T06:30:18.201Z","threshold":"500ms"}
+2026-09-23T06:30:19.660Z: info: ServerStarted
+Trace Id: 448a8053-0f45-493a-8564-ce4ff932bab7
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":38507}
+2026-09-23T06:31:10.192Z: info: ShutdownSignal
+Trace Id: 05925b4c-1b4e-4414-a976-5b0a823a6705
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-23T06:31:10.805Z: info: Database connection attempt 1
+Trace Id: c08e96d7-3698-4333-9cd5-3d467d6d888e
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:31:15.423Z: info: Database connected successfully
+Trace Id: 657387f3-6a12-46dc-badb-2ea9c597cf0e
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-23T06:31:15.423Z: warn: Slow database query detected
+Trace Id: d925e27c-44e5-437f-b1a6-7cac365f6662
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1241ms","timestamp":"2026-09-23T06:31:14.181Z","threshold":"500ms"}
+2026-09-23T06:31:16.584Z: warn: Slow database query detected
+Trace Id: f3387fc8-6151-4303-a94c-e712e9da1623
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1160ms","timestamp":"2026-09-23T06:31:15.423Z","threshold":"500ms"}
+2026-09-23T06:31:16.585Z: info: ServerStarted
+Trace Id: 7a19fc77-2d55-4a44-b341-b445d039e2fe
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":38780}
+2026-09-23T06:32:23.298Z: info: ShutdownSignal
+Trace Id: d95a81ef-4827-4792-973d-af24d39a0fab
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-23T06:32:23.758Z: info: Database connection attempt 1
+Trace Id: d8f8269e-b916-483e-94de-7d5bb6f6f71b
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:32:28.767Z: info: Retrying in 3 seconds...
+Trace Id: bbef6c2b-abcd-452b-9002-26f4aeb844c7
+Function Name: connectWithRetry
+Metadata: {"delay":2725.7175997080476}
+2026-09-23T06:32:28.767Z: warn: Database connection attempt 1 failed
+Trace Id: 60dbc388-0bfa-41be-ba69-2045435b245d
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:32:31.494Z: info: Database connection attempt 2
+Trace Id: 2d776ffc-0fba-466a-bc82-05a40fb50822
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:32:36.498Z: warn: Database connection attempt 2 failed
+Trace Id: b07f9e91-d0ba-42ea-bd44-8c912612ba6f
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:32:36.498Z: info: Retrying in 5 seconds...
+Trace Id: 3f466e8a-9c44-48bb-af0c-5153d9f49b74
+Function Name: connectWithRetry
+Metadata: {"delay":4908.099321372531}
+2026-09-23T06:32:41.407Z: info: Database connection attempt 3
+Trace Id: 4913e13e-106f-4eaa-80e5-d14bd6d00f3a
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:32:43.907Z: info: Database connection attempt 1
+Trace Id: ee34c7dc-86ab-4997-84ed-e9ac2cd00a7c
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:32:48.916Z: warn: Database connection attempt 1 failed
+Trace Id: aa779bc1-63a1-4028-98ac-389e49d1173d
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:32:48.917Z: info: Retrying in 3 seconds...
+Trace Id: 052ea218-4e93-4912-abf7-99a08a09f820
+Function Name: connectWithRetry
+Metadata: {"delay":2839.861237944876}
+2026-09-23T06:32:51.759Z: info: Database connection attempt 2
+Trace Id: c41bf91a-d9be-4fba-a8d9-17aea37fda89
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:32:56.765Z: warn: Database connection attempt 2 failed
+Trace Id: 23bf039f-46b1-40db-bfec-4ef570426d4d
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:32:56.765Z: info: Retrying in 4 seconds...
+Trace Id: a1413482-eb7d-4802-aee4-bf716a102f23
+Function Name: connectWithRetry
+Metadata: {"delay":4325.937865501727}
+2026-09-23T06:32:57.256Z: info: Database connection attempt 1
+Trace Id: 05358bc8-c58d-4ab5-bce7-cb1fb739cfd4
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:33:02.263Z: warn: Database connection attempt 1 failed
+Trace Id: da9c2ced-6b5e-4d85-afda-3ac58ab0bd2d
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:33:02.263Z: info: Retrying in 3 seconds...
+Trace Id: 1d2f7c59-9e36-48d5-9fbe-d20baabc1dfd
+Function Name: connectWithRetry
+Metadata: {"delay":2668.0632964004667}
+2026-09-23T06:33:04.933Z: info: Database connection attempt 2
+Trace Id: 520f4906-510a-4f0f-a159-b5000ec046b3
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:33:09.938Z: warn: Database connection attempt 2 failed
+Trace Id: 600153b8-969e-4dd0-bc48-d1ef11909f40
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:33:09.939Z: info: Retrying in 4 seconds...
+Trace Id: 64315480-1f53-49b3-9605-5fe3cd3c2480
+Function Name: connectWithRetry
+Metadata: {"delay":4006.850893481959}
+2026-09-23T06:33:13.947Z: info: Database connection attempt 3
+Trace Id: 6d29752b-dae4-4f12-91e5-fa0ff89fef5c
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:33:18.952Z: warn: Database connection attempt 3 failed
+Trace Id: c0f56eac-6a9a-46e6-9df3-3b3bb9842df3
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:33:18.953Z: info: Retrying in 9 seconds...
+Trace Id: a0d1be68-c33f-4957-ad90-2edcf80f9cc5
+Function Name: connectWithRetry
+Metadata: {"delay":8863.749559896272}
+2026-09-23T06:33:27.817Z: info: Database connection attempt 4
+Trace Id: 1080a495-1bba-48b9-b135-596f6666cd70
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:33:32.821Z: warn: Database connection attempt 4 failed
+Trace Id: d7e0cbd7-5245-40d5-bee6-660e1b23740e
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:33:32.821Z: info: Retrying in 17 seconds...
+Trace Id: 02648ffa-e114-4c13-b23b-044f5c36310f
+Function Name: connectWithRetry
+Metadata: {"delay":16640.30080996762}
+2026-09-23T06:33:33.652Z: info: Database connection attempt 1
+Trace Id: 9dc141cd-7057-4990-83df-aff9ef6b99aa
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:33:38.662Z: warn: Database connection attempt 1 failed
+Trace Id: fb77300c-0bb2-421a-86f7-7f8b25cd7bc7
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:33:38.662Z: info: Retrying in 3 seconds...
+Trace Id: ea7d19bb-0ea6-4380-95de-3fd8841a3b61
+Function Name: connectWithRetry
+Metadata: {"delay":2937.329159367675}
+2026-09-23T06:33:41.602Z: info: Database connection attempt 2
+Trace Id: 5daed9ce-b9bf-4093-91d1-b4dfa956dc29
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:33:46.610Z: warn: Database connection attempt 2 failed
+Trace Id: 623a0255-3551-4162-b22e-dce23aeb8f3c
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:33:46.610Z: info: Retrying in 4 seconds...
+Trace Id: 17051889-453d-4bd5-a89d-16aba7fe2e4e
+Function Name: connectWithRetry
+Metadata: {"delay":4124.594958929919}
+2026-09-23T06:33:50.738Z: info: Database connection attempt 3
+Trace Id: de31ac2b-27f6-484c-8aae-8a4fecfccb37
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:33:55.742Z: warn: Database connection attempt 3 failed
+Trace Id: 5c7ee0a2-f1d4-41d2-8622-a1026f1c5399
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:33:55.743Z: info: Retrying in 9 seconds...
+Trace Id: 8009a596-19b2-445b-a08f-4ddd38b923ec
+Function Name: connectWithRetry
+Metadata: {"delay":8658.332985173301}
+2026-09-23T06:33:59.064Z: info: Database connection attempt 1
+Trace Id: 5a35090e-68f1-4211-bf46-3e7e4ed5b899
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:34:04.073Z: info: Retrying in 2 seconds...
+Trace Id: fcc45083-d0a6-4201-931b-ac08153956be
+Function Name: connectWithRetry
+Metadata: {"delay":2380.9190403850207}
+2026-09-23T06:34:04.073Z: warn: Database connection attempt 1 failed
+Trace Id: 82b94d63-8446-45c2-989f-4096110e1005
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:34:06.454Z: info: Database connection attempt 2
+Trace Id: 20d9c478-de47-4031-b4b6-b648e5b34d03
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:34:11.459Z: info: Retrying in 5 seconds...
+Trace Id: 8955aeec-1bae-4c0e-adf1-b55b7fe431f2
+Function Name: connectWithRetry
+Metadata: {"delay":4522.50015493559}
+2026-09-23T06:34:11.459Z: warn: Database connection attempt 2 failed
+Trace Id: ab7eb3d4-c85a-45c0-abe5-769e9e5884b4
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:34:15.983Z: info: Database connection attempt 3
+Trace Id: 717ddd51-cfb4-4923-ad31-e27b31966148
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:34:20.989Z: info: Retrying in 8 seconds...
+Trace Id: beef1c49-05dc-4070-877c-4b3355e67f91
+Function Name: connectWithRetry
+Metadata: {"delay":8000.657187967784}
+2026-09-23T06:34:20.988Z: warn: Database connection attempt 3 failed
+Trace Id: 5c5a3e61-b674-4b51-927f-2c73cfe58d15
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:34:28.995Z: info: Database connection attempt 4
+Trace Id: 2eb641da-943c-45fe-a177-c5ee313117c3
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:34:34.006Z: info: Retrying in 16 seconds...
+Trace Id: 4caf938b-57c9-4e38-a452-2e9864b51d3e
+Function Name: connectWithRetry
+Metadata: {"delay":16054.743831938054}
+2026-09-23T06:34:34.006Z: warn: Database connection attempt 4 failed
+Trace Id: 1a06ea22-ac2f-40fa-8941-2c13188395c7
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:34:50.066Z: info: Database connection attempt 5
+Trace Id: 9c24ec4c-f220-425d-89eb-315a7af46f2b
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:34:56.196Z: warn: Slow database query detected
+Trace Id: 1f885048-1572-42a4-b076-2c56cfea6378
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1182ms","timestamp":"2026-09-23T06:34:55.014Z","threshold":"500ms"}
+2026-09-23T06:34:56.196Z: info: Database connected successfully
+Trace Id: cd651237-501f-497f-82a5-aa04daa8f4d4
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"totalAttempts":5}
+2026-09-23T06:34:57.497Z: warn: Slow database query detected
+Trace Id: d4b7ada3-4d5f-479f-9de1-798fb39fce9c
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1300ms","timestamp":"2026-09-23T06:34:56.196Z","threshold":"500ms"}
+2026-09-23T06:34:57.502Z: info: ServerStarted
+Trace Id: 1971e41c-517a-44b9-8ba7-db374e987872
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":39497}
+2026-09-23T06:37:34.017Z: info: ShutdownSignal
+Trace Id: 761a4fb4-e8bf-4497-9dc4-8f1b38fd3b57
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-23T06:37:34.627Z: info: Database connection attempt 1
+Trace Id: e93999b0-4e41-4189-aca1-c8185fc74eda
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:37:39.662Z: warn: Database connection attempt 1 failed
+Trace Id: 08ba5567-1889-4d0c-8864-a678aef3de18
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:37:39.664Z: info: Retrying in 2 seconds...
+Trace Id: 9c34b6e2-6be8-4ab7-809e-11576db35ec5
+Function Name: connectWithRetry
+Metadata: {"delay":2173.2063847465183}
+2026-09-23T06:37:41.838Z: info: Database connection attempt 2
+Trace Id: 1856143f-3576-4927-b6a4-c504613756f2
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:37:46.844Z: warn: Database connection attempt 2 failed
+Trace Id: 5cd5ff46-4cbb-4513-ab85-c103ca2a74ee
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-23T06:37:46.845Z: info: Retrying in 5 seconds...
+Trace Id: 17d78b53-c928-4c50-baf1-c7b1b505dda3
+Function Name: connectWithRetry
+Metadata: {"delay":4670.564575825988}
+2026-09-23T06:37:51.517Z: info: Database connection attempt 3
+Trace Id: 454b54d1-696d-4650-b471-be5896c1a219
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T06:37:57.447Z: warn: Slow database query detected
+Trace Id: 1f2403d3-9a98-4426-a57b-55170926223f
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1138ms","timestamp":"2026-09-23T06:37:56.308Z","threshold":"500ms"}
+2026-09-23T06:37:57.447Z: info: Database connected successfully
+Trace Id: cbc2e258-12c5-4163-8b8a-683f41326c8d
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"totalAttempts":3}
+2026-09-23T06:37:58.172Z: warn: Slow database query detected
+Trace Id: a5a9756f-f027-4e6e-b807-55e358cefe9d
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"724ms","timestamp":"2026-09-23T06:37:57.448Z","threshold":"500ms"}
+2026-09-23T06:37:58.177Z: info: ServerStarted
+Trace Id: f2874b47-ac60-41a4-a22e-5e62ec7e92a7
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":40216}
+2026-09-23T06:39:56.158Z: info: ShutdownSignal
+Trace Id: 3e527b43-e910-4d81-a626-2b89d30f01a8
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGINT"}
+2026-09-23T06:39:56.180Z: info: ShutdownSignal
+Trace Id: 33500492-b7af-44db-a34f-49c4d8fd2893
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGINT"}
+2026-09-23T09:46:05.036Z: info: Database connection attempt 1
+Trace Id: 52cd845c-eb98-4008-8293-8c2380690d53
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T09:46:12.554Z: info: Database connected successfully
+Trace Id: 9e2b45b8-0d3c-42d9-84af-5fe534c6395e
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-23T09:46:12.553Z: warn: Slow database query detected
+Trace Id: 120b98eb-24fb-4327-92d7-acc364592dfd
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1834ms","timestamp":"2026-09-23T09:46:10.719Z","threshold":"500ms"}
+2026-09-23T09:46:13.507Z: warn: Slow database query detected
+Trace Id: 14910b64-8b13-4d92-b6a5-2ee2452ffd13
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"952ms","timestamp":"2026-09-23T09:46:12.554Z","threshold":"500ms"}
+2026-09-23T09:46:13.515Z: info: ServerStarted
+Trace Id: 7913632a-0999-4fc7-841a-b882eb83a15f
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":50710}
+2026-09-23T09:46:22.257Z: info: OPTIONS /v0/api/users/me
+Trace Id: 8b125e3e-f6e7-4666-9f85-50aa5f1a1025
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"3ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T09:46:22.281Z: info: Profile API called
+Trace Id: 87ba8393-6d39-4b5c-92d1-a1196c9df5a2
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:22.282Z: info: Fetching user profile
+Trace Id: 87ba8393-6d39-4b5c-92d1-a1196c9df5a2
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:24.306Z: warn: Slow database query detected
+Trace Id: 87ba8393-6d39-4b5c-92d1-a1196c9df5a2
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"2022ms","timestamp":"2026-09-23T09:46:22.283Z","threshold":"500ms"}
+2026-09-23T09:46:24.308Z: info: Profile fetched successfully
+Trace Id: 87ba8393-6d39-4b5c-92d1-a1196c9df5a2
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:24.312Z: info: GET /me
+Trace Id: 87ba8393-6d39-4b5c-92d1-a1196c9df5a2
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"2053ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T09:46:24.341Z: info: Profile API called
+Trace Id: 87be224c-b002-4da7-89ae-d9be034dc6b0
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:24.342Z: info: Fetching user profile
+Trace Id: 87be224c-b002-4da7-89ae-d9be034dc6b0
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:24.480Z: info: OPTIONS /v0/api/goals
+Trace Id: 002e38ff-65a9-4692-bc51-902aff380b2e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/goals","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T09:46:24.492Z: info: Get goals API called
+Trace Id: 783da006-54d5-446d-bd56-37275d40b839
+Function Name: GoalController.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","filters":{"limit":20,"page":1}}
+2026-09-23T09:46:24.492Z: info: Fetching goals with filters
+Trace Id: 783da006-54d5-446d-bd56-37275d40b839
+Function Name: GoalService.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","filters":{"limit":20,"page":1}}
+2026-09-23T09:46:24.713Z: info: Profile fetched successfully
+Trace Id: 87be224c-b002-4da7-89ae-d9be034dc6b0
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:24.715Z: info: GET /me
+Trace Id: 87be224c-b002-4da7-89ae-d9be034dc6b0
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"394ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T09:46:25.727Z: info: Get goals API called
+Trace Id: e3e0dbbd-c930-46c0-bf3c-1fb0b396d1e8
+Function Name: GoalController.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","filters":{"limit":20,"page":1}}
+2026-09-23T09:46:25.727Z: info: Fetching goals with filters
+Trace Id: e3e0dbbd-c930-46c0-bf3c-1fb0b396d1e8
+Function Name: GoalService.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","filters":{"limit":20,"page":1}}
+2026-09-23T09:46:28.001Z: info: OPTIONS /v0/api/users/me
+Trace Id: a923d84f-713b-4973-9156-aa4a374bb5ae
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T09:46:28.006Z: info: Profile API called
+Trace Id: 0e1eb09a-361b-4b0a-a431-4b3039224ca8
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:28.007Z: info: Fetching user profile
+Trace Id: 0e1eb09a-361b-4b0a-a431-4b3039224ca8
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:28.987Z: warn: Slow database query detected
+Trace Id: e3e0dbbd-c930-46c0-bf3c-1fb0b396d1e8
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"3259ms","timestamp":"2026-09-23T09:46:25.728Z","threshold":"500ms"}
+2026-09-23T09:46:30.222Z: warn: Slow database query detected
+Trace Id: 783da006-54d5-446d-bd56-37275d40b839
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"5728ms","timestamp":"2026-09-23T09:46:24.493Z","threshold":"500ms"}
+2026-09-23T09:46:31.249Z: info: Goals fetched successfully
+Trace Id: 783da006-54d5-446d-bd56-37275d40b839
+Function Name: GoalService.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","count":1}
+2026-09-23T09:46:31.249Z: warn: Slow database query detected
+Trace Id: 783da006-54d5-446d-bd56-37275d40b839
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"findMany","duration":"6756ms","timestamp":"2026-09-23T09:46:24.493Z","threshold":"500ms"}
+2026-09-23T09:46:31.249Z: info: Goals fetched successfully
+Trace Id: 783da006-54d5-446d-bd56-37275d40b839
+Function Name: GoalController.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","count":1}
+2026-09-23T09:46:31.250Z: warn: Slow database query detected
+Trace Id: e3e0dbbd-c930-46c0-bf3c-1fb0b396d1e8
+Function Name: prisma.query
+Metadata: {"model":"Goal","operation":"count","duration":"5522ms","timestamp":"2026-09-23T09:46:25.728Z","threshold":"500ms"}
+2026-09-23T09:46:31.250Z: info: Goals fetched successfully
+Trace Id: e3e0dbbd-c930-46c0-bf3c-1fb0b396d1e8
+Function Name: GoalService.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","count":1}
+2026-09-23T09:46:31.250Z: info: Goals fetched successfully
+Trace Id: e3e0dbbd-c930-46c0-bf3c-1fb0b396d1e8
+Function Name: GoalController.getGoals
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553","count":1}
+2026-09-23T09:46:32.975Z: warn: Slow database query detected
+Trace Id: 0e1eb09a-361b-4b0a-a431-4b3039224ca8
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"4967ms","timestamp":"2026-09-23T09:46:28.008Z","threshold":"500ms"}
+2026-09-23T09:46:32.976Z: info: Profile fetched successfully
+Trace Id: 0e1eb09a-361b-4b0a-a431-4b3039224ca8
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:32.977Z: info: GET /me
+Trace Id: 0e1eb09a-361b-4b0a-a431-4b3039224ca8
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"4974ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T09:46:40.736Z: info: OPTIONS /v0/api/users/login
+Trace Id: 7a98950a-bd30-4b4c-ac87-b2b6130be30f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/login","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T09:46:40.762Z: info: Processing login request
+Trace Id: 7496094d-1156-421d-828f-cefd835f618c
+Function Name: UserService.login
+Metadata: {"email":"arbaazkhanark23@gmail.com"}
+2026-09-23T09:46:40.761Z: info: Login API called
+Trace Id: 7496094d-1156-421d-828f-cefd835f618c
+Function Name: UserController.login
+Metadata: {"email":"arbaazkhanark23@gmail.com"}
+2026-09-23T09:46:41.631Z: warn: Slow database query detected
+Trace Id: 7496094d-1156-421d-828f-cefd835f618c
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"869ms","timestamp":"2026-09-23T09:46:40.762Z","threshold":"500ms"}
+2026-09-23T09:46:41.931Z: info: Login API success
+Trace Id: 7496094d-1156-421d-828f-cefd835f618c
+Function Name: UserController.login
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:41.931Z: info: POST /login
+Trace Id: 7496094d-1156-421d-828f-cefd835f618c
+Function Name: HTTP_REQUEST
+Metadata: {"method":"POST","url":"/login","status":200,"responseTime":"1170ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T09:46:41.931Z: info: Login successful, tokens issued
+Trace Id: 7496094d-1156-421d-828f-cefd835f618c
+Function Name: UserService.login
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:41.934Z: info: OPTIONS /v0/api/users/me
+Trace Id: 4050657f-fc8b-457e-943e-1b7259c7eceb
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T09:46:41.936Z: info: Fetching user profile
+Trace Id: 9620c593-7964-4c4a-989f-3be3015289df
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:41.935Z: info: Profile API called
+Trace Id: 9620c593-7964-4c4a-989f-3be3015289df
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:42.388Z: info: Profile fetched successfully
+Trace Id: 9620c593-7964-4c4a-989f-3be3015289df
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T09:46:42.390Z: info: GET /me
+Trace Id: 9620c593-7964-4c4a-989f-3be3015289df
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"455ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T10:06:33.777Z: info: ShutdownSignal
+Trace Id: 18271dd4-6693-490a-98cb-d69f86075af6
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGINT"}
+2026-09-23T16:37:41.782Z: info: Database connection attempt 1
+Trace Id: d85d6f9c-c40d-40a2-b0b0-8ceff462cc5f
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-23T16:37:44.974Z: warn: Slow database query detected
+Trace Id: e2be9909-f3d3-4418-9cc1-baff72b6c730
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"541ms","timestamp":"2026-09-23T16:37:44.432Z","threshold":"500ms"}
+2026-09-23T16:37:44.974Z: info: Database connected successfully
+Trace Id: 272d4697-b7e5-49ac-95bd-3da1ecb58980
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-23T16:37:45.552Z: warn: Slow database query detected
+Trace Id: 4f0bdc90-82b6-44ba-8eb5-b5d267a32af2
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"576ms","timestamp":"2026-09-23T16:37:44.975Z","threshold":"500ms"}
+2026-09-23T16:37:45.561Z: info: ServerStarted
+Trace Id: dd4a72d9-0a7c-42d4-a81c-bfcb205ab535
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":66078}
+2026-09-23T16:38:03.153Z: info: OPTIONS /v0/api/users/me
+Trace Id: ed9909f3-fe02-403d-8034-89162e4356c7
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:38:03.176Z: info: Profile API called
+Trace Id: f3ca2526-6384-47bf-9ffc-eedde6ec4192
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:38:03.177Z: info: Fetching user profile
+Trace Id: f3ca2526-6384-47bf-9ffc-eedde6ec4192
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:38:04.130Z: warn: Slow database query detected
+Trace Id: f3ca2526-6384-47bf-9ffc-eedde6ec4192
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"943ms","timestamp":"2026-09-23T16:38:03.185Z","threshold":"500ms"}
+2026-09-23T16:38:04.131Z: info: Profile fetched successfully
+Trace Id: f3ca2526-6384-47bf-9ffc-eedde6ec4192
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:38:04.134Z: info: GET /me
+Trace Id: f3ca2526-6384-47bf-9ffc-eedde6ec4192
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"979ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:38:18.663Z: info: OPTIONS /v0/api/users/login
+Trace Id: 34f6aaaa-a1e3-47d9-9169-258900a677d6
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/login","status":204,"responseTime":"6ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:38:18.700Z: info: Login API called
+Trace Id: dbf90ab4-3f9b-421e-a76a-1bf7b98f5b4a
+Function Name: UserController.login
+Metadata: {"email":"arbaazkhanark23@gmail.com"}
+2026-09-23T16:38:18.700Z: info: Processing login request
+Trace Id: dbf90ab4-3f9b-421e-a76a-1bf7b98f5b4a
+Function Name: UserService.login
+Metadata: {"email":"arbaazkhanark23@gmail.com"}
+2026-09-23T16:38:19.422Z: warn: Slow database query detected
+Trace Id: dbf90ab4-3f9b-421e-a76a-1bf7b98f5b4a
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"722ms","timestamp":"2026-09-23T16:38:18.700Z","threshold":"500ms"}
+2026-09-23T16:38:19.705Z: info: Login successful, tokens issued
+Trace Id: dbf90ab4-3f9b-421e-a76a-1bf7b98f5b4a
+Function Name: UserService.login
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:38:19.706Z: info: POST /login
+Trace Id: dbf90ab4-3f9b-421e-a76a-1bf7b98f5b4a
+Function Name: HTTP_REQUEST
+Metadata: {"method":"POST","url":"/login","status":200,"responseTime":"1011ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:38:19.705Z: info: Login API success
+Trace Id: dbf90ab4-3f9b-421e-a76a-1bf7b98f5b4a
+Function Name: UserController.login
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:38:19.714Z: info: OPTIONS /v0/api/users/me
+Trace Id: 1c9b79b5-1fc4-41bb-af3e-8065d0fd048f
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"0ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:38:19.717Z: info: Fetching user profile
+Trace Id: 3c4e55fa-f788-4562-9b1e-87ff02131bb1
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:38:19.717Z: info: Profile API called
+Trace Id: 3c4e55fa-f788-4562-9b1e-87ff02131bb1
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:38:19.957Z: info: Profile fetched successfully
+Trace Id: 3c4e55fa-f788-4562-9b1e-87ff02131bb1
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:38:19.958Z: info: GET /me
+Trace Id: 3c4e55fa-f788-4562-9b1e-87ff02131bb1
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"242ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:39:00.338Z: info: OPTIONS /v0/api/profile
+Trace Id: c1994d03-d29b-4493-9036-d6b098b9ce34
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/profile","status":204,"responseTime":"3ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:39:00.365Z: info: PUT /v0/api/profile
+Trace Id: b5a6145c-f9ce-473f-b0d6-1cd352fb57d5
+Function Name: HTTP_REQUEST
+Metadata: {"method":"PUT","url":"/v0/api/profile","status":404,"responseTime":"3ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:40:26.394Z: info: OPTIONS /v0/api/users/profile
+Trace Id: 20229d73-5467-4605-9552-ba62fabd2b27
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/profile","status":204,"responseTime":"26ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:40:26.503Z: info: Update profile API called
+Trace Id: 4308af56-a097-40ff-87c2-f882c48df1d7
+Function Name: UserController.updateProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:40:26.503Z: info: Updating user profile
+Trace Id: 4308af56-a097-40ff-87c2-f882c48df1d7
+Function Name: UserService.updateProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:40:29.804Z: info: User profile updated
+Trace Id: 4308af56-a097-40ff-87c2-f882c48df1d7
+Function Name: UserService.updateProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:40:29.808Z: info: PUT /profile
+Trace Id: 4308af56-a097-40ff-87c2-f882c48df1d7
+Function Name: HTTP_REQUEST
+Metadata: {"method":"PUT","url":"/profile","status":200,"responseTime":"3385ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:40:29.803Z: warn: Slow database query detected
+Trace Id: 4308af56-a097-40ff-87c2-f882c48df1d7
+Function Name: prisma.query
+Metadata: {"model":"Profile","operation":"upsert","duration":"3292ms","timestamp":"2026-09-23T16:40:26.510Z","threshold":"500ms"}
+2026-09-23T16:42:17.325Z: info: OPTIONS /v0/api/users/profile
+Trace Id: 249056f6-1cc3-4e5d-b099-631d0e92ec91
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/profile","status":204,"responseTime":"19ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:42:17.513Z: info: Update profile API called
+Trace Id: 1c54f4d4-1051-4396-9680-c0fb7ee5ec4d
+Function Name: UserController.updateProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:42:17.514Z: info: Updating user profile
+Trace Id: 1c54f4d4-1051-4396-9680-c0fb7ee5ec4d
+Function Name: UserService.updateProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:42:19.476Z: warn: Slow database query detected
+Trace Id: 1c54f4d4-1051-4396-9680-c0fb7ee5ec4d
+Function Name: prisma.query
+Metadata: {"model":"Profile","operation":"upsert","duration":"1951ms","timestamp":"2026-09-23T16:42:17.524Z","threshold":"500ms"}
+2026-09-23T16:42:19.476Z: info: User profile updated
+Trace Id: 1c54f4d4-1051-4396-9680-c0fb7ee5ec4d
+Function Name: UserService.updateProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:42:19.485Z: info: PUT /profile
+Trace Id: 1c54f4d4-1051-4396-9680-c0fb7ee5ec4d
+Function Name: HTTP_REQUEST
+Metadata: {"method":"PUT","url":"/profile","status":200,"responseTime":"2078ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:42:53.445Z: info: OPTIONS /v0/api/users/me
+Trace Id: b5443546-d417-4dd3-82cd-50231833a3fd
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"12ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:42:53.466Z: info: Profile API called
+Trace Id: a38f56e4-d50f-4f41-9ba9-74e705f27fa1
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:42:53.467Z: info: Fetching user profile
+Trace Id: a38f56e4-d50f-4f41-9ba9-74e705f27fa1
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:42:53.477Z: info: OPTIONS /v0/api/users/me
+Trace Id: dbdaa10f-a2cb-477b-816a-39f62ec74f20
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:42:56.108Z: warn: Slow database query detected
+Trace Id: a38f56e4-d50f-4f41-9ba9-74e705f27fa1
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"2633ms","timestamp":"2026-09-23T16:42:53.474Z","threshold":"500ms"}
+2026-09-23T16:42:56.108Z: info: Profile fetched successfully
+Trace Id: a38f56e4-d50f-4f41-9ba9-74e705f27fa1
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:42:56.112Z: info: GET /me
+Trace Id: a38f56e4-d50f-4f41-9ba9-74e705f27fa1
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"2653ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:42:56.121Z: info: Profile API called
+Trace Id: 5336819d-3fc8-44c3-8ce7-e4298bf35fa8
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:42:56.122Z: info: Fetching user profile
+Trace Id: 5336819d-3fc8-44c3-8ce7-e4298bf35fa8
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:42:56.377Z: info: Profile fetched successfully
+Trace Id: 5336819d-3fc8-44c3-8ce7-e4298bf35fa8
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:42:56.381Z: info: GET /me
+Trace Id: 5336819d-3fc8-44c3-8ce7-e4298bf35fa8
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"264ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:43:07.987Z: info: OPTIONS /v0/api/users/me
+Trace Id: 67a14727-0786-4b73-9bfc-1fd4e10ebba1
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:43:07.993Z: info: Profile API called
+Trace Id: 5a5bc55b-82ee-4adf-8dcf-a4e92ea6e85b
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:07.999Z: info: OPTIONS /v0/api/users/me
+Trace Id: d9dceb0e-774a-4fd6-aad9-77dfa00afdbd
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:43:07.994Z: info: Fetching user profile
+Trace Id: 5a5bc55b-82ee-4adf-8dcf-a4e92ea6e85b
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:08.321Z: info: Profile fetched successfully
+Trace Id: 5a5bc55b-82ee-4adf-8dcf-a4e92ea6e85b
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:08.323Z: info: GET /me
+Trace Id: 5a5bc55b-82ee-4adf-8dcf-a4e92ea6e85b
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"332ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:43:08.327Z: info: Fetching user profile
+Trace Id: ae87b6ae-ad9f-41b5-872a-b74e655f9953
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:08.326Z: info: Profile API called
+Trace Id: ae87b6ae-ad9f-41b5-872a-b74e655f9953
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:08.629Z: info: Profile fetched successfully
+Trace Id: ae87b6ae-ad9f-41b5-872a-b74e655f9953
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:08.629Z: info: GET /me
+Trace Id: ae87b6ae-ad9f-41b5-872a-b74e655f9953
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"303ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:43:09.111Z: info: Fetching user profile
+Trace Id: e0c23bd6-5438-4979-9284-6ab860b0e2a1
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:09.111Z: info: Profile API called
+Trace Id: e0c23bd6-5438-4979-9284-6ab860b0e2a1
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:09.447Z: info: Profile fetched successfully
+Trace Id: e0c23bd6-5438-4979-9284-6ab860b0e2a1
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:09.447Z: info: GET /me
+Trace Id: e0c23bd6-5438-4979-9284-6ab860b0e2a1
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"338ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:43:09.479Z: info: Profile API called
+Trace Id: c6553572-ef72-48e9-a2ce-17373f5b7fdb
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:09.479Z: info: Fetching user profile
+Trace Id: c6553572-ef72-48e9-a2ce-17373f5b7fdb
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:43:09.715Z: info: GET /me
+Trace Id: c6553572-ef72-48e9-a2ce-17373f5b7fdb
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"236ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-23T16:43:09.713Z: info: Profile fetched successfully
+Trace Id: c6553572-ef72-48e9-a2ce-17373f5b7fdb
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-23T16:44:46.268Z: info: ShutdownSignal
+Trace Id: 06412e7e-8276-4d72-ba4b-0543de726f00
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGINT"}
+2026-09-23T16:44:46.313Z: info: ShutdownSignal
+Trace Id: bcf6aea8-2dc5-481b-a3a2-d200612db164
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGINT"}
+2026-09-24T05:04:46.070Z: info: Database connection attempt 1
+Trace Id: 1a3104df-14fb-4c0d-b5b3-b39208ebda7a
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:04:51.133Z: info: Retrying in 2 seconds...
+Trace Id: f08c6af5-0f9e-4329-a8d1-d201909ebaf0
+Function Name: connectWithRetry
+Metadata: {"delay":2378.0489290678106}
+2026-09-24T05:04:51.133Z: warn: Database connection attempt 1 failed
+Trace Id: 1578d625-2c5b-41b1-9d5a-5acb28e4e577
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:04:53.512Z: info: Database connection attempt 2
+Trace Id: ebf7b8d9-0937-458e-847b-35e8f9c7f1c6
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:04:58.515Z: warn: Database connection attempt 2 failed
+Trace Id: 16dcc9cc-00f1-48e2-acba-113e360745b5
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:04:58.515Z: info: Retrying in 4 seconds...
+Trace Id: 9017e536-8336-4c41-be8c-8b81800c7128
+Function Name: connectWithRetry
+Metadata: {"delay":4255.492408749617}
+2026-09-24T05:05:02.771Z: info: Database connection attempt 3
+Trace Id: b2dbd791-37d3-4908-9840-9e6060e6f945
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:05:07.777Z: warn: Database connection attempt 3 failed
+Trace Id: fe460034-96e0-4773-809f-361deb4d4041
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:05:07.778Z: info: Retrying in 9 seconds...
+Trace Id: 09ef033a-406d-4986-adde-53e0cbaf2a1f
+Function Name: connectWithRetry
+Metadata: {"delay":8878.69998874209}
+2026-09-24T05:05:16.659Z: info: Database connection attempt 4
+Trace Id: 7cc04e65-cd11-4beb-a5b5-fa5ae83b7e77
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:05:21.663Z: warn: Database connection attempt 4 failed
+Trace Id: 3f68bb9a-431f-42d0-b1b1-8833bb5a0a98
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:05:21.663Z: info: Retrying in 17 seconds...
+Trace Id: 38c3a78c-c286-41d8-ba08-aca5fc1b7812
+Function Name: connectWithRetry
+Metadata: {"delay":16804.646423276772}
+2026-09-24T05:05:38.470Z: info: Database connection attempt 5
+Trace Id: 8c713b69-70f3-4476-89ea-0962c99511a4
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:06:51.058Z: info: Database connection attempt 1
+Trace Id: b5136ab0-01ef-414d-b828-5392a4f562b7
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:06:56.101Z: warn: Database connection attempt 1 failed
+Trace Id: 8dd935d9-8a42-4865-aadd-eb2078915709
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:06:56.101Z: info: Retrying in 3 seconds...
+Trace Id: b23e07ee-f978-40e5-8271-6180e5cc8adf
+Function Name: connectWithRetry
+Metadata: {"delay":2997.480246962691}
+2026-09-24T05:06:59.101Z: info: Database connection attempt 2
+Trace Id: b770f06f-edaf-41af-98a9-acf772460905
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:07:04.106Z: info: Retrying in 5 seconds...
+Trace Id: 2db9f7a9-26f1-47eb-958c-8b7b4a4d86ea
+Function Name: connectWithRetry
+Metadata: {"delay":4880.420445237324}
+2026-09-24T05:07:04.105Z: warn: Database connection attempt 2 failed
+Trace Id: be7fc094-ed8e-4fac-b187-9e9a45e7d283
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:07:08.987Z: info: Database connection attempt 3
+Trace Id: 09e60376-c82f-497e-939a-800c3621bb74
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:07:13.989Z: warn: Database connection attempt 3 failed
+Trace Id: 2b36089f-01af-42ea-baa6-f6d96b732f79
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:07:13.990Z: info: Retrying in 9 seconds...
+Trace Id: c0357aa5-6ef7-47b0-bd53-1cac40779bad
+Function Name: connectWithRetry
+Metadata: {"delay":8958.2159423522}
+2026-09-24T05:07:22.951Z: info: Database connection attempt 4
+Trace Id: 0be98655-148f-4a74-ae09-e520e0ef0ae2
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:07:27.960Z: warn: Database connection attempt 4 failed
+Trace Id: 1d64def1-6b69-4434-bcee-7e63f66eb6ac
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:07:27.960Z: info: Retrying in 17 seconds...
+Trace Id: 0438b816-200a-4195-9739-f99ef2049f3f
+Function Name: connectWithRetry
+Metadata: {"delay":16772.31941446402}
+2026-09-24T05:07:44.734Z: info: Database connection attempt 5
+Trace Id: 14d0cd03-8311-4bde-96cc-f194a33639f8
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:14:14.915Z: info: Database connection attempt 1
+Trace Id: cd8bec98-06e7-498a-be76-38b334dab491
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:14:19.959Z: info: Retrying in 3 seconds...
+Trace Id: e013ff69-6016-43a3-9279-d585c4c34921
+Function Name: connectWithRetry
+Metadata: {"delay":2913.0869374274944}
+2026-09-24T05:14:19.958Z: warn: Database connection attempt 1 failed
+Trace Id: 98b959a5-e992-4be6-b95b-0de736aeb505
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:14:22.873Z: info: Database connection attempt 2
+Trace Id: de340894-5288-4ad7-b327-be27075a49d2
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:14:27.879Z: info: Retrying in 5 seconds...
+Trace Id: 60b4f434-6bc2-476d-be18-a241607f4701
+Function Name: connectWithRetry
+Metadata: {"delay":4653.919968656718}
+2026-09-24T05:14:27.878Z: warn: Database connection attempt 2 failed
+Trace Id: 0b3d4e09-bb64-4c57-9f05-f92d19d70e39
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:14:32.534Z: info: Database connection attempt 3
+Trace Id: 104e3740-f57e-418c-a585-0406774bf330
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:14:37.535Z: warn: Database connection attempt 3 failed
+Trace Id: 979994e7-5c63-4ad6-8601-c1dba83e9946
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:14:37.535Z: info: Retrying in 9 seconds...
+Trace Id: 776654a3-2c0b-4fb2-b7a8-97eb8d8b1376
+Function Name: connectWithRetry
+Metadata: {"delay":8844.76227634363}
+2026-09-24T05:14:45.081Z: info: Database connection attempt 1
+Trace Id: 86a1eeca-4ced-4a4b-98ca-9c0a52268df2
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:14:50.383Z: warn: Slow database query detected
+Trace Id: 08e10c1d-6837-45b2-a51c-143492292af8
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1177ms","timestamp":"2026-09-24T05:14:49.206Z","threshold":"500ms"}
+2026-09-24T05:14:50.383Z: info: Database connected successfully
+Trace Id: 0e5cc517-65e3-48fe-8031-a0404ec936f1
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-24T05:14:51.384Z: warn: Slow database query detected
+Trace Id: e9405d5c-6537-40f6-b79a-cf7af2cba7fb
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"998ms","timestamp":"2026-09-24T05:14:50.384Z","threshold":"500ms"}
+2026-09-24T05:14:51.389Z: info: ServerStarted
+Trace Id: 3dddd047-e2b9-42f8-9b79-85f421cd4d1c
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":21262}
+2026-09-24T05:15:18.350Z: info: OPTIONS /v0/api/users/me
+Trace Id: a5c4e6e9-461f-42bb-be9a-64b41f82f7db
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"2ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-24T05:15:18.395Z: info: Profile API called
+Trace Id: 973bfc5b-f8f2-4dcb-9dc5-6bae1eae3435
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:18.396Z: info: Fetching user profile
+Trace Id: 973bfc5b-f8f2-4dcb-9dc5-6bae1eae3435
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:20.361Z: warn: Slow database query detected
+Trace Id: 973bfc5b-f8f2-4dcb-9dc5-6bae1eae3435
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1959ms","timestamp":"2026-09-24T05:15:18.402Z","threshold":"500ms"}
+2026-09-24T05:15:20.362Z: info: Profile fetched successfully
+Trace Id: 973bfc5b-f8f2-4dcb-9dc5-6bae1eae3435
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:20.365Z: info: GET /me
+Trace Id: 973bfc5b-f8f2-4dcb-9dc5-6bae1eae3435
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1987ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-24T05:15:20.379Z: info: Fetching user profile
+Trace Id: 1a2a12f2-9f9e-4f03-a424-584adea6dcf6
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:20.379Z: info: Profile API called
+Trace Id: 1a2a12f2-9f9e-4f03-a424-584adea6dcf6
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:21.497Z: info: Profile fetched successfully
+Trace Id: 1a2a12f2-9f9e-4f03-a424-584adea6dcf6
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:21.497Z: warn: Slow database query detected
+Trace Id: 1a2a12f2-9f9e-4f03-a424-584adea6dcf6
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1116ms","timestamp":"2026-09-24T05:15:20.381Z","threshold":"500ms"}
+2026-09-24T05:15:21.498Z: info: GET /me
+Trace Id: 1a2a12f2-9f9e-4f03-a424-584adea6dcf6
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1124ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-24T05:15:21.501Z: info: Fetching user profile
+Trace Id: af59d284-438f-414d-8862-0cbf818242da
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:21.501Z: info: Profile API called
+Trace Id: af59d284-438f-414d-8862-0cbf818242da
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:22.257Z: warn: Slow database query detected
+Trace Id: af59d284-438f-414d-8862-0cbf818242da
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"755ms","timestamp":"2026-09-24T05:15:21.502Z","threshold":"500ms"}
+2026-09-24T05:15:22.258Z: info: Profile fetched successfully
+Trace Id: af59d284-438f-414d-8862-0cbf818242da
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:22.259Z: info: GET /me
+Trace Id: af59d284-438f-414d-8862-0cbf818242da
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"758ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-24T05:15:22.268Z: info: Profile API called
+Trace Id: 9251644e-f66e-40ad-95d1-c50340d39c36
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:22.268Z: info: Fetching user profile
+Trace Id: 9251644e-f66e-40ad-95d1-c50340d39c36
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:22.721Z: info: Profile fetched successfully
+Trace Id: 9251644e-f66e-40ad-95d1-c50340d39c36
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:22.721Z: info: GET /me
+Trace Id: 9251644e-f66e-40ad-95d1-c50340d39c36
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"454ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-24T05:15:23.465Z: info: OPTIONS /v0/api/users/me
+Trace Id: 91842515-90f8-42cc-a268-b0752be95c42
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-24T05:15:23.468Z: info: Profile API called
+Trace Id: 91b23a38-dc17-4496-868e-2b81eea48cde
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:23.468Z: info: Fetching user profile
+Trace Id: 91b23a38-dc17-4496-868e-2b81eea48cde
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:24.309Z: info: Profile fetched successfully
+Trace Id: 91b23a38-dc17-4496-868e-2b81eea48cde
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:24.310Z: info: GET /me
+Trace Id: 91b23a38-dc17-4496-868e-2b81eea48cde
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"843ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-24T05:15:24.309Z: warn: Slow database query detected
+Trace Id: 91b23a38-dc17-4496-868e-2b81eea48cde
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"841ms","timestamp":"2026-09-24T05:15:23.468Z","threshold":"500ms"}
+2026-09-24T05:15:24.314Z: info: Profile API called
+Trace Id: 9f5336e8-1b85-48c9-96d3-4f442e1f53a9
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:24.314Z: info: Fetching user profile
+Trace Id: 9f5336e8-1b85-48c9-96d3-4f442e1f53a9
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:24.840Z: warn: Slow database query detected
+Trace Id: 9f5336e8-1b85-48c9-96d3-4f442e1f53a9
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"524ms","timestamp":"2026-09-24T05:15:24.315Z","threshold":"500ms"}
+2026-09-24T05:15:24.842Z: info: Profile fetched successfully
+Trace Id: 9f5336e8-1b85-48c9-96d3-4f442e1f53a9
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-24T05:15:24.844Z: info: GET /me
+Trace Id: 9f5336e8-1b85-48c9-96d3-4f442e1f53a9
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"530ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-24T05:22:59.893Z: info: ShutdownSignal
+Trace Id: 11a70ab6-d1b0-44e6-9f11-114b69eb5834
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-24T05:24:12.662Z: info: Database connection attempt 1
+Trace Id: 4fe7c14d-590b-4365-99da-80e4cfec4e08
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:24:17.706Z: info: Retrying in 2 seconds...
+Trace Id: 3301d1fa-c1f6-4759-977b-d6de9241a8ce
+Function Name: connectWithRetry
+Metadata: {"delay":2111.499754175914}
+2026-09-24T05:24:17.706Z: warn: Database connection attempt 1 failed
+Trace Id: 59ec6e32-9049-40ca-a4c3-892979c47783
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:24:19.820Z: info: Database connection attempt 2
+Trace Id: 9634b612-f098-435d-9c46-566128e5f2af
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:24:25.260Z: warn: Slow database query detected
+Trace Id: 0e1d7b13-26fb-4eb6-bb99-d666e622df72
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1375ms","timestamp":"2026-09-24T05:24:23.885Z","threshold":"500ms"}
+2026-09-24T05:24:25.260Z: info: Database connected successfully
+Trace Id: 6853826a-a7c8-4daf-ae2d-b641d5f71428
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"totalAttempts":2}
+2026-09-24T05:24:26.653Z: warn: Slow database query detected
+Trace Id: 2288cf8e-e86f-4c42-ba3d-ce5cf15eb9fc
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1392ms","timestamp":"2026-09-24T05:24:25.261Z","threshold":"500ms"}
+2026-09-24T05:24:26.657Z: info: ServerStarted
+Trace Id: f22bf04f-564c-4e24-b84a-73af39861c15
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":23976}
+2026-09-24T05:24:58.108Z: info: ShutdownSignal
+Trace Id: 646b57bd-008d-41c1-baf1-d6e772d83d2b
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-24T05:24:58.556Z: info: Database connection attempt 1
+Trace Id: 621dbeb9-9437-4f3d-a408-0bcc5bbff18c
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:24:59.310Z: info: Database connection attempt 1
+Trace Id: 9a8f5850-7bb4-4f01-8fc8-80e4c0dfa460
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:25:06.486Z: warn: Slow database query detected
+Trace Id: ef9e820c-b024-448c-9b29-8ba658af570b
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"2856ms","timestamp":"2026-09-24T05:25:03.630Z","threshold":"500ms"}
+2026-09-24T05:25:06.487Z: info: Database connected successfully
+Trace Id: 6618bced-ff8d-4986-8683-47de9e9f84c8
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-24T05:25:07.608Z: warn: Slow database query detected
+Trace Id: d2d5e075-dd15-4040-ba31-bdb221bebb5b
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1121ms","timestamp":"2026-09-24T05:25:06.487Z","threshold":"500ms"}
+2026-09-24T05:25:07.611Z: info: ServerStarted
+Trace Id: 38fc9d14-57dc-47bd-826c-9c3352f314cb
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":24261}
+2026-09-24T05:59:13.204Z: info: Database connection attempt 1
+Trace Id: 86e10035-20d5-4c28-a136-63fbfec7bfc4
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:59:16.621Z: info: Database connection attempt 1
+Trace Id: f88bcb0a-f64d-43d3-8631-eeb30f8fabcf
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:59:21.644Z: info: Retrying in 2 seconds...
+Trace Id: a52a1071-f987-4304-bd36-de3bbd6d4b31
+Function Name: connectWithRetry
+Metadata: {"delay":2274.5878343870454}
+2026-09-24T05:59:21.643Z: warn: Database connection attempt 1 failed
+Trace Id: 4da267e8-66b5-4ab1-91d6-86be9b3c3ece
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:59:23.925Z: info: Database connection attempt 2
+Trace Id: e3f72270-b909-4aeb-af95-223d89398778
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:59:28.945Z: info: Retrying in 5 seconds...
+Trace Id: 11d2fa64-1fcd-4f1a-9c23-f33e56a4f51d
+Function Name: connectWithRetry
+Metadata: {"delay":4693.563349360168}
+2026-09-24T05:59:28.941Z: warn: Database connection attempt 2 failed
+Trace Id: 1fbaf7a6-df3a-4f94-afe0-ed47c83eb5b2
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:59:33.641Z: info: Database connection attempt 3
+Trace Id: 4692265d-cac3-4f8f-835f-663a49abdb1c
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:59:38.648Z: warn: Database connection attempt 3 failed
+Trace Id: 1215f389-2286-4b11-8acf-6fbc57f85d5f
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T05:59:38.650Z: info: Retrying in 9 seconds...
+Trace Id: 293f40a5-19c8-4cf3-98e9-71471d0620fd
+Function Name: connectWithRetry
+Metadata: {"delay":8924.16478475268}
+2026-09-24T05:59:47.579Z: info: Database connection attempt 4
+Trace Id: 841e713b-c566-45d9-a832-4b9058871441
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T05:59:52.586Z: info: Retrying in 17 seconds...
+Trace Id: cc8c1137-bc00-49fc-a8fa-093c59ef3f8e
+Function Name: connectWithRetry
+Metadata: {"delay":16806.479522692953}
+2026-09-24T05:59:52.586Z: warn: Database connection attempt 4 failed
+Trace Id: 9351875f-c64f-404a-be73-326d6b9ae8e5
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:00:09.402Z: info: Database connection attempt 5
+Trace Id: b63eaa5e-f47f-41f2-9656-245a015361d8
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:00:15.094Z: info: Database connected successfully
+Trace Id: 81aa11eb-677c-4d21-98c1-f4ce428b3d29
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"totalAttempts":5}
+2026-09-24T06:00:15.094Z: warn: Slow database query detected
+Trace Id: 876db0af-7bfd-4e67-97a9-9fb1f4b1a242
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1350ms","timestamp":"2026-09-24T06:00:13.744Z","threshold":"500ms"}
+2026-09-24T06:00:16.100Z: warn: Slow database query detected
+Trace Id: 576b22ef-0794-4fa2-9519-2b896cfbd248
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1005ms","timestamp":"2026-09-24T06:00:15.095Z","threshold":"500ms"}
+2026-09-24T06:00:16.110Z: info: ServerStarted
+Trace Id: 95bc4d8c-98f2-4e1c-a98d-c2b2fd75c765
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":29481}
+2026-09-24T06:00:36.652Z: info: ShutdownSignal
+Trace Id: 38a13475-12da-4741-a057-ac72995cc431
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-24T06:00:37.260Z: info: Database connection attempt 1
+Trace Id: 6af2b0e6-19e5-49cc-b5e2-eef790c56b2e
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:00:42.290Z: info: Retrying in 3 seconds...
+Trace Id: 55a77b21-f567-43f9-a3d5-0ab4a0cdaa9c
+Function Name: connectWithRetry
+Metadata: {"delay":2503.1366357295283}
+2026-09-24T06:00:42.288Z: warn: Database connection attempt 1 failed
+Trace Id: 0f066a56-9057-4c4c-8eb9-88e6cd27e28c
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:00:44.794Z: info: Database connection attempt 2
+Trace Id: 6fc7f639-017a-4125-8dbd-72a0afa3abe6
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:00:49.800Z: warn: Database connection attempt 2 failed
+Trace Id: 9fd139d6-d9f8-4c91-a05c-fc088af009a7
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:00:49.800Z: info: Retrying in 5 seconds...
+Trace Id: 75f271c8-46fd-4c3c-bdcf-e8380b000c6d
+Function Name: connectWithRetry
+Metadata: {"delay":4979.53546274207}
+2026-09-24T06:00:54.782Z: info: Database connection attempt 3
+Trace Id: a7324daf-a5d5-4fdb-8b62-0dfc6ff5a6f1
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:01:00.747Z: warn: Slow database query detected
+Trace Id: b66b17e0-26cd-4833-8143-6a1e81408e06
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1236ms","timestamp":"2026-09-24T06:00:59.511Z","threshold":"500ms"}
+2026-09-24T06:01:00.748Z: info: Database connected successfully
+Trace Id: a5bf8f32-89de-4d6d-a17f-0b1caf347421
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"totalAttempts":3}
+2026-09-24T06:01:01.843Z: warn: Slow database query detected
+Trace Id: f0c402ed-c53d-49f0-b0ca-4890796c5a30
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1094ms","timestamp":"2026-09-24T06:01:00.748Z","threshold":"500ms"}
+2026-09-24T06:01:01.848Z: info: ServerStarted
+Trace Id: a368afd5-06e7-4af6-9c79-c36c32279222
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":29782}
+2026-09-24T06:02:21.843Z: info: ShutdownSignal
+Trace Id: 1bf1777d-a4a3-47f8-8857-248a055b614b
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-24T06:02:22.298Z: info: Database connection attempt 1
+Trace Id: 959b80a9-a0c4-4e27-accf-3c4a930d0125
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:02:27.307Z: info: Retrying in 2 seconds...
+Trace Id: f6e5655b-09ab-43af-9301-b45bc1f3b4a8
+Function Name: connectWithRetry
+Metadata: {"delay":2081.7388101903957}
+2026-09-24T06:02:27.307Z: warn: Database connection attempt 1 failed
+Trace Id: d173dabd-778e-4604-b7a5-e2507def9479
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:02:29.391Z: info: Database connection attempt 2
+Trace Id: 15bf6199-ef10-4e49-a182-3b24bcccf9ef
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:02:33.920Z: info: Database connection attempt 1
+Trace Id: 54c60107-3133-4961-9cf4-3e95df62262b
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:02:38.938Z: warn: Database connection attempt 1 failed
+Trace Id: f2406973-0b49-4bc9-b024-ef01236372dd
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:02:38.939Z: info: Retrying in 2 seconds...
+Trace Id: b6fe80de-c97a-418c-9ab8-09ae044faffc
+Function Name: connectWithRetry
+Metadata: {"delay":2134.134752676067}
+2026-09-24T06:02:41.075Z: info: Database connection attempt 2
+Trace Id: 683a1a98-aacb-41ce-b533-06678ed04893
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:02:46.082Z: info: Retrying in 5 seconds...
+Trace Id: db3e049e-a482-4de1-9fce-1b199cceb0dd
+Function Name: connectWithRetry
+Metadata: {"delay":4569.72200308139}
+2026-09-24T06:02:46.081Z: warn: Database connection attempt 2 failed
+Trace Id: 52973031-4c32-4ef3-b54d-b90f32c22f72
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:02:50.652Z: info: Database connection attempt 3
+Trace Id: 4cdbf4fb-88e2-4154-8355-47cbb03f2542
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:02:55.657Z: info: Retrying in 8 seconds...
+Trace Id: 06426081-fe54-434b-a667-256a5022f361
+Function Name: connectWithRetry
+Metadata: {"delay":8129.417130110201}
+2026-09-24T06:02:55.656Z: warn: Database connection attempt 3 failed
+Trace Id: 8f156a18-dc22-4b43-a8ed-eaba45ab85a6
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:03:03.788Z: info: Database connection attempt 4
+Trace Id: 309ca943-431c-4aa6-becf-d6de6f381f8f
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:03:08.147Z: warn: Slow database query detected
+Trace Id: 93159ac3-744d-4f1a-82f5-5f8b2f8f19bf
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"931ms","timestamp":"2026-09-24T06:03:07.216Z","threshold":"500ms"}
+2026-09-24T06:03:08.147Z: info: Database connected successfully
+Trace Id: f689a4a3-b7e9-4dc2-bea9-04526f8d894f
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"totalAttempts":4}
+2026-09-24T06:03:08.916Z: warn: Slow database query detected
+Trace Id: 80086859-ad79-472d-984d-7fa617d57f5c
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"769ms","timestamp":"2026-09-24T06:03:08.147Z","threshold":"500ms"}
+2026-09-24T06:03:08.919Z: info: ServerStarted
+Trace Id: 475f8536-c97e-4807-9cc9-19a3fb462dd8
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":30215}
+2026-09-24T06:14:34.786Z: info: ShutdownSignal
+Trace Id: e1217070-d0de-46b1-9cd7-1279ca4b85ab
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-24T06:14:35.439Z: info: Database connection attempt 1
+Trace Id: ee8652e3-b717-4999-8443-eee51198b05a
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:14:40.476Z: info: Retrying in 2 seconds...
+Trace Id: 5b33d568-303b-4bf0-b2d4-aab842e1174e
+Function Name: connectWithRetry
+Metadata: {"delay":2021.3871745048962}
+2026-09-24T06:14:40.476Z: warn: Database connection attempt 1 failed
+Trace Id: f2823f3b-ba42-4343-854a-e0a0b79dac2f
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:14:42.502Z: info: Database connection attempt 2
+Trace Id: b4b3848e-09dd-4608-aa85-5ce7cf9949be
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:14:47.512Z: info: Retrying in 5 seconds...
+Trace Id: 1d199a1f-d2d0-48fb-9802-bc753805f1a8
+Function Name: connectWithRetry
+Metadata: {"delay":4727.963106386513}
+2026-09-24T06:14:47.511Z: warn: Database connection attempt 2 failed
+Trace Id: dac0c82b-216c-4533-9014-76a1ec0e5efe
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:14:52.240Z: info: Database connection attempt 3
+Trace Id: ad1b34bb-b1ab-4bb4-a8f4-7a9bc03d13af
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:14:57.267Z: warn: Database connection attempt 3 failed
+Trace Id: 06da63b9-daa0-4bcf-9a0c-34b2ec33ca76
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:14:57.268Z: info: Retrying in 9 seconds...
+Trace Id: a90adeba-b96c-4182-90d8-886f8e2fc172
+Function Name: connectWithRetry
+Metadata: {"delay":8519.023684778465}
+2026-09-24T06:15:05.793Z: info: Database connection attempt 4
+Trace Id: c3a810e4-3c1c-4ed0-bd46-f26e1b044390
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:15:10.802Z: warn: Database connection attempt 4 failed
+Trace Id: 4c302c96-0f2f-4b6e-8afa-bac6fe130d2a
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:15:10.803Z: info: Retrying in 16 seconds...
+Trace Id: 2f0d5e95-6ba8-4c9d-93aa-2c7d830d5faa
+Function Name: connectWithRetry
+Metadata: {"delay":16442.311681687443}
+2026-09-24T06:15:27.248Z: info: Database connection attempt 5
+Trace Id: 0768889a-3b81-4cb9-a484-594c002fffdd
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:15:32.609Z: warn: Slow database query detected
+Trace Id: 5b793438-db9b-449d-a2e7-8b83eea23e5f
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1419ms","timestamp":"2026-09-24T06:15:31.190Z","threshold":"500ms"}
+2026-09-24T06:15:32.609Z: info: Database connected successfully
+Trace Id: edef8cfe-bcd9-4f5e-90b7-df853e8ee314
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"totalAttempts":5}
+2026-09-24T06:15:35.092Z: warn: Slow database query detected
+Trace Id: 0e7398bd-382e-4a3e-acb5-47ba1e458b0d
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"2481ms","timestamp":"2026-09-24T06:15:32.610Z","threshold":"500ms"}
+2026-09-24T06:15:35.102Z: info: ServerStarted
+Trace Id: 702b9e70-6b2b-49a1-9f80-3fd64119e73d
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":32763}
+2026-09-24T06:15:57.797Z: info: ShutdownSignal
+Trace Id: 5ac926a7-905a-4237-bf5d-edd97d11a69d
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-24T06:16:41.128Z: info: Database connection attempt 1
+Trace Id: 721af931-a01c-46d4-8a99-bc60a097a15d
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:16:46.181Z: warn: Database connection attempt 1 failed
+Trace Id: 0c6fa484-9aba-4573-a48e-544e647e77c1
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:16:46.183Z: info: Retrying in 2 seconds...
+Trace Id: 89b99bfc-b432-4f0c-af92-145a6729b618
+Function Name: connectWithRetry
+Metadata: {"delay":2482.604657939427}
+2026-09-24T06:16:48.668Z: info: Database connection attempt 2
+Trace Id: 610d3787-a71c-43e9-8325-6b8d8841764c
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:16:53.675Z: warn: Database connection attempt 2 failed
+Trace Id: 8da35e61-cdfc-49ca-a709-7420577a46d4
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:16:53.676Z: info: Retrying in 4 seconds...
+Trace Id: 5fb2a1d1-b846-49cf-b85a-59f5c0485820
+Function Name: connectWithRetry
+Metadata: {"delay":4394.177622272605}
+2026-09-24T06:16:58.074Z: info: Database connection attempt 3
+Trace Id: e62d5569-7d13-4da9-9e0c-6848b215b370
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:17:03.081Z: warn: Database connection attempt 3 failed
+Trace Id: c6691949-aa93-4e6d-9c93-360f209b56c6
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:17:03.084Z: info: Retrying in 8 seconds...
+Trace Id: eca44551-a00d-4ce3-a483-96e1ebe000ea
+Function Name: connectWithRetry
+Metadata: {"delay":8208.366175277393}
+2026-09-24T06:17:11.296Z: info: Database connection attempt 4
+Trace Id: 2e3b8092-e453-4d6a-b1ac-0ae3d1434aff
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:17:18.170Z: warn: Slow database query detected
+Trace Id: 8d3994df-92a5-4d2f-aa50-fdfddf60112f
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1996ms","timestamp":"2026-09-24T06:17:16.174Z","threshold":"500ms"}
+2026-09-24T06:17:18.170Z: info: Database connected successfully
+Trace Id: eed02c04-7eca-4922-8ade-12cee96eda62
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"totalAttempts":4}
+2026-09-24T06:17:19.275Z: warn: Slow database query detected
+Trace Id: 141d0464-75f2-436d-b440-692a24e8bcdb
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1104ms","timestamp":"2026-09-24T06:17:18.171Z","threshold":"500ms"}
+2026-09-24T06:17:19.277Z: info: ServerStarted
+Trace Id: 660b98b9-7703-4e88-bbe2-0159bdd6632a
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":33879}
+2026-09-24T06:21:32.106Z: info: ShutdownSignal
+Trace Id: d4215e70-5581-41da-83b5-e20d07f92996
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-24T06:21:32.562Z: info: Database connection attempt 1
+Trace Id: d75bedcb-d9d2-436d-a98e-2eefb3130ebf
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:21:37.571Z: info: Retrying in 3 seconds...
+Trace Id: 6d41380a-09cc-4225-8022-c4c58a712af9
+Function Name: connectWithRetry
+Metadata: {"delay":2784.0842578431334}
+2026-09-24T06:21:37.570Z: warn: Database connection attempt 1 failed
+Trace Id: 6ae6af9c-b3c2-494b-a201-498136ae05eb
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:21:40.356Z: info: Database connection attempt 2
+Trace Id: 04445625-f931-4874-9666-13c0a4d2fb1b
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:21:45.361Z: info: Retrying in 4 seconds...
+Trace Id: 8d4d68f7-f0d7-459c-b464-708670069e6a
+Function Name: connectWithRetry
+Metadata: {"delay":4295.380366974975}
+2026-09-24T06:21:45.361Z: warn: Database connection attempt 2 failed
+Trace Id: 96eeb20d-868a-475d-91a7-35e48dfde5ce
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:21:48.386Z: info: Database connection attempt 1
+Trace Id: 72d24c00-2ea1-4de6-a254-7ce3b051d93e
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:21:53.401Z: warn: Database connection attempt 1 failed
+Trace Id: 2b1e64f6-107f-4e07-9963-ffca70efbdbb
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:21:53.402Z: info: Retrying in 3 seconds...
+Trace Id: c89c336a-44a7-4eae-8176-a8f6d65d8bcb
+Function Name: connectWithRetry
+Metadata: {"delay":2866.958560624352}
+2026-09-24T06:21:54.277Z: info: Database connection attempt 1
+Trace Id: 50122ef2-2b84-4004-9412-bf911813bfd0
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:21:59.289Z: warn: Database connection attempt 1 failed
+Trace Id: 78127971-d1db-43bf-a668-dec0e2af4ee6
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:21:59.290Z: info: Retrying in 2 seconds...
+Trace Id: c08803ff-d5bd-4117-b8e5-80b540a2cbde
+Function Name: connectWithRetry
+Metadata: {"delay":2476.5149279754373}
+2026-09-24T06:22:01.769Z: info: Database connection attempt 2
+Trace Id: a409a70a-058f-4d59-9889-5fca46b65d8a
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:22:06.776Z: warn: Database connection attempt 2 failed
+Trace Id: ff5e8e71-a40d-47b3-a161-836963e88513
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:22:06.777Z: info: Retrying in 4 seconds...
+Trace Id: 58dfb9a8-bba5-4a67-888d-00ddfbfaa695
+Function Name: connectWithRetry
+Metadata: {"delay":4494.2762238546065}
+2026-09-24T06:22:11.272Z: info: Database connection attempt 3
+Trace Id: b9e565b6-7ae9-488c-92fd-e8079a538c88
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:22:16.292Z: warn: Database connection attempt 3 failed
+Trace Id: cca05a52-7d60-46d6-810b-eeeb3ac5894d
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:22:16.294Z: info: Retrying in 8 seconds...
+Trace Id: 76b1a14d-5f4b-4146-a977-9881492bd9db
+Function Name: connectWithRetry
+Metadata: {"delay":8141.009943292792}
+2026-09-24T06:22:24.444Z: info: Database connection attempt 4
+Trace Id: 83922222-94c7-49b3-afba-c7d43bca0966
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:22:29.457Z: info: Retrying in 16 seconds...
+Trace Id: bc4dd2f8-b999-4d9a-adbe-599dae7700d9
+Function Name: connectWithRetry
+Metadata: {"delay":16031.211538903444}
+2026-09-24T06:22:29.456Z: warn: Database connection attempt 4 failed
+Trace Id: d06649ab-294f-4154-a1e1-1b055cfa725d
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:22:45.494Z: info: Database connection attempt 5
+Trace Id: bca84198-783c-4b5c-a236-1641aec275fe
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:22:51.559Z: info: Database connected successfully
+Trace Id: 23abed62-522e-46b2-86af-94084a726476
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"totalAttempts":5}
+2026-09-24T06:22:51.559Z: warn: Slow database query detected
+Trace Id: 50fd03be-7fcf-4491-a971-60fd6acbc502
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1664ms","timestamp":"2026-09-24T06:22:49.895Z","threshold":"500ms"}
+2026-09-24T06:22:53.068Z: warn: Slow database query detected
+Trace Id: da5190ef-e805-46e9-a8c7-60c7491cc017
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1509ms","timestamp":"2026-09-24T06:22:51.559Z","threshold":"500ms"}
+2026-09-24T06:22:53.070Z: info: ServerStarted
+Trace Id: 358bd819-432e-44ba-94ff-60371b6618a0
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":35448}
+2026-09-24T06:23:12.853Z: info: ShutdownSignal
+Trace Id: 85686075-c736-4be3-a29f-9739763afe43
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGTERM"}
+2026-09-24T06:23:13.306Z: info: Database connection attempt 1
+Trace Id: 68c4232a-b244-46ae-84f6-d84725932ca7
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:23:18.315Z: warn: Database connection attempt 1 failed
+Trace Id: ad96cce1-7dd2-429b-ac51-e8effa5bdf7f
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:23:18.315Z: info: Retrying in 2 seconds...
+Trace Id: eba851ae-161d-4ce4-8892-89a4acd6b580
+Function Name: connectWithRetry
+Metadata: {"delay":2494.2397530279727}
+2026-09-24T06:23:20.810Z: info: Database connection attempt 2
+Trace Id: 7c421873-9076-4087-b327-cf8a25a6be7d
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:23:25.819Z: warn: Database connection attempt 2 failed
+Trace Id: 34834180-1de0-4e1b-b71d-4d464b9bbdd7
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:23:25.820Z: info: Retrying in 5 seconds...
+Trace Id: 00552dfe-94f2-4c19-981c-a7539e93b68d
+Function Name: connectWithRetry
+Metadata: {"delay":4969.419946882842}
+2026-09-24T06:23:30.792Z: info: Database connection attempt 3
+Trace Id: f54f3aed-95e3-49f9-9152-bbbf8e40577e
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:23:35.797Z: info: Retrying in 8 seconds...
+Trace Id: 94e9edaf-4edd-42b6-b666-9efc142c7de2
+Function Name: connectWithRetry
+Metadata: {"delay":8316.988568541901}
+2026-09-24T06:23:35.796Z: warn: Database connection attempt 3 failed
+Trace Id: 93deea66-93d5-404a-ac6d-9d36979cbe13
+Function Name: connectWithRetry
+Metadata: {"attempt":3,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:23:44.122Z: info: Database connection attempt 4
+Trace Id: 3da4f944-a5e9-4bf8-af08-daf29e2c36eb
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:23:49.130Z: warn: Database connection attempt 4 failed
+Trace Id: 3413c99c-759a-441a-9199-ad2fa1572fae
+Function Name: connectWithRetry
+Metadata: {"attempt":4,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:23:49.131Z: info: Retrying in 16 seconds...
+Trace Id: e30911b6-84e0-4723-baf4-7af46fc46db7
+Function Name: connectWithRetry
+Metadata: {"delay":16372.753258040311}
+2026-09-24T06:24:05.504Z: info: Database connection attempt 5
+Trace Id: 97605c8a-d2de-4712-8389-b684d41cb65c
+Function Name: connectWithRetry
+Metadata: {"attempt":5,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:28:01.552Z: info: Database connection attempt 1
+Trace Id: 69d52749-c41a-49a9-b383-bdb358f0efaf
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:28:06.608Z: info: Retrying in 2 seconds...
+Trace Id: 00bb5c97-f9a2-44e4-bd46-92a69f7bb068
+Function Name: connectWithRetry
+Metadata: {"delay":2104.7735414734498}
+2026-09-24T06:28:06.607Z: warn: Database connection attempt 1 failed
+Trace Id: 1fe8a016-d56b-44ca-bca7-34a4c133b02a
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"error":"Can't reach database server at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`\n\nPlease make sure your database server is running at `ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech:5432`.","errorType":"PrismaClientInitializationError"}
+2026-09-24T06:28:08.715Z: info: Database connection attempt 2
+Trace Id: 09ffab3e-0a89-4343-be58-aafd694dd2c5
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-24T06:28:14.149Z: warn: Slow database query detected
+Trace Id: 18866bc9-3b77-4a93-9522-467e31fe63c9
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1015ms","timestamp":"2026-09-24T06:28:13.134Z","threshold":"500ms"}
+2026-09-24T06:28:14.150Z: info: Database connected successfully
+Trace Id: 5f4ca396-995d-4a9e-a9f9-93e8dde1b7ae
+Function Name: connectWithRetry
+Metadata: {"attempt":2,"totalAttempts":2}
+2026-09-24T06:28:15.242Z: warn: Slow database query detected
+Trace Id: b8e5afb6-4ff2-423b-b140-51366d512897
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1091ms","timestamp":"2026-09-24T06:28:14.150Z","threshold":"500ms"}
+2026-09-24T06:28:15.247Z: info: ServerStarted
+Trace Id: 8bf7d134-5a3b-41c2-9c91-604ae6e15322
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":37721}
+2026-09-24T06:30:58.645Z: info: ShutdownSignal
+Trace Id: b858adfa-f03d-4b3b-822e-f08c4067700d
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGINT"}
+2026-09-24T06:30:58.649Z: info: ShutdownSignal
+Trace Id: 0c410b1b-ee99-4f71-ac0a-d83767f233b6
+Function Name: gracefulShutdown
+Metadata: {"signal":"SIGINT"}
+2026-09-25T05:09:47.837Z: info: Database connection attempt 1
+Trace Id: cf0e814a-44cc-4f50-afe9-5b0f3e234efb
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"maxRetries":5,"databaseUrl":"postgresql://neondb_owner:npg_fNOyGEBx48Qd@ep-red-shape-aillwbpp.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"}
+2026-09-25T05:09:51.850Z: info: Database connected successfully
+Trace Id: 3033579a-0e09-4bce-905a-57cda2c9b73c
+Function Name: connectWithRetry
+Metadata: {"attempt":1,"totalAttempts":1}
+2026-09-25T05:09:51.850Z: warn: Slow database query detected
+Trace Id: 3991c378-f939-4002-b48e-34ca8a5173f1
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"1095ms","timestamp":"2026-09-25T05:09:50.755Z","threshold":"500ms"}
+2026-09-25T05:09:52.414Z: warn: Slow database query detected
+Trace Id: fe88c639-7b8b-4630-8c77-678d16eca7a8
+Function Name: prisma.query
+Metadata: {"model":"unknown","operation":"$queryRaw","duration":"563ms","timestamp":"2026-09-25T05:09:51.850Z","threshold":"500ms"}
+2026-09-25T05:09:52.418Z: info: ServerStarted
+Trace Id: 727cfcf0-3519-4de5-a9c6-369100e0903f
+Function Name: app.listen
+Metadata: {"port":"8181","nodeEnv":"development","pid":8500}
+2026-09-25T05:10:24.000Z: info: OPTIONS /v0/api/users/me
+Trace Id: 3e3f3cbc-f3b9-4892-a760-9c5dd4ef5a3e
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"26ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:10:24.048Z: info: GET /v0/api/users/me
+Trace Id: ca31e1e2-397e-41d1-a591-d115c5b61da6
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/v0/api/users/me","status":401,"responseTime":"30ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:10:33.926Z: info: OPTIONS /v0/api/users/login
+Trace Id: 0ca28476-4520-4f96-beb0-3e58a2f8b308
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/login","status":204,"responseTime":"10ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:10:33.971Z: info: Login API called
+Trace Id: c9084c38-8c2d-4526-8739-ce7180c02887
+Function Name: UserController.login
+Metadata: {"email":"arbaazkhanark23@gmail.com"}
+2026-09-25T05:10:33.971Z: info: Processing login request
+Trace Id: c9084c38-8c2d-4526-8739-ce7180c02887
+Function Name: UserService.login
+Metadata: {"email":"arbaazkhanark23@gmail.com"}
+2026-09-25T05:10:36.995Z: warn: Slow database query detected
+Trace Id: c9084c38-8c2d-4526-8739-ce7180c02887
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"3022ms","timestamp":"2026-09-25T05:10:33.972Z","threshold":"500ms"}
+2026-09-25T05:10:37.266Z: info: Login successful, tokens issued
+Trace Id: c9084c38-8c2d-4526-8739-ce7180c02887
+Function Name: UserService.login
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:10:37.266Z: info: Login API success
+Trace Id: c9084c38-8c2d-4526-8739-ce7180c02887
+Function Name: UserController.login
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:10:37.267Z: info: POST /login
+Trace Id: c9084c38-8c2d-4526-8739-ce7180c02887
+Function Name: HTTP_REQUEST
+Metadata: {"method":"POST","url":"/login","status":200,"responseTime":"3298ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:10:37.283Z: info: OPTIONS /v0/api/users/me
+Trace Id: 7711c009-f1ac-45ec-b039-3db37ce44086
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:10:37.286Z: info: Profile API called
+Trace Id: 62b8e2c4-8425-444d-bd91-ef8180cefc48
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:10:37.286Z: info: Fetching user profile
+Trace Id: 62b8e2c4-8425-444d-bd91-ef8180cefc48
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:10:38.830Z: warn: Slow database query detected
+Trace Id: 62b8e2c4-8425-444d-bd91-ef8180cefc48
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1542ms","timestamp":"2026-09-25T05:10:37.287Z","threshold":"500ms"}
+2026-09-25T05:10:38.831Z: info: Profile fetched successfully
+Trace Id: 62b8e2c4-8425-444d-bd91-ef8180cefc48
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:10:38.834Z: info: GET /me
+Trace Id: 62b8e2c4-8425-444d-bd91-ef8180cefc48
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1550ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:11:19.627Z: info: OPTIONS /v0/api/users/me
+Trace Id: 2e1ed799-0523-4f57-9fae-c257d311c1c4
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"15ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:11:19.638Z: info: OPTIONS /v0/api/users/me
+Trace Id: b47e29a7-3a44-4f9c-ad46-f7f5074de6c6
+Function Name: HTTP_REQUEST
+Metadata: {"method":"OPTIONS","url":"/v0/api/users/me","status":204,"responseTime":"1ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:11:19.648Z: info: Fetching user profile
+Trace Id: cc5b8d3b-c099-4a76-b515-580f1f716976
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:19.648Z: info: Profile API called
+Trace Id: cc5b8d3b-c099-4a76-b515-580f1f716976
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:21.278Z: warn: Slow database query detected
+Trace Id: cc5b8d3b-c099-4a76-b515-580f1f716976
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1628ms","timestamp":"2026-09-25T05:11:19.650Z","threshold":"500ms"}
+2026-09-25T05:11:21.279Z: info: Profile fetched successfully
+Trace Id: cc5b8d3b-c099-4a76-b515-580f1f716976
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:21.280Z: info: GET /me
+Trace Id: cc5b8d3b-c099-4a76-b515-580f1f716976
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1635ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:11:21.289Z: info: Fetching user profile
+Trace Id: e4259769-0112-4575-b4eb-c9a5df298967
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:21.289Z: info: Profile API called
+Trace Id: e4259769-0112-4575-b4eb-c9a5df298967
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:21.568Z: info: Profile fetched successfully
+Trace Id: e4259769-0112-4575-b4eb-c9a5df298967
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:21.568Z: info: GET /me
+Trace Id: e4259769-0112-4575-b4eb-c9a5df298967
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"281ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:11:21.589Z: info: Fetching user profile
+Trace Id: 910d9897-5d4d-4446-9cec-8268206e7226
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:21.588Z: info: Profile API called
+Trace Id: 910d9897-5d4d-4446-9cec-8268206e7226
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:21.874Z: info: Profile fetched successfully
+Trace Id: 910d9897-5d4d-4446-9cec-8268206e7226
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:21.874Z: info: GET /me
+Trace Id: 910d9897-5d4d-4446-9cec-8268206e7226
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"303ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}
+2026-09-25T05:11:21.877Z: info: Fetching user profile
+Trace Id: 5583b9f7-66e1-4a6e-b923-644e76e82820
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:21.877Z: info: Profile API called
+Trace Id: 5583b9f7-66e1-4a6e-b923-644e76e82820
+Function Name: UserController.profile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:23.049Z: warn: Slow database query detected
+Trace Id: 5583b9f7-66e1-4a6e-b923-644e76e82820
+Function Name: prisma.query
+Metadata: {"model":"User","operation":"findUnique","duration":"1171ms","timestamp":"2026-09-25T05:11:21.878Z","threshold":"500ms"}
+2026-09-25T05:11:23.050Z: info: Profile fetched successfully
+Trace Id: 5583b9f7-66e1-4a6e-b923-644e76e82820
+Function Name: UserService.getProfile
+Metadata: {"userId":"8161b119-55f2-4c59-a2e8-564964a3c553"}
+2026-09-25T05:11:23.050Z: info: GET /me
+Trace Id: 5583b9f7-66e1-4a6e-b923-644e76e82820
+Function Name: HTTP_REQUEST
+Metadata: {"method":"GET","url":"/me","status":304,"responseTime":"1174ms","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"}

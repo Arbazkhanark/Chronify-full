@@ -188,6 +188,7 @@ import { AppError } from "../../utils/AppError";
 import { logger } from "patal-log";
 import { emailTemplates } from "../email/email.template";
 import { sendResetPasswordEmail, sendVerificationEmail } from "../email/email.helper";
+import { UpdateProfileDTO } from "./user.validation";
 
 export class UserService {
   static async signup(data: CreateUserDTO) {
@@ -461,21 +462,31 @@ static async forgotPassword(email: string) {
     });
   }
 
-  static async updateProfile(userId: string, data: any) {
-    logger.info("Updating user profile", {
-      functionName: "UserService.updateProfile",
-      metadata: { userId },
-    });
+  static async updateProfile(
+  userId: string,
+  data: UpdateProfileDTO
+) {
+  logger.info("Updating user profile", {
+    functionName: "UserService.updateProfile",
+    metadata: {
+      userId,
+    },
+  });
 
-    const profile = await UserRepository.updateProfile(userId, data);
+  const profile = await UserRepository.updateProfile(
+    userId,
+    data
+  );
 
-    logger.info("User profile updated", {
-      functionName: "UserService.updateProfile",
-      metadata: { userId },
-    });
+  logger.info("User profile updated", {
+    functionName: "UserService.updateProfile",
+    metadata: {
+      userId,
+    },
+  });
 
-    return profile;
-  }
+  return profile;
+}
 
   static async getProfile(userId: string) {
     logger.info("Fetching user profile", {
@@ -500,6 +511,65 @@ static async forgotPassword(email: string) {
     return user;
   }
 
+
+  static async logout(userId: string) {
+    logger.info("User logout initiated", {
+      functionName: "UserService.logout",
+      metadata: { userId },
+    });
+    
+
+    // const accessToken = jwt.sign(
+    //   { userId: userId },
+    //   process.env.JWT_SECRET!,
+    //   { expiresIn: "1d" }
+    // );
+
+
+    // Now i have to expire the user's existing token 
+    // TODO: Expire Token
+
+
+    logger.info("User logout successful", {
+      functionName: "UserService.logout",
+      metadata: { userId },
+    });
+
+    return true;
+  }
+
+
+
+  static async getFullDetailedProfile(userId: string) {
+    logger.info("Fetching full detailed user profile", {
+      functionName: "UserService.getFullDetailedProfile",
+      metadata: { userId },
+    });
+
+    const user = await UserRepository.findById(userId);
+    const userDetails= await UserRepository.getUserDetailsById(userId);
+
+    if (!user) {
+      logger.warn("Full profile fetch failed - user not found", {
+        functionName: "UserService.getFullDetailedProfile",
+        metadata: { userId },
+      });
+      throw new AppError("User not found", 404);
+    }
+
+    // Mix the user details in single variable and return that 
+    const fullProfile = {
+      ...user,
+      ...userDetails
+    };
+
+    logger.info("Full detailed profile fetched successfully", {
+      functionName: "UserService.getFullDetailedProfile",
+      metadata: { userId },
+    });
+
+    return fullProfile;
+  }
 
 
   static async saveFcmToken(userId: string, token: string) {

@@ -1,15 +1,17 @@
-'use client'
+// chronify-frontend/src/app/onboarding/role/page.tsx
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   motion,
   AnimatePresence,
-} from 'framer-motion'
+} from "framer-motion";
 
 import {
   Button,
-} from '@/components/ui/button'
+} from "@/components/ui/button";
 
 import {
   Card,
@@ -17,7 +19,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from "@/components/ui/card";
 
 import {
   GraduationCap,
@@ -26,165 +28,139 @@ import {
   Users,
   ArrowRight,
   Sparkles,
-} from 'lucide-react'
+} from "lucide-react";
 
-import toast from 'react-hot-toast'
+import toast from "react-hot-toast";
 
 import {
   AuthService,
   type UserRole,
-} from '@/hooks/useAuth'
-
-// ============================================================
-// ROLE CONFIGURATION
-// ============================================================
+} from "@/hooks/useAuth";
 
 interface RoleOption {
-  id: UserRole
-  title: string
-  description: string
-  details: string
-  gradient: string
-  icon: typeof GraduationCap
+  id: UserRole;
+  title: string;
+  description: string;
+  details: string;
+  gradient: string;
+  icon: typeof GraduationCap;
 }
 
 const roles: RoleOption[] = [
   {
-    id: 'student',
-    title: 'Student',
+    id: "student",
+    title: "Student",
     description:
-      'School, College, or University student',
+      "School, College, or University student",
     icon: GraduationCap,
     gradient:
-      'from-blue-500 to-cyan-500',
+      "from-blue-500 to-cyan-500",
     details:
-      'Tell us about your studies and goals',
+      "Tell us about your studies and goals",
   },
   {
-    id: 'employed',
-    title: 'Employed Professional',
+    id: "employed",
+    title: "Employed Professional",
     description:
-      'Working full-time or part-time',
+      "Working full-time or part-time",
     icon: Briefcase,
     gradient:
-      'from-purple-500 to-pink-500',
+      "from-purple-500 to-pink-500",
     details:
-      'Share your profession and work schedule',
+      "Share your profession and work schedule",
   },
   {
-    id: 'unemployed',
-    title: 'Currently Unemployed',
+    id: "unemployed",
+    title: "Currently Unemployed",
     description:
-      'Seeking job, internship, or skill development',
+      "Seeking job, internship, or skill development",
     icon: UserSearch,
     gradient:
-      'from-orange-500 to-red-500',
+      "from-orange-500 to-red-500",
     details:
-      'Tell us about your career goals',
+      "Tell us about your career goals",
   },
   {
-    id: 'other',
-    title: 'Other',
+    id: "other",
+    title: "Other",
     description:
-      'Freelancer, entrepreneur, or pursuing passion',
+      "Freelancer, entrepreneur, or pursuing passion",
     icon: Users,
     gradient:
-      'from-green-500 to-emerald-500',
+      "from-green-500 to-emerald-500",
     details:
       "Share what you're working on",
   },
-]
-
-// ============================================================
-// PAGE
-// ============================================================
+];
 
 export default function RoleSelectionPage() {
-  const router = useRouter()
+  const router = useRouter();
 
-  // IMPORTANT:
-  // selectedRole is now UserRole | null instead of string.
   const [
     selectedRole,
     setSelectedRole,
-  ] = useState<UserRole | null>(null)
+  ] = useState<UserRole | null>(null);
 
   const [
     isLoading,
     setIsLoading,
-  ] = useState(false)
-
-  // ==========================================================
-  // ROLE SELECTION
-  // ==========================================================
+  ] = useState(false);
 
   const handleRoleSelect = (
-    role: UserRole,
+    role: UserRole
   ) => {
-    setSelectedRole(role)
-  }
-
-  // ==========================================================
-  // CONTINUE
-  // ==========================================================
+    setSelectedRole(role);
+  };
 
   const handleContinue = async () => {
     if (!selectedRole) {
       toast.error(
-        'Please select your role',
-      )
+        "Please select your role"
+      );
 
-      return
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       AuthService.saveRole(
-        selectedRole,
-      )
+        selectedRole
+      );
 
       toast.success(
-        'Great! Now tell us more about yourself',
-      )
+        "Great! Now tell us more about yourself"
+      );
 
       router.push(
-        `/onboarding/details?role=${selectedRole}`,
-      )
+        `/onboarding/details?role=${encodeURIComponent(
+          selectedRole
+        )}`
+      );
     } catch (error: unknown) {
       console.error(
-        'Failed to save role:',
-        error,
-      )
+        "Failed to save role:",
+        error
+      );
 
       toast.error(
-        'Something went wrong',
-      )
+        "Something went wrong"
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
-
-  // ==========================================================
-  // SKIP
-  // ==========================================================
+  };
 
   const handleSkip = () => {
-    router.push('/dashboard')
+    router.push("/dashboard");
 
     toast.success(
-      'You can update this later',
-    )
-  }
-
-  // ==========================================================
-  // RENDER
-  // ==========================================================
+      "You can update this later"
+    );
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-secondary/30">
-      {/* Background Effects */}
-
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-primary/5 rounded-full blur-3xl animate-pulse" />
 
@@ -202,13 +178,7 @@ export default function RoleSelectionPage() {
         }}
         className="w-full max-w-4xl relative"
       >
-        {/* ==================================================
-            PROGRESS INDICATOR
-        ================================================== */}
-
         <div className="flex items-center justify-center gap-2 mb-8">
-          {/* Step 1 */}
-
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center">
               <span className="text-white font-bold">
@@ -221,11 +191,7 @@ export default function RoleSelectionPage() {
             </span>
           </div>
 
-          {/* Connector */}
-
           <div className="w-12 h-1 bg-border rounded-full" />
-
-          {/* Step 2 */}
 
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-border flex items-center justify-center">
@@ -239,11 +205,7 @@ export default function RoleSelectionPage() {
             </span>
           </div>
 
-          {/* Connector */}
-
           <div className="w-12 h-1 bg-border rounded-full" />
-
-          {/* Step 3 */}
 
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-border flex items-center justify-center">
@@ -258,15 +220,9 @@ export default function RoleSelectionPage() {
           </div>
         </div>
 
-        {/* ==================================================
-            MAIN CARD
-        ================================================== */}
-
         <Card className="border-border/50 shadow-2xl backdrop-blur-sm">
           <CardHeader className="space-y-1">
             <div className="flex flex-col items-center space-y-3">
-              {/* Icon */}
-
               <motion.div
                 initial={{
                   scale: 0,
@@ -279,13 +235,9 @@ export default function RoleSelectionPage() {
                 <Sparkles className="w-10 h-10 text-white" />
               </motion.div>
 
-              {/* Title */}
-
               <CardTitle className="text-3xl text-center font-bold">
                 Tell Us About Yourself
               </CardTitle>
-
-              {/* Description */}
 
               <CardDescription className="text-center text-lg">
                 This helps us personalize your
@@ -296,23 +248,19 @@ export default function RoleSelectionPage() {
 
           <CardContent>
             <div className="space-y-8">
-              {/* ==================================================
-                  ROLE OPTIONS
-              ================================================== */}
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <AnimatePresence>
                   {roles.map(
                     (
                       role,
-                      index,
+                      index
                     ) => {
                       const Icon =
-                        role.icon
+                        role.icon;
 
                       const isSelected =
                         selectedRole ===
-                        role.id
+                        role.id;
 
                       return (
                         <motion.div
@@ -340,8 +288,8 @@ export default function RoleSelectionPage() {
                           <button
                             type="button"
                             onClick={() =>
-                              handleRoleSelect(
-                                role.id,
+                              setSelectedRole(
+                                role.id
                               )
                             }
                             disabled={
@@ -349,46 +297,34 @@ export default function RoleSelectionPage() {
                             }
                             className={`w-full p-6 rounded-2xl border-2 transition-all duration-300 text-left ${
                               isSelected
-                                ? 'border-primary bg-primary/5 shadow-lg'
-                                : 'border-border hover:border-primary/50 hover:bg-secondary/50'
+                                ? "border-primary bg-primary/5 shadow-lg"
+                                : "border-border hover:border-primary/50 hover:bg-secondary/50"
                             } ${
                               isLoading
-                                ? 'cursor-not-allowed opacity-70'
-                                : 'cursor-pointer'
+                                ? "cursor-not-allowed opacity-70"
+                                : "cursor-pointer"
                             }`}
                           >
                             <div className="flex items-start gap-4">
-                              {/* Role Icon */}
-
                               <div
                                 className={`w-14 h-14 rounded-xl bg-gradient-to-br ${role.gradient} flex items-center justify-center flex-shrink-0`}
                               >
                                 <Icon className="w-7 h-7 text-white" />
                               </div>
 
-                              {/* Role Content */}
-
                               <div>
                                 <h3 className="text-xl font-bold mb-1">
-                                  {
-                                    role.title
-                                  }
+                                  {role.title}
                                 </h3>
 
                                 <p className="text-muted-foreground mb-2">
-                                  {
-                                    role.description
-                                  }
+                                  {role.description}
                                 </p>
 
                                 <p className="text-sm text-primary font-medium">
-                                  {
-                                    role.details
-                                  }
+                                  {role.details}
                                 </p>
                               </div>
-
-                              {/* Selected Indicator */}
 
                               {isSelected && (
                                 <div className="ml-auto w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
@@ -400,15 +336,11 @@ export default function RoleSelectionPage() {
                             </div>
                           </button>
                         </motion.div>
-                      )
-                    },
+                      );
+                    }
                   )}
                 </AnimatePresence>
               </div>
-
-              {/* ==================================================
-                  ACTION BUTTONS
-              ================================================== */}
 
               <motion.div
                 initial={{
@@ -422,29 +354,19 @@ export default function RoleSelectionPage() {
                 }}
                 className="flex flex-col sm:flex-row gap-4 justify-between items-center pt-6 border-t border-border"
               >
-                {/* Skip */}
-
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={
-                    handleSkip
-                  }
-                  disabled={
-                    isLoading
-                  }
+                  onClick={handleSkip}
+                  disabled={isLoading}
                   className="w-full sm:w-auto"
                 >
                   Skip for now
                 </Button>
 
-                {/* Continue */}
-
                 <Button
                   type="button"
-                  onClick={
-                    handleContinue
-                  }
+                  onClick={handleContinue}
                   disabled={
                     !selectedRole ||
                     isLoading
@@ -471,5 +393,5 @@ export default function RoleSelectionPage() {
         </Card>
       </motion.div>
     </div>
-  )
+  );
 }
