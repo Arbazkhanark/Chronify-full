@@ -36,6 +36,8 @@ import {
   Flame,
   X,
   RefreshCw,
+  ShieldAlert,
+  ShieldCheck,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -64,6 +66,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Toaster, toast } from 'sonner'
+import { AuthService, type User } from '@/hooks/useAuth'
 
 // -----------------------------------------------------
 // Animation variants
@@ -73,21 +76,13 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.1 },
   },
 }
 
 const itemVariants = {
-  hidden: {
-    y: 20,
-    opacity: 0,
-  },
-  visible: {
-    y: 0,
-    opacity: 1,
-  },
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 },
 }
 
 // -----------------------------------------------------
@@ -133,11 +128,7 @@ interface DailyBreakdown {
   date?: Date
 }
 
-type PerformancePeriod =
-  | 'morning'
-  | 'afternoon'
-  | 'evening'
-  | 'night'
+type PerformancePeriod = 'morning' | 'afternoon' | 'evening' | 'night'
 
 interface PerformanceMetric {
   time: string
@@ -203,10 +194,24 @@ export default function InsightsClient() {
   const [showTips, setShowTips] = useState(true)
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null)
 
+  // ==========================================================
+  // USER / VERIFICATION STATE
+  //
+  // `userChecked` — true once we've finished trying to load the user
+  // (whether it succeeded or failed). This prevents the banner from
+  // being hidden forever if the fetch fails.
+  //
+  // `isVerified` — treats `undefined` / `null` as NOT verified, so the
+  // banner shows up when the backend omits the field.
+  // ==========================================================
+  const [user, setUser] = useState<User | null>(null)
+  const [userChecked, setUserChecked] = useState(false)
+  const [showVerifyBanner, setShowVerifyBanner] = useState(true)
+  const [isResendingVerification, setIsResendingVerification] = useState(false)
+
   // ---------------------------------------------------
   // Dark mode
   // ---------------------------------------------------
-
   useEffect(() => {
     const savedMode = localStorage.getItem('darkMode')
 
@@ -220,6 +225,47 @@ export default function InsightsClient() {
       document.documentElement.classList.add('dark')
     } else {
       document.documentElement.classList.remove('dark')
+    }
+  }, [])
+
+  // ---------------------------------------------------
+  // Load current user (with debug logging + guaranteed completion)
+  // ---------------------------------------------------
+  useEffect(() => {
+    let mounted = true
+
+    const loadUser = async () => {
+      try {
+        console.log('[Insights] Fetching current user...')
+        const currentUser = await AuthService.getCurrentUser()
+
+        // Debug: log exactly what the backend returned
+        console.log('[Insights] Current user:', currentUser)
+        console.log('[Insights] verified field:', currentUser?.verified)
+        console.log('[Insights] email field:', currentUser?.email)
+
+        if (mounted) setUser(currentUser)
+      } catch (err) {
+        console.error('[Insights] Failed to load user:', err)
+        // Do NOT rethrow — we want the banner to render anyway
+      } finally {
+        // Always mark the check as complete, even on failure.
+        // This makes sure `userChecked` flips to true.
+        if (mounted) setUserChecked(true)
+      }
+    }
+
+    void loadUser()
+
+    // Safety net: if after 2s we still haven't marked user as checked,
+    // force it so the banner can render.
+    const safetyTimer = window.setTimeout(() => {
+      if (mounted) setUserChecked(true)
+    }, 2000)
+
+    return () => {
+      mounted = false
+      window.clearTimeout(safetyTimer)
     }
   }, [])
 
@@ -240,35 +286,17 @@ export default function InsightsClient() {
   // ---------------------------------------------------
   // Time range options
   // ---------------------------------------------------
-
   const timeRanges: TimeRange[] = [
-    {
-      value: 'week',
-      label: 'This Week',
-    },
-    {
-      value: 'month',
-      label: 'This Month',
-    },
-    {
-      value: 'quarter',
-      label: 'This Quarter',
-    },
-    {
-      value: 'year',
-      label: 'This Year',
-    },
-    {
-      value: 'all',
-      label: 'All Time',
-    },
+    { value: 'week', label: 'This Week' },
+    { value: 'month', label: 'This Month' },
+    { value: 'quarter', label: 'This Quarter' },
+    { value: 'year', label: 'This Year' },
+    { value: 'all', label: 'All Time' },
   ]
 
   // ---------------------------------------------------
   // Mock data
-  // In production this should come from API
   // ---------------------------------------------------
-
   const insightsData: InsightsData = {
     streak: 21,
     consistencyScore: 92,
@@ -283,223 +311,46 @@ export default function InsightsClient() {
     completionRate: 94,
   }
 
-  // ---------------------------------------------------
-  // Detailed analytics
-  // ---------------------------------------------------
-
   const detailedAnalytics: DetailedMetric[] = [
-    {
-      metric: 'DSA Problems Solved',
-      current: 120,
-      target: 180,
-      trend: '+8%',
-      color: 'bg-blue-500',
-      unit: 'problems',
-    },
-    {
-      metric: 'College GPA',
-      current: 8.7,
-      target: 9.0,
-      trend: '+0.3',
-      color: 'bg-green-500',
-      unit: 'points',
-    },
-    {
-      metric: 'Projects Completed',
-      current: 1,
-      target: 3,
-      trend: '0',
-      color: 'bg-purple-500',
-      unit: 'projects',
-    },
-    {
-      metric: 'Skills Learned',
-      current: 4,
-      target: 8,
-      trend: '+2',
-      color: 'bg-orange-500',
-      unit: 'skills',
-    },
-    {
-      metric: 'Hours Coded',
-      current: 85,
-      target: 120,
-      trend: '+15%',
-      color: 'bg-pink-500',
-      unit: 'hours',
-    },
-    {
-      metric: 'Certifications',
-      current: 2,
-      target: 3,
-      trend: '+1',
-      color: 'bg-indigo-500',
-      unit: 'certs',
-    },
+    { metric: 'DSA Problems Solved', current: 120, target: 180, trend: '+8%', color: 'bg-blue-500', unit: 'problems' },
+    { metric: 'College GPA', current: 8.7, target: 9.0, trend: '+0.3', color: 'bg-green-500', unit: 'points' },
+    { metric: 'Projects Completed', current: 1, target: 3, trend: '0', color: 'bg-purple-500', unit: 'projects' },
+    { metric: 'Skills Learned', current: 4, target: 8, trend: '+2', color: 'bg-orange-500', unit: 'skills' },
+    { metric: 'Hours Coded', current: 85, target: 120, trend: '+15%', color: 'bg-pink-500', unit: 'hours' },
+    { metric: 'Certifications', current: 2, target: 3, trend: '+1', color: 'bg-indigo-500', unit: 'certs' },
   ]
-
-  // ---------------------------------------------------
-  // Weekly breakdown
-  // ---------------------------------------------------
 
   const weeklyBreakdown: DailyBreakdown[] = [
-    {
-      day: 'Mon',
-      dsa: 4,
-      college: 3,
-      projects: 1,
-      total: 8,
-    },
-    {
-      day: 'Tue',
-      dsa: 3.5,
-      college: 3,
-      projects: 1.5,
-      total: 8,
-    },
-    {
-      day: 'Wed',
-      dsa: 4.5,
-      college: 2.5,
-      projects: 1,
-      total: 8,
-    },
-    {
-      day: 'Thu',
-      dsa: 3,
-      college: 4,
-      projects: 1,
-      total: 8,
-    },
-    {
-      day: 'Fri',
-      dsa: 4,
-      college: 2,
-      projects: 2,
-      total: 8,
-    },
-    {
-      day: 'Sat',
-      dsa: 5,
-      college: 1,
-      projects: 2,
-      total: 8,
-    },
-    {
-      day: 'Sun',
-      dsa: 4,
-      college: 2,
-      projects: 2,
-      total: 8,
-    },
+    { day: 'Mon', dsa: 4, college: 3, projects: 1, total: 8 },
+    { day: 'Tue', dsa: 3.5, college: 3, projects: 1.5, total: 8 },
+    { day: 'Wed', dsa: 4.5, college: 2.5, projects: 1, total: 8 },
+    { day: 'Thu', dsa: 3, college: 4, projects: 1, total: 8 },
+    { day: 'Fri', dsa: 4, college: 2, projects: 2, total: 8 },
+    { day: 'Sat', dsa: 5, college: 1, projects: 2, total: 8 },
+    { day: 'Sun', dsa: 4, college: 2, projects: 2, total: 8 },
   ]
-
-  // ---------------------------------------------------
-  // Performance metrics
-  // ---------------------------------------------------
 
   const performanceMetrics: PerformanceMetric[] = [
-    {
-      time: 'Early Morning (5-8 AM)',
-      efficiency: 92,
-      tasks: 8,
-      icon: Sunrise,
-      period: 'morning',
-    },
-    {
-      time: 'Morning (8-12 PM)',
-      efficiency: 88,
-      tasks: 12,
-      icon: Coffee,
-      period: 'morning',
-    },
-    {
-      time: 'Afternoon (12-4 PM)',
-      efficiency: 78,
-      tasks: 10,
-      icon: Sun,
-      period: 'afternoon',
-    },
-    {
-      time: 'Evening (4-8 PM)',
-      efficiency: 85,
-      tasks: 8,
-      icon: Sunset,
-      period: 'evening',
-    },
-    {
-      time: 'Night (8-12 AM)',
-      efficiency: 90,
-      tasks: 6,
-      icon: MoonIcon,
-      period: 'night',
-    },
+    { time: 'Early Morning (5-8 AM)', efficiency: 92, tasks: 8, icon: Sunrise, period: 'morning' },
+    { time: 'Morning (8-12 PM)', efficiency: 88, tasks: 12, icon: Coffee, period: 'morning' },
+    { time: 'Afternoon (12-4 PM)', efficiency: 78, tasks: 10, icon: Sun, period: 'afternoon' },
+    { time: 'Evening (4-8 PM)', efficiency: 85, tasks: 8, icon: Sunset, period: 'evening' },
+    { time: 'Night (8-12 AM)', efficiency: 90, tasks: 6, icon: MoonIcon, period: 'night' },
   ]
-
-  // ---------------------------------------------------
-  // Milestones
-  // ---------------------------------------------------
 
   const milestones: Milestone[] = [
-    {
-      title: '21-Day Streak',
-      date: 'Today',
-      description: 'Longest streak achieved! Keep it up!',
-      icon: Trophy,
-      achieved: true,
-      color: 'yellow',
-    },
-    {
-      title: '100 DSA Problems',
-      date: '3 days ago',
-      description: 'Reached major milestone in DSA',
-      icon: Brain,
-      achieved: true,
-      color: 'purple',
-    },
-    {
-      title: '90%+ Consistency',
-      date: '1 week ago',
-      description: 'Maintained high consistency for 2 weeks',
-      icon: Zap,
-      achieved: true,
-      color: 'green',
-    },
-    {
-      title: 'Early Bird',
-      date: '2 weeks ago',
-      description: '5 AM starts for 7 consecutive days',
-      icon: Zap,
-      achieved: true,
-      color: 'orange',
-    },
-    {
-      title: '500 Hours Total',
-      date: 'In progress',
-      description: '85% complete - 425/500 hours',
-      icon: Clock,
-      achieved: false,
-      color: 'blue',
-    },
-    {
-      title: 'Perfect Week',
-      date: 'In progress',
-      description: '7 days with 100% task completion',
-      icon: Star,
-      achieved: false,
-      color: 'pink',
-    },
+    { title: '21-Day Streak', date: 'Today', description: 'Longest streak achieved! Keep it up!', icon: Trophy, achieved: true, color: 'yellow' },
+    { title: '100 DSA Problems', date: '3 days ago', description: 'Reached major milestone in DSA', icon: Brain, achieved: true, color: 'purple' },
+    { title: '90%+ Consistency', date: '1 week ago', description: 'Maintained high consistency for 2 weeks', icon: Zap, achieved: true, color: 'green' },
+    { title: 'Early Bird', date: '2 weeks ago', description: '5 AM starts for 7 consecutive days', icon: Zap, achieved: true, color: 'orange' },
+    { title: '500 Hours Total', date: 'In progress', description: '85% complete - 425/500 hours', icon: Clock, achieved: false, color: 'blue' },
+    { title: 'Perfect Week', date: 'In progress', description: '7 days with 100% task completion', icon: Star, achieved: false, color: 'pink' },
   ]
-
-  // ---------------------------------------------------
-  // Recommendations
-  // ---------------------------------------------------
 
   const recommendations: Recommendation[] = [
     {
       title: 'Optimize Morning Routine',
-      description:
-        'Your morning efficiency is 92%. Start 30 minutes earlier to add 3.5 productive hours weekly.',
+      description: 'Your morning efficiency is 92%. Start 30 minutes earlier to add 3.5 productive hours weekly.',
       icon: Sunrise,
       priority: 'high',
       action: 'Adjust Schedule',
@@ -507,8 +358,7 @@ export default function InsightsClient() {
     },
     {
       title: 'Balance DSA & Projects',
-      description:
-        'Project progress is lagging. Allocate 2 more hours weekly to project work for balanced growth.',
+      description: 'Project progress is lagging. Allocate 2 more hours weekly to project work for balanced growth.',
       icon: Target,
       priority: 'high',
       action: 'Reallocate Time',
@@ -516,8 +366,7 @@ export default function InsightsClient() {
     },
     {
       title: 'Optimize Break Schedule',
-      description:
-        'Afternoon efficiency drops to 78%. Try Pomodoro technique with 25-min focus, 5-min breaks.',
+      description: 'Afternoon efficiency drops to 78%. Try Pomodoro technique with 25-min focus, 5-min breaks.',
       icon: Coffee,
       priority: 'medium',
       action: 'Try Pomodoro',
@@ -525,8 +374,7 @@ export default function InsightsClient() {
     },
     {
       title: 'Evening Review Session',
-      description:
-        'Add 30-minute evening review to improve retention and plan next day.',
+      description: 'Add 30-minute evening review to improve retention and plan next day.',
       icon: MoonIcon,
       priority: 'medium',
       action: 'Add Session',
@@ -534,8 +382,7 @@ export default function InsightsClient() {
     },
     {
       title: 'Weekend Deep Work',
-      description:
-        'Schedule 4-hour deep work sessions on weekends for complex tasks.',
+      description: 'Schedule 4-hour deep work sessions on weekends for complex tasks.',
       icon: Brain,
       priority: 'low',
       action: 'Block Time',
@@ -543,158 +390,31 @@ export default function InsightsClient() {
     },
   ]
 
-  // ---------------------------------------------------
-  // Key metrics
-  // ---------------------------------------------------
-
   const metrics: MetricCard[] = [
-    {
-      key: 'streak',
-      label: 'Current Streak',
-      value: insightsData.streak,
-      icon: Flame,
-      color: 'orange',
-      bgColor: 'bg-orange-50 dark:bg-orange-900/20',
-      tooltip: 'Consecutive days with productive activity',
-      trend: {
-        value: '+5 days',
-        positive: true,
-      },
-    },
-    {
-      key: 'consistencyScore',
-      label: 'Consistency Score',
-      value: `${insightsData.consistencyScore}%`,
-      icon: Activity,
-      color: 'green',
-      bgColor: 'bg-green-50 dark:bg-green-900/20',
-      tooltip: 'Regularity of your study habits',
-      trend: {
-        value: '+8%',
-        positive: true,
-      },
-    },
-    {
-      key: 'productivityScore',
-      label: 'Productivity Score',
-      value: `${insightsData.productivityScore}%`,
-      icon: Zap,
-      color: 'yellow',
-      bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
-      tooltip: 'Efficiency of your study sessions',
-      trend: {
-        value: '+12%',
-        positive: true,
-      },
-    },
-    {
-      key: 'focusHours',
-      label: 'Focus Hours',
-      value: insightsData.focusHours,
-      icon: Timer,
-      color: 'purple',
-      bgColor: 'bg-purple-50 dark:bg-purple-900/20',
-      tooltip: 'Total hours of focused work',
-      trend: {
-        value: '+5h',
-        positive: true,
-      },
-    },
-    {
-      key: 'completedTasks',
-      label: 'Tasks Completed',
-      value: insightsData.completedTasks,
-      icon: CheckCircle2,
-      color: 'blue',
-      bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-      tooltip: 'Total tasks completed this period',
-      trend: {
-        value: '+24',
-        positive: true,
-      },
-    },
-    {
-      key: 'completionRate',
-      label: 'Completion Rate',
-      value: `${insightsData.completionRate}%`,
-      icon: Target,
-      color: 'pink',
-      bgColor: 'bg-pink-50 dark:bg-pink-900/20',
-      tooltip: 'Percentage of planned tasks completed',
-      trend: {
-        value: '+5%',
-        positive: true,
-      },
-    },
-    {
-      key: 'bestStreak',
-      label: 'Best Streak',
-      value: insightsData.bestStreak,
-      icon: Trophy,
-      color: 'yellow',
-      bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
-      tooltip: 'Longest streak ever achieved',
-      trend: {
-        value: 'Personal best',
-        positive: true,
-      },
-    },
-    {
-      key: 'averageDaily',
-      label: 'Avg Daily Hours',
-      value: insightsData.averageDaily,
-      icon: Clock3,
-      color: 'indigo',
-      bgColor: 'bg-indigo-50 dark:bg-indigo-900/20',
-      tooltip: 'Average hours per day',
-      trend: {
-        value: '+0.5h',
-        positive: true,
-      },
-    },
+    { key: 'streak', label: 'Current Streak', value: insightsData.streak, icon: Flame, color: 'orange', bgColor: 'bg-orange-50 dark:bg-orange-900/20', tooltip: 'Consecutive days with productive activity', trend: { value: '+5 days', positive: true } },
+    { key: 'consistencyScore', label: 'Consistency Score', value: `${insightsData.consistencyScore}%`, icon: Activity, color: 'green', bgColor: 'bg-green-50 dark:bg-green-900/20', tooltip: 'Regularity of your study habits', trend: { value: '+8%', positive: true } },
+    { key: 'productivityScore', label: 'Productivity Score', value: `${insightsData.productivityScore}%`, icon: Zap, color: 'yellow', bgColor: 'bg-yellow-50 dark:bg-yellow-900/20', tooltip: 'Efficiency of your study sessions', trend: { value: '+12%', positive: true } },
+    { key: 'focusHours', label: 'Focus Hours', value: insightsData.focusHours, icon: Timer, color: 'purple', bgColor: 'bg-purple-50 dark:bg-purple-900/20', tooltip: 'Total hours of focused work', trend: { value: '+5h', positive: true } },
+    { key: 'completedTasks', label: 'Tasks Completed', value: insightsData.completedTasks, icon: CheckCircle2, color: 'blue', bgColor: 'bg-blue-50 dark:bg-blue-900/20', tooltip: 'Total tasks completed this period', trend: { value: '+24', positive: true } },
+    { key: 'completionRate', label: 'Completion Rate', value: `${insightsData.completionRate}%`, icon: Target, color: 'pink', bgColor: 'bg-pink-50 dark:bg-pink-900/20', tooltip: 'Percentage of planned tasks completed', trend: { value: '+5%', positive: true } },
+    { key: 'bestStreak', label: 'Best Streak', value: insightsData.bestStreak, icon: Trophy, color: 'yellow', bgColor: 'bg-yellow-50 dark:bg-yellow-900/20', tooltip: 'Longest streak ever achieved', trend: { value: 'Personal best', positive: true } },
+    { key: 'averageDaily', label: 'Avg Daily Hours', value: insightsData.averageDaily, icon: Clock3, color: 'indigo', bgColor: 'bg-indigo-50 dark:bg-indigo-900/20', tooltip: 'Average hours per day', trend: { value: '+0.5h', positive: true } },
   ]
 
-  // ---------------------------------------------------
-  // Export formats
-  // ---------------------------------------------------
-
   const exportFormats: ExportFormat[] = [
-    {
-      format: 'PDF Report',
-      description: 'Detailed progress report',
-      icon: BookOpen,
-      color: 'red',
-    },
-    {
-      format: 'CSV Data',
-      description: 'Raw data for analysis',
-      icon: BarChart3,
-      color: 'green',
-    },
-    {
-      format: 'PNG Image',
-      description: 'Shareable progress snapshot',
-      icon: Share2,
-      color: 'blue',
-    },
-    {
-      format: 'JSON Export',
-      description: 'Structured data export',
-      icon: Users,
-      color: 'purple',
-    },
+    { format: 'PDF Report', description: 'Detailed progress report', icon: BookOpen, color: 'red' },
+    { format: 'CSV Data', description: 'Raw data for analysis', icon: BarChart3, color: 'green' },
+    { format: 'PNG Image', description: 'Shareable progress snapshot', icon: Share2, color: 'blue' },
+    { format: 'JSON Export', description: 'Structured data export', icon: Users, color: 'purple' },
   ]
 
   // ---------------------------------------------------
   // Handlers
   // ---------------------------------------------------
-
   const handleExport = (format: string) => {
     setIsLoading(true)
-
     window.setTimeout(() => {
       setIsLoading(false)
-
       toast.success(`Exported as ${format}`, {
         description: 'Your data has been exported successfully.',
         icon: '📥',
@@ -711,34 +431,69 @@ export default function InsightsClient() {
 
   const handleRecommendationAction = (title: string) => {
     toast.info(`Implementing: ${title}`, {
-      description:
-        "We'll help you get started with this recommendation.",
+      description: "We'll help you get started with this recommendation.",
       icon: '✨',
     })
   }
 
-  // ---------------------------------------------------
-  // FIX:
-  // Previously the code called refresh(), but no function
-  // named refresh existed.
-  //
-  // This handler refreshes the current browser page.
-  // ---------------------------------------------------
-
   const handleRefresh = () => {
-    if (isLoading) {
+    if (isLoading) return
+    setIsLoading(true)
+    window.location.reload()
+  }
+
+  // ==========================================================
+  // VERIFY EMAIL
+  // ==========================================================
+  const handleVerifyEmail = async () => {
+    const email = user?.email
+    if (!email) {
+      toast.error('No email address found on your account')
       return
     }
 
-    setIsLoading(true)
-
-    window.location.reload()
+    setIsResendingVerification(true)
+    try {
+      // TODO: wire to real endpoint:
+      //   await AuthService.resendVerificationEmail(email)
+      await new Promise((resolve) => setTimeout(resolve, 700))
+      toast.success('Verification email sent', {
+        description: `We've sent a verification link to ${email}. Check your inbox.`,
+        duration: 6000,
+      })
+    } catch {
+      toast.error('Could not send verification email', {
+        description: 'Please try again in a moment.',
+      })
+    } finally {
+      setIsResendingVerification(false)
+    }
   }
+
+  // ==========================================================
+  // VERIFICATION DERIVED STATE
+  //
+  // IMPORTANT:
+  //  - `undefined` / `null` verified => treated as NOT verified
+  //  - `userChecked === false` => we haven't finished loading yet, so
+  //     we DON'T render the banner yet (avoids a flash)
+  //  - Once `userChecked === true`, banner renders whenever
+  //     `isVerified !== true`
+  // ==========================================================
+  const isVerified = user?.verified === true
+  const shouldShowVerifyWarning = userChecked && !isVerified
+
+  // Debug log (remove when done)
+  console.log('[Insights] shouldShowVerifyWarning:', shouldShowVerifyWarning, {
+    userChecked,
+    isVerified,
+    verifiedRaw: user?.verified,
+    hasUser: !!user,
+  })
 
   // ---------------------------------------------------
   // Render
   // ---------------------------------------------------
-
   return (
     <>
       <Toaster
@@ -765,6 +520,7 @@ export default function InsightsClient() {
             animate="visible"
             className="space-y-8"
           >
+
             {/* Header */}
             <motion.div variants={itemVariants}>
               <nav
@@ -787,10 +543,29 @@ export default function InsightsClient() {
 
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                       Progress Insights
                     </h1>
+
+                    {/* Verified / Unverified pill */}
+                    {userChecked && (
+                      isVerified ? (
+                        <Badge
+                          variant="outline"
+                          className="gap-1 border-blue-300 text-blue-600 dark:border-blue-700/60 dark:text-blue-400"
+                        >
+                          <CheckCircle2 className="w-3 h-3" /> Verified
+                        </Badge>
+                      ) : (
+                        <Badge
+                          variant="outline"
+                          className="gap-1 border-amber-300 text-amber-700 dark:border-amber-700/60 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20"
+                        >
+                          <ShieldAlert className="w-3 h-3" /> Unverified
+                        </Badge>
+                      )
+                    )}
 
                     <Button
                       type="button"
@@ -825,7 +600,6 @@ export default function InsightsClient() {
                   >
                     <SelectTrigger className="w-[180px] dark:bg-gray-800 dark:border-gray-700">
                       <Calendar className="w-4 h-4 mr-2" />
-
                       <SelectValue placeholder="Select time range" />
                     </SelectTrigger>
 
@@ -853,7 +627,6 @@ export default function InsightsClient() {
                           <Filter className="w-4 h-4" />
                         </Button>
                       </TooltipTrigger>
-
                       <TooltipContent>
                         <p>Filter insights</p>
                       </TooltipContent>
@@ -872,7 +645,6 @@ export default function InsightsClient() {
                           <Download className="w-4 h-4" />
                         </Button>
                       </TooltipTrigger>
-
                       <TooltipContent>
                         <p>Export data</p>
                       </TooltipContent>
@@ -951,14 +723,10 @@ export default function InsightsClient() {
                                 ? 'border-blue-500 dark:border-blue-400'
                                 : 'border-gray-200 dark:border-gray-700'
                             }`}
-                            onClick={() =>
-                              setSelectedMetric(metric.key)
-                            }
+                            onClick={() => setSelectedMetric(metric.key)}
                           >
                             <div className="flex flex-col items-center text-center">
-                              <div
-                                className={`p-2 rounded-lg ${metric.bgColor} mb-2`}
-                              >
+                              <div className={`p-2 rounded-lg ${metric.bgColor} mb-2`}>
                                 <Icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                               </div>
 
@@ -985,13 +753,8 @@ export default function InsightsClient() {
                           </motion.div>
                         </TooltipTrigger>
 
-                        <TooltipContent
-                          side="bottom"
-                          className="max-w-[200px]"
-                        >
-                          <p className="text-sm">
-                            {metric.tooltip}
-                          </p>
+                        <TooltipContent side="bottom" className="max-w-[200px]">
+                          <p className="text-sm">{metric.tooltip}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -1002,11 +765,7 @@ export default function InsightsClient() {
 
             {/* Detailed Analytics + Weekly Breakdown */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Progress Overview */}
-              <motion.div
-                variants={itemVariants}
-                className="lg:col-span-2"
-              >
+              <motion.div variants={itemVariants} className="lg:col-span-2">
                 <Card className="dark:bg-gray-800 dark:border-gray-700">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 dark:text-gray-200">
@@ -1024,10 +783,7 @@ export default function InsightsClient() {
                       {detailedAnalytics.map((item, index) => {
                         const progress =
                           item.target > 0
-                            ? Math.min(
-                                (item.current / item.target) * 100,
-                                100
-                              )
+                            ? Math.min((item.current / item.target) * 100, 100)
                             : 0
 
                         const progressStyle: ProgressStyle = {
@@ -1037,25 +793,14 @@ export default function InsightsClient() {
                         return (
                           <motion.div
                             key={item.metric}
-                            initial={{
-                              opacity: 0,
-                              x: -20,
-                            }}
-                            animate={{
-                              opacity: 1,
-                              x: 0,
-                            }}
-                            transition={{
-                              delay: index * 0.05,
-                            }}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
                             className="space-y-2"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <div
-                                  className={`w-3 h-3 rounded-full ${item.color}`}
-                                />
-
+                                <div className={`w-3 h-3 rounded-full ${item.color}`} />
                                 <span className="font-medium dark:text-gray-300">
                                   {item.metric}
                                 </span>
@@ -1065,11 +810,9 @@ export default function InsightsClient() {
                                 <span className="font-bold dark:text-gray-200">
                                   {item.current}
                                 </span>
-
                                 <span className="text-gray-600 dark:text-gray-400 text-sm">
                                   / {item.target} {item.unit}
                                 </span>
-
                                 <Badge
                                   className={
                                     item.trend.startsWith('+')
@@ -1084,11 +827,7 @@ export default function InsightsClient() {
                               </div>
                             </div>
 
-                            <Progress
-                              value={progress}
-                              className="h-2"
-                              style={progressStyle}
-                            />
+                            <Progress value={progress} className="h-2" style={progressStyle} />
                           </motion.div>
                         )
                       })}
@@ -1097,7 +836,6 @@ export default function InsightsClient() {
                 </Card>
               </motion.div>
 
-              {/* Weekly Breakdown */}
               <motion.div variants={itemVariants}>
                 <Card className="dark:bg-gray-800 dark:border-gray-700 h-full">
                   <CardHeader>
@@ -1116,24 +854,15 @@ export default function InsightsClient() {
                       {weeklyBreakdown.map((day, index) => (
                         <motion.div
                           key={day.day}
-                          initial={{
-                            opacity: 0,
-                            y: 10,
-                          }}
-                          animate={{
-                            opacity: 1,
-                            y: 0,
-                          }}
-                          transition={{
-                            delay: index * 0.05,
-                          }}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
                           className="space-y-2"
                         >
                           <div className="flex items-center justify-between">
                             <span className="font-medium dark:text-gray-300">
                               {day.day}
                             </span>
-
                             <span className="text-sm text-gray-600 dark:text-gray-400">
                               {day.total}h total
                             </span>
@@ -1142,40 +871,22 @@ export default function InsightsClient() {
                           <div className="flex h-2 rounded-full overflow-hidden">
                             <div
                               className="bg-blue-500"
-                              style={{
-                                width: `${
-                                  (day.dsa / day.total) * 100
-                                }%`,
-                              }}
+                              style={{ width: `${(day.dsa / day.total) * 100}%` }}
                             />
-
                             <div
                               className="bg-green-500"
-                              style={{
-                                width: `${
-                                  (day.college / day.total) * 100
-                                }%`,
-                              }}
+                              style={{ width: `${(day.college / day.total) * 100}%` }}
                             />
-
                             <div
                               className="bg-purple-500"
-                              style={{
-                                width: `${
-                                  (day.projects / day.total) * 100
-                                }%`,
-                              }}
+                              style={{ width: `${(day.projects / day.total) * 100}%` }}
                             />
                           </div>
 
                           <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                             <span>DSA: {day.dsa}h</span>
-                            <span>
-                              College: {day.college}h
-                            </span>
-                            <span>
-                              Projects: {day.projects}h
-                            </span>
+                            <span>College: {day.college}h</span>
+                            <span>Projects: {day.projects}h</span>
                           </div>
                         </motion.div>
                       ))}
@@ -1183,23 +894,15 @@ export default function InsightsClient() {
                       <div className="flex items-center gap-4 pt-2 mt-2 border-t dark:border-gray-700">
                         <div className="flex items-center gap-1">
                           <div className="w-3 h-3 bg-blue-500 rounded-full" />
-                          <span className="text-xs text-gray-600 dark:text-gray-400">
-                            DSA
-                          </span>
+                          <span className="text-xs text-gray-600 dark:text-gray-400">DSA</span>
                         </div>
-
                         <div className="flex items-center gap-1">
                           <div className="w-3 h-3 bg-green-500 rounded-full" />
-                          <span className="text-xs text-gray-600 dark:text-gray-400">
-                            College
-                          </span>
+                          <span className="text-xs text-gray-600 dark:text-gray-400">College</span>
                         </div>
-
                         <div className="flex items-center gap-1">
                           <div className="w-3 h-3 bg-purple-500 rounded-full" />
-                          <span className="text-xs text-gray-600 dark:text-gray-400">
-                            Projects
-                          </span>
+                          <span className="text-xs text-gray-600 dark:text-gray-400">Projects</span>
                         </div>
                       </div>
                     </div>
@@ -1210,7 +913,6 @@ export default function InsightsClient() {
 
             {/* Performance Metrics + Milestones */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Performance Patterns */}
               <motion.div variants={itemVariants}>
                 <Card className="dark:bg-gray-800 dark:border-gray-700">
                   <CardHeader>
@@ -1226,104 +928,83 @@ export default function InsightsClient() {
 
                   <CardContent>
                     <div className="space-y-4">
-                      {performanceMetrics.map(
-                        (metric, index) => {
-                          const Icon = metric.icon
+                      {performanceMetrics.map((metric, index) => {
+                        const Icon = metric.icon
 
-                          return (
-                            <motion.div
-                              key={metric.time}
-                              initial={{
-                                opacity: 0,
-                                x: -20,
-                              }}
-                              animate={{
-                                opacity: 1,
-                                x: 0,
-                              }}
-                              transition={{
-                                delay: index * 0.1,
-                              }}
-                              className="space-y-2"
-                            >
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <div
-                                    className={`p-1.5 rounded-lg ${
+                        return (
+                          <motion.div
+                            key={metric.time}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="space-y-2"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className={`p-1.5 rounded-lg ${
+                                    metric.period === 'morning'
+                                      ? 'bg-yellow-100 dark:bg-yellow-900/30'
+                                      : metric.period === 'afternoon'
+                                        ? 'bg-orange-100 dark:bg-orange-900/30'
+                                        : metric.period === 'evening'
+                                          ? 'bg-purple-100 dark:bg-purple-900/30'
+                                          : 'bg-indigo-100 dark:bg-indigo-900/30'
+                                  }`}
+                                >
+                                  <Icon
+                                    className={`w-4 h-4 ${
                                       metric.period === 'morning'
-                                        ? 'bg-yellow-100 dark:bg-yellow-900/30'
-                                        : metric.period ===
-                                            'afternoon'
-                                          ? 'bg-orange-100 dark:bg-orange-900/30'
-                                          : metric.period ===
-                                              'evening'
-                                            ? 'bg-purple-100 dark:bg-purple-900/30'
-                                            : 'bg-indigo-100 dark:bg-indigo-900/30'
+                                        ? 'text-yellow-600 dark:text-yellow-400'
+                                        : metric.period === 'afternoon'
+                                          ? 'text-orange-600 dark:text-orange-400'
+                                          : metric.period === 'evening'
+                                            ? 'text-purple-600 dark:text-purple-400'
+                                            : 'text-indigo-600 dark:text-indigo-400'
                                     }`}
-                                  >
-                                    <Icon
-                                      className={`w-4 h-4 ${
-                                        metric.period ===
-                                        'morning'
-                                          ? 'text-yellow-600 dark:text-yellow-400'
-                                          : metric.period ===
-                                              'afternoon'
-                                            ? 'text-orange-600 dark:text-orange-400'
-                                            : metric.period ===
-                                                'evening'
-                                              ? 'text-purple-600 dark:text-purple-400'
-                                              : 'text-indigo-600 dark:text-indigo-400'
-                                      }`}
-                                    />
-                                  </div>
-
-                                  <span className="font-medium dark:text-gray-300">
-                                    {metric.time}
-                                  </span>
+                                  />
                                 </div>
 
-                                <div className="flex items-center gap-4">
-                                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                                    {metric.tasks} tasks
-                                  </span>
-
-                                  <Badge
-                                    className={
-                                      metric.efficiency >= 90
-                                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                                        : metric.efficiency >= 80
-                                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-                                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
-                                    }
-                                  >
-                                    {metric.efficiency}%
-                                    efficiency
-                                  </Badge>
-                                </div>
+                                <span className="font-medium dark:text-gray-300">
+                                  {metric.time}
+                                </span>
                               </div>
 
-                              <Progress
-                                value={metric.efficiency}
-                                className="h-2"
-                              />
-                            </motion.div>
-                          )
-                        }
-                      )}
+                              <div className="flex items-center gap-4">
+                                <span className="text-sm text-gray-600 dark:text-gray-400">
+                                  {metric.tasks} tasks
+                                </span>
+
+                                <Badge
+                                  className={
+                                    metric.efficiency >= 90
+                                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                                      : metric.efficiency >= 80
+                                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                                  }
+                                >
+                                  {metric.efficiency}% efficiency
+                                </Badge>
+                              </div>
+                            </div>
+
+                            <Progress value={metric.efficiency} className="h-2" />
+                          </motion.div>
+                        )
+                      })}
                     </div>
                   </CardContent>
 
                   <CardFooter className="border-t dark:border-gray-700 pt-4">
                     <p className="text-xs text-gray-500 dark:text-gray-500">
                       <Info className="w-3 h-3 inline mr-1" />
-                      Peak productivity: Early Morning (92%
-                      efficiency)
+                      Peak productivity: Early Morning (92% efficiency)
                     </p>
                   </CardFooter>
                 </Card>
               </motion.div>
 
-              {/* Recent Milestones */}
               <motion.div variants={itemVariants}>
                 <Card className="dark:bg-gray-800 dark:border-gray-700">
                   <CardHeader>
@@ -1345,17 +1026,9 @@ export default function InsightsClient() {
                         return (
                           <motion.div
                             key={milestone.title}
-                            initial={{
-                              opacity: 0,
-                              x: 20,
-                            }}
-                            animate={{
-                              opacity: 1,
-                              x: 0,
-                            }}
-                            transition={{
-                              delay: index * 0.1,
-                            }}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
                             className={`flex items-start gap-4 p-3 rounded-lg ${
                               milestone.achieved
                                 ? 'bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20'
@@ -1384,13 +1057,7 @@ export default function InsightsClient() {
                                   {milestone.title}
                                 </h4>
 
-                                <Badge
-                                  variant={
-                                    milestone.achieved
-                                      ? 'default'
-                                      : 'outline'
-                                  }
-                                >
+                                <Badge variant={milestone.achieved ? 'default' : 'outline'}>
                                   {milestone.date}
                                 </Badge>
                               </div>
@@ -1400,10 +1067,7 @@ export default function InsightsClient() {
                               </p>
 
                               {!milestone.achieved && (
-                                <Progress
-                                  value={85}
-                                  className="h-1 mt-2"
-                                />
+                                <Progress value={85} className="h-1 mt-2" />
                               )}
                             </div>
                           </motion.div>
@@ -1425,8 +1089,7 @@ export default function InsightsClient() {
                   </CardTitle>
 
                   <CardDescription className="dark:text-gray-400">
-                    Personalized suggestions based on your
-                    performance patterns
+                    Personalized suggestions based on your performance patterns
                   </CardDescription>
                 </CardHeader>
 
@@ -1438,17 +1101,9 @@ export default function InsightsClient() {
                       return (
                         <motion.div
                           key={rec.title}
-                          initial={{
-                            opacity: 0,
-                            y: 20,
-                          }}
-                          animate={{
-                            opacity: 1,
-                            y: 0,
-                          }}
-                          transition={{
-                            delay: index * 0.1,
-                          }}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
                           className={`p-4 rounded-lg border ${
                             rec.priority === 'high'
                               ? 'border-red-200 dark:border-red-800/50 bg-red-50/50 dark:bg-red-950/20'
@@ -1513,11 +1168,7 @@ export default function InsightsClient() {
                                 size="sm"
                                 variant="outline"
                                 className="w-full"
-                                onClick={() =>
-                                  handleRecommendationAction(
-                                    rec.title
-                                  )
-                                }
+                                onClick={() => handleRecommendationAction(rec.title)}
                               >
                                 {rec.action}
                               </Button>
@@ -1541,8 +1192,7 @@ export default function InsightsClient() {
                   </CardTitle>
 
                   <CardDescription className="dark:text-gray-400">
-                    Share your progress or export data for further
-                    analysis
+                    Share your progress or export data for further analysis
                   </CardDescription>
                 </CardHeader>
 
@@ -1555,26 +1205,14 @@ export default function InsightsClient() {
                         <motion.button
                           key={format.format}
                           type="button"
-                          initial={{
-                            opacity: 0,
-                            scale: 0.9,
-                          }}
-                          animate={{
-                            opacity: 1,
-                            scale: 1,
-                          }}
-                          transition={{
-                            delay: index * 0.1,
-                          }}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: index * 0.1 }}
                           whileHover={{ y: -2 }}
-                          onClick={() =>
-                            handleExport(format.format)
-                          }
+                          onClick={() => handleExport(format.format)}
                           disabled={isLoading}
                           className={`p-4 rounded-lg border border-gray-200 dark:border-gray-700 transition-all text-left relative hover:border-blue-500 ${
-                            isLoading
-                              ? 'opacity-50 cursor-not-allowed'
-                              : ''
+                            isLoading ? 'opacity-50 cursor-not-allowed' : ''
                           }`}
                         >
                           {isLoading && (
@@ -1587,7 +1225,6 @@ export default function InsightsClient() {
                             <div className="p-2 rounded-lg bg-gray-50 dark:bg-gray-900/20">
                               <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                             </div>
-
                             <span className="font-medium dark:text-gray-200">
                               {format.format}
                             </span>
@@ -1604,9 +1241,7 @@ export default function InsightsClient() {
 
                 <CardFooter className="border-t dark:border-gray-700 pt-4">
                   <div className="flex items-center justify-between w-full text-sm text-gray-600 dark:text-gray-400">
-                    <span>
-                      Last updated: Today at 2:30 PM
-                    </span>
+                    <span>Last updated: Today at 2:30 PM</span>
 
                     <Button
                       type="button"
@@ -1621,7 +1256,6 @@ export default function InsightsClient() {
                       ) : (
                         <RefreshCw className="w-3 h-3" />
                       )}
-
                       Refresh
                     </Button>
                   </div>

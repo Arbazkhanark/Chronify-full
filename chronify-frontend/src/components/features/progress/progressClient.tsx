@@ -180,7 +180,9 @@ import {
   ExternalLink,
   Link,
   Unlink,
-  Github as GithubIcon
+  Github as GithubIcon,
+  ShieldAlert,
+  ShieldCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
@@ -213,6 +215,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { Slider } from '@/components/ui/slider'
+import { AuthService, type User } from '@/hooks/useAuth'
 import {
   AreaChart,
   Area,
@@ -1028,6 +1031,13 @@ export default function ProgressClient() {
   const [compactMode, setCompactMode] = useState<boolean>(false)
   const [showNotifications, setShowNotifications] = useState<boolean>(true)
   const [autoRefresh, setAutoRefresh] = useState<boolean>(true)
+
+  // ==========================================================
+  // USER / VERIFICATION STATE
+  // ==========================================================
+  const [user, setUser] = useState<User | null>(null)
+  const [showVerifyBanner, setShowVerifyBanner] = useState<boolean>(true)
+  const [isResendingVerification, setIsResendingVerification] = useState<boolean>(false)
   
   // Data states
   const [loading, setLoading] = useState<boolean>(true)
@@ -1045,11 +1055,17 @@ export default function ProgressClient() {
   const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear())
   const [selectedMetric, setSelectedMetric] = useState<'tasks' | 'hours' | 'focus' | 'commits'>('tasks')
 
-  // Load mock data
+  // ==========================================================
+  // LOAD USER + DATA
+  // ==========================================================
   useEffect(() => {
     const loadData = async () => {
       setLoading(true)
       try {
+        // Load current user (for verification status)
+        const currentUser = await AuthService.getCurrentUser()
+        setUser(currentUser)
+
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1500))
         
@@ -1081,6 +1097,33 @@ export default function ProgressClient() {
     
     loadData()
   }, [])
+
+  // ==========================================================
+  // VERIFY EMAIL
+  // ==========================================================
+  const handleVerifyEmail = async () => {
+    if (!user?.email) {
+      toast.error('No email address found on your account')
+      return
+    }
+
+    setIsResendingVerification(true)
+    try {
+      // TODO: wire to real endpoint:
+      //   await AuthService.resendVerificationEmail(user.email)
+      await new Promise((resolve) => setTimeout(resolve, 700))
+      toast.success('Verification email sent', {
+        description: `We've sent a verification link to ${user.email}. Check your inbox.`,
+        duration: 6000,
+      })
+    } catch {
+      toast.error('Could not send verification email', {
+        description: 'Please try again in a moment.',
+      })
+    } finally {
+      setIsResendingVerification(false)
+    }
+  }
 
   // Get activity for a specific date
   const getActivityForDate = useCallback((date: Date): ActivityData | undefined => {
@@ -1290,6 +1333,8 @@ export default function ProgressClient() {
     )
   }
 
+  const isVerified = user?.verified === true
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
@@ -1299,6 +1344,60 @@ export default function ProgressClient() {
           transition={{ duration: 0.6 }}
           className="space-y-8"
         >
+          {/* ================================================================
+              VERIFICATION WARNING STRIP
+              Only shown when user exists and is not verified.
+              Dismissible for the current session.
+              ================================================================ */}
+          {user && !isVerified && showVerifyBanner && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-amber-300/70 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-950/50 shadow-sm"
+            >
+              <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+
+              <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-100 flex-1 min-w-0">
+                <span className="font-semibold">
+                  Your account isn&apos;t verified yet.
+                </span>{' '}
+                Verify{' '}
+                <span className="hidden sm:inline">{user.email}</span>
+                <span className="sm:hidden">your email</span>{' '}
+                to unlock messaging, connections &amp; full profile visibility.
+              </p>
+
+              <Button
+                size="sm"
+                onClick={handleVerifyEmail}
+                disabled={isResendingVerification}
+                className="bg-amber-600 hover:bg-amber-700 text-white h-7 px-2.5 text-xs flex-shrink-0"
+              >
+                {isResendingVerification ? (
+                  <>
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="w-3 h-3 mr-1" />
+                    <span className="hidden sm:inline">Verify Now</span>
+                    <span className="sm:hidden">Verify</span>
+                  </>
+                )}
+              </Button>
+
+              <button
+                onClick={() => setShowVerifyBanner(false)}
+                className="p-1 text-amber-700/70 hover:text-amber-900 dark:text-amber-300/70 dark:hover:text-amber-100 flex-shrink-0"
+                aria-label="Dismiss verification warning"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </motion.div>
+          )}
+
           {/* Header */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
@@ -1307,7 +1406,7 @@ export default function ProgressClient() {
                 <ChevronRight className="w-4 h-4" />
                 <span className="font-medium text-gray-900 dark:text-gray-100">Progress Reports</span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <h1 className="text-3xl font-bold">Track Your Progress</h1>
                 <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white animate-pulse">
                   <div className="flex items-center gap-1">
@@ -1315,6 +1414,25 @@ export default function ProgressClient() {
                     LIVE
                   </div>
                 </Badge>
+
+                {/* Verified / Unverified pill next to title */}
+                {user && (
+                  isVerified ? (
+                    <Badge
+                      variant="outline"
+                      className="gap-1 border-blue-300 text-blue-600 dark:border-blue-700/60 dark:text-blue-400"
+                    >
+                      <CheckCircle className="w-3 h-3" /> Verified
+                    </Badge>
+                  ) : (
+                    <Badge
+                      variant="outline"
+                      className="gap-1 border-amber-300 text-amber-700 dark:border-amber-700/60 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20"
+                    >
+                      <ShieldAlert className="w-3 h-3" /> Unverified
+                    </Badge>
+                  )
+                )}
               </div>
               <p className="text-gray-600 dark:text-gray-400">
                 {loading ? 'Loading your progress...' : 
@@ -1367,6 +1485,63 @@ export default function ProgressClient() {
               </Button>
             </div>
           </div>
+
+          {/* ================================================================
+              DEDICATED VERIFY CARD
+              Prominent CTA under the header when user isn't verified.
+              ================================================================ */}
+          {user && !isVerified && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="border-amber-300/70 dark:border-amber-500/40 bg-amber-50/70 dark:bg-amber-950/30">
+                <CardContent className="p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center flex-shrink-0">
+                        <ShieldAlert className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                      </div>
+
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+                          Verify your account to unlock more
+                        </h3>
+
+                        <p className="text-xs text-amber-800 dark:text-amber-200/90 mt-0.5">
+                          Verified users get messaging, connections, and
+                          full profile visibility. Get the complete
+                          Chronify experience.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <Button
+                        size="sm"
+                        onClick={handleVerifyEmail}
+                        disabled={isResendingVerification}
+                        className="bg-amber-600 hover:bg-amber-700 text-white"
+                      >
+                        {isResendingVerification ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
+                            Send Verification Email
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
 
           {/* Stats Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">

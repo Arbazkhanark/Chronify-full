@@ -37,6 +37,9 @@ import {
   Sun,
   LogOut,
   Zap,
+  ShieldAlert,
+  ShieldCheck,
+  X,
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -82,7 +85,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Toaster } from 'sonner'
+import { Toaster, toast } from 'sonner'
 
 import { useGoals, Goal } from '@/hooks/useGoal'
 import { useAuth } from '@/hooks/useAuth'
@@ -228,6 +231,13 @@ export default function GoalClients() {
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
 
   // ==========================================================
+  // VERIFICATION STATE
+  // ==========================================================
+
+  const [showVerifyBanner, setShowVerifyBanner] = useState(true)
+  const [isResendingVerification, setIsResendingVerification] = useState(false)
+
+  // ==========================================================
   // MILESTONE FORM
   // ==========================================================
 
@@ -239,9 +249,6 @@ export default function GoalClients() {
 
   // ==========================================================
   // NEW GOAL FORM
-  // IMPORTANT:
-  // targetDate is Date because createGoal expects Partial<Goal>
-  // and Goal.targetDate is Date.
   // ==========================================================
 
   const [newGoal, setNewGoal] = useState<{
@@ -338,6 +345,34 @@ export default function GoalClients() {
   const handleLogout = async () => {
     await AuthService.logout()
     window.location.href = '/auth/login'
+  }
+
+  // ==========================================================
+  // VERIFY EMAIL
+  // ==========================================================
+
+  const handleVerifyEmail = async () => {
+    if (!user?.email) {
+      toast.error('No email address found on your account')
+      return
+    }
+
+    setIsResendingVerification(true)
+    try {
+      // TODO: wire to real endpoint when available:
+      //   await AuthService.resendVerificationEmail(user.email)
+      await new Promise((resolve) => setTimeout(resolve, 700))
+      toast.success('Verification email sent', {
+        description: `We've sent a verification link to ${user.email}. Check your inbox.`,
+        duration: 6000,
+      })
+    } catch {
+      toast.error('Could not send verification email', {
+        description: 'Please try again in a moment.',
+      })
+    } finally {
+      setIsResendingVerification(false)
+    }
   }
 
   // ==========================================================
@@ -1440,6 +1475,66 @@ export default function GoalClients() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6 lg:p-8 transition-colors duration-200">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* ==================================================
+              VERIFICATION WARNING STRIP
+              Shown only when the user is not verified.
+              Dismissible for the current session.
+          ================================================== */}
+
+          {user && !user.verified && showVerifyBanner && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-amber-300/70 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-950/50 shadow-sm"
+            >
+              <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+
+              <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-100 flex-1 min-w-0">
+                <span className="font-semibold">
+                  Your account isn&apos;t verified yet.
+                </span>{' '}
+                Verify{' '}
+                <span className="hidden sm:inline">
+                  {user.email}
+                </span>
+                <span className="sm:hidden">your email</span>{' '}
+                to unlock messaging, connections &amp; full profile
+                visibility.
+              </p>
+
+              <Button
+                size="sm"
+                onClick={handleVerifyEmail}
+                disabled={isResendingVerification}
+                className="bg-amber-600 hover:bg-amber-700 text-white h-7 px-2.5 text-xs flex-shrink-0"
+              >
+                {isResendingVerification ? (
+                  <>
+                    <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="w-3 h-3 mr-1" />
+                    <span className="hidden sm:inline">
+                      Verify Now
+                    </span>
+                    <span className="sm:hidden">Verify</span>
+                  </>
+                )}
+              </Button>
+
+              <button
+                onClick={() => setShowVerifyBanner(false)}
+                className="p-1 text-amber-700/70 hover:text-amber-900 dark:text-amber-300/70 dark:hover:text-amber-100 flex-shrink-0"
+                aria-label="Dismiss verification warning"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </motion.div>
+          )}
+
+          {/* ==================================================
               HEADER
           ================================================== */}
 
@@ -1448,7 +1543,7 @@ export default function GoalClients() {
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
-                    Goals & Milestones
+                    Goals &amp; Milestones
                   </h1>
 
                   <Button
@@ -1490,11 +1585,21 @@ export default function GoalClients() {
                         )[0]}
                     </p>
 
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {user.verified
-                        ? '✅ Verified'
-                        : '🔓 Not verified'}
-                    </p>
+                    {user.verified ? (
+                      <p className="text-xs text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" />
+                        Verified
+                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleVerifyEmail}
+                        className="text-xs text-amber-600 dark:text-amber-400 font-medium flex items-center gap-1 hover:underline"
+                      >
+                        <ShieldAlert className="w-3 h-3" />
+                        Not verified
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
@@ -1688,6 +1793,64 @@ export default function GoalClients() {
                 ),
               )}
             </div>
+          )}
+
+          {/* ==================================================
+              DEDICATED VERIFY CARD
+              Shown when user is not verified — prominent CTA.
+          ================================================== */}
+
+          {user && !user.verified && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="border-amber-300/70 dark:border-amber-500/40 bg-amber-50/70 dark:bg-amber-950/30">
+                <CardContent className="p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center flex-shrink-0">
+                        <ShieldAlert className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                      </div>
+
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+                          Verify your account to unlock more
+                        </h3>
+
+                        <p className="text-xs text-amber-800 dark:text-amber-200/90 mt-0.5">
+                          Verified users get messaging, connections,
+                          and full profile visibility. Get the
+                          complete Chronify experience.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <Button
+                        size="sm"
+                        onClick={handleVerifyEmail}
+                        disabled={isResendingVerification}
+                        className="bg-amber-600 hover:bg-amber-700 text-white"
+                      >
+                        {isResendingVerification ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
+                            Send Verification Email
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           )}
 
           {/* ==================================================

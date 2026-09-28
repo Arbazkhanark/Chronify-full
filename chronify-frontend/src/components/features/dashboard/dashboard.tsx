@@ -38,17 +38,18 @@ import {
   Bed,
   ChevronRight,
   Loader2,
+  ShieldAlert,
+  ShieldCheck,
+  X,
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
+import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 
 /* ============================================================================
    TYPES
-   These intentionally mirror your Prisma models (Goal, Task, FixedTime,
-   SleepSchedule, Streak) so that when the real endpoints exist, swapping the
-   DUMMY_* constants below for actual `fetch(...)` calls is close to a
-   drop-in replacement — the shapes the UI expects won't need to change.
    ============================================================================ */
 
 type GoalCategory =
@@ -147,13 +148,6 @@ interface WeeklyActivityDay {
 
 /* ============================================================================
    DUMMY DATA
-   TODO: Replace each block below with a real API call once the endpoint is
-   ready, e.g.:
-     const res = await fetch(`${API_BASE_URL}/goals`, { headers: { Authorization: token } })
-     const data = await res.json()
-     setGoals(data.data.goals)
-   The interfaces above already match the Prisma schema, so this should be a
-   straightforward swap.
    ============================================================================ */
 
 const DUMMY_GOALS: DashboardGoal[] = [
@@ -402,8 +396,12 @@ export default function DashboardClient() {
   const [loading, setLoading] = useState(true)
   const [darkMode, setDarkMode] = useState(false)
 
-  // Dummy-data state — swap the setters below for real API responses once
-  // the corresponding backend endpoints exist.
+  // Verification banner — user can hide it for this session if it's
+  // annoying, but it comes back on the next visit until they verify.
+  const [showVerifyBanner, setShowVerifyBanner] = useState(true)
+  const [isResendingVerification, setIsResendingVerification] = useState(false)
+
+  // Dummy-data state
   const [goals] = useState<DashboardGoal[]>(DUMMY_GOALS)
   const [tasks] = useState<DashboardTask[]>(DUMMY_TASKS)
   const [fixedTimes] = useState<DashboardFixedTime[]>(DUMMY_FIXED_TIMES)
@@ -451,6 +449,28 @@ export default function DashboardClient() {
     document.documentElement.classList.toggle('dark', next)
   }
 
+  /* ---------------- Verification ---------------- */
+
+  const handleVerifyEmail = async () => {
+    if (!user?.email) return
+    setIsResendingVerification(true)
+    try {
+      // TODO: wire to real endpoint when available:
+        await AuthService.resendVerificationEmail(user.email)
+      await new Promise(resolve => setTimeout(resolve, 700))
+      toast.success('Verification email sent', {
+        description: `We've sent a verification link to ${user.email}. Check your inbox.`,
+        duration: 6000,
+      })
+    } catch {
+      toast.error('Could not send verification email', {
+        description: 'Please try again in a moment.',
+      })
+    } finally {
+      setIsResendingVerification(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -468,11 +488,10 @@ export default function DashboardClient() {
 
   const displayName = user.name || user.email
   const isNewUser = user.onboardingStep === 4
+  const isVerified = user.verified === true
   const greeting = isNewUser ? 'Welcome to Chronify' : 'Welcome back'
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
-  // Derived stats — computed from the dummy data above. Once real data is
-  // wired in, these calculations stay exactly the same.
   const activeGoalsCount = goals.filter(g => g.status === 'IN_PROGRESS').length
   const tasksCompletedToday = tasks.filter(t => t.status === 'COMPLETED').length
   const completionRate = tasks.length > 0 ? Math.round((tasksCompletedToday / tasks.length) * 100) : 0
@@ -494,6 +513,55 @@ export default function DashboardClient() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6 lg:p-8 transition-colors duration-200">
       <div className="max-w-7xl mx-auto space-y-6">
+        {/* ================================================================
+            VERIFICATION WARNING STRIP
+            Slim, dismissible amber bar above everything else. Only shown
+            while `user.verified === false`.
+            ================================================================ */}
+        {!isVerified && showVerifyBanner && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-amber-300/70 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-950/50 shadow-sm"
+          >
+            <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+            <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-100 flex-1 min-w-0">
+              <span className="font-semibold">Your account isn&apos;t verified yet.</span>{' '}
+              Verify{' '}
+              <span className="hidden sm:inline">{user.email}</span>
+              <span className="sm:hidden">your email</span>{' '}
+              to unlock messaging, connections &amp; full profile visibility.
+            </p>
+            <Button
+              size="sm"
+              onClick={handleVerifyEmail}
+              disabled={isResendingVerification}
+              className="bg-amber-600 hover:bg-amber-700 text-white h-7 px-2.5 text-xs flex-shrink-0"
+            >
+              {isResendingVerification ? (
+                <>
+                  <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="w-3 h-3 mr-1" />
+                  <span className="hidden sm:inline">Verify Now</span>
+                  <span className="sm:hidden">Verify</span>
+                </>
+              )}
+            </Button>
+            <button
+              onClick={() => setShowVerifyBanner(false)}
+              className="p-1 text-amber-700/70 hover:text-amber-900 dark:text-amber-300/70 dark:hover:text-amber-100 flex-shrink-0"
+              aria-label="Dismiss verification warning"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </motion.div>
+        )}
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}
@@ -502,12 +570,39 @@ export default function DashboardClient() {
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-base md:text-lg font-semibold shadow-sm flex-shrink-0">
-              {getInitials(user.name, user.email)}
+            {/* Avatar with verification indicator */}
+            <div className="relative flex-shrink-0">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-base md:text-lg font-semibold shadow-sm">
+                {getInitials(user.name, user.email)}
+              </div>
+              {!isVerified && (
+                <span
+                  className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-amber-500 border-2 border-white dark:border-gray-900 flex items-center justify-center"
+                  title="Email not verified"
+                >
+                  <ShieldAlert className="w-2.5 h-2.5 text-white" />
+                </span>
+              )}
             </div>
+
             <div>
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {greeting}, {displayName}
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 flex-wrap">
+                <span>
+                  {greeting}, {displayName}
+                </span>
+                {isVerified ? (
+                  <CheckCircle2
+                    className="w-4 h-4 text-blue-500 flex-shrink-0"
+                    aria-label="Verified"
+                  />
+                ) : (
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] gap-1 border-amber-300 text-amber-700 dark:border-amber-700/60 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20"
+                  >
+                    <ShieldAlert className="w-3 h-3" /> Unverified
+                  </Badge>
+                )}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                 {today} · {isNewUser ? "Let's set up your first goal" : "Here's your progress overview"}
@@ -564,7 +659,7 @@ export default function DashboardClient() {
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">Today's Schedule</h2>
+                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">Today&apos;s Schedule</h2>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                         {tasksCompletedToday} of {tasks.length} tasks completed
                       </p>
@@ -629,7 +724,7 @@ export default function DashboardClient() {
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="font-semibold text-gray-900 dark:text-gray-100">Goals & Milestones</h2>
+                    <h2 className="font-semibold text-gray-900 dark:text-gray-100">Goals &amp; Milestones</h2>
                     <Link
                       href="/dashboard/goals"
                       className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
@@ -715,6 +810,64 @@ export default function DashboardClient() {
 
           {/* Right Column */}
           <div className="space-y-6">
+            {/* ================================================================
+                DEDICATED VERIFICATION CARD
+                Always shown at the top of the right column while unverified.
+                Gives the user a clear call-to-action every time they visit.
+                ================================================================ */}
+            {!isVerified && (
+              <motion.div
+                initial={{ opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.05 }}
+              >
+                <Card className="border-amber-300/70 dark:border-amber-500/40 bg-amber-50/70 dark:bg-amber-950/30">
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center flex-shrink-0">
+                        <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+                          Verify your account
+                        </h3>
+                        <p className="text-xs text-amber-800 dark:text-amber-200/90 mt-0.5">
+                          Unlock messaging, connections, and full profile visibility.
+                          Verified accounts are shown as trusted users.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        onClick={handleVerifyEmail}
+                        disabled={isResendingVerification}
+                        className="bg-amber-600 hover:bg-amber-700 text-white h-8 text-xs flex-1"
+                      >
+                        {isResendingVerification ? (
+                          <>
+                            <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />
+                            Send Verification Email
+                          </>
+                        )}
+                      </Button>
+                      <Link
+                        href="/profile"
+                        className="text-xs font-medium text-amber-800 dark:text-amber-200 hover:underline px-2 flex-shrink-0"
+                      >
+                        Open Profile
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
             {/* Streak */}
             <motion.div initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">

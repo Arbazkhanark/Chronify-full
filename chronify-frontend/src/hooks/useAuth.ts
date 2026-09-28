@@ -1,5 +1,6 @@
 // src/hooks/useAuth.ts
 
+import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 

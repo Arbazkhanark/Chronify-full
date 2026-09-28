@@ -13,6 +13,22 @@ import { AuthRequest } from "../../middlewares/auth.middleware";
 import { AppError } from "../../utils/AppError";
 import { logger } from "patal-log";
 import { UserRepository } from "./user.repository";
+import { ZodError } from "zod";
+
+/* ============================================================================
+   🔥 HELPER: Handle Zod validation errors properly
+   ============================================================================ */
+function handleZodError(err: unknown, res: Response): boolean {
+  if (err instanceof ZodError) {
+    res.status(400).json({
+      success: false,
+      message: "Validation failed",
+      errors: err.flatten().fieldErrors,
+    });
+    return true; // handled
+  }
+  return false; // not a Zod error
+}
 
 export class UserController {
   static async signup(req: Request, res: Response) {
@@ -42,6 +58,8 @@ export class UserController {
         error: err.message,
       });
 
+      if (handleZodError(err, res)) return;
+
       if (err instanceof AppError) {
         return res
           .status(err.statusCode)
@@ -55,15 +73,13 @@ export class UserController {
     }
   }
 
-
-    static async verify(req: Request, res: Response) {
+  static async verify(req: Request, res: Response) {
     try {
       const { token } = req.query;
 
-
       logger.info("Verification API called", {
         functionName: "UserController.verification",
-        metadata: {  },
+        metadata: {},
       });
 
       const user = await UserService.verifyEmail(token as string);
@@ -124,6 +140,8 @@ export class UserController {
         error: err.message,
       });
 
+      if (handleZodError(err, res)) return;
+
       if (err instanceof AppError) {
         return res
           .status(err.statusCode)
@@ -158,6 +176,8 @@ export class UserController {
         error: err.message,
       });
 
+      if (handleZodError(err, res)) return;
+
       return res.status(500).json({
         success: false,
         message: "Internal server error",
@@ -185,6 +205,8 @@ export class UserController {
         error: err.message,
       });
 
+      if (handleZodError(err, res)) return;
+
       if (err instanceof AppError) {
         return res
           .status(err.statusCode)
@@ -198,22 +220,9 @@ export class UserController {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
   static async changePassword(req: AuthRequest, res: Response) {
     try {
-
-      const { oldPassword, newPassword } =
-      changePasswordSchema.parse(req.body);
+      const { oldPassword, newPassword } = changePasswordSchema.parse(req.body);
 
       logger.info("Change password API called", {
         functionName: "UserController.changePassword",
@@ -236,6 +245,8 @@ export class UserController {
         error: err.message,
       });
 
+      if (handleZodError(err, res)) return;
+
       if (err instanceof AppError) {
         return res
           .status(err.statusCode)
@@ -252,6 +263,7 @@ export class UserController {
   static async updateProfile(req: AuthRequest, res: Response) {
     try {
       const data = updateProfileSchema.parse(req.body);
+      console.log(data,"Updated Data")
 
       logger.info("Update profile API called", {
         functionName: "UserController.updateProfile",
@@ -275,6 +287,8 @@ export class UserController {
         functionName: "UserController.updateProfile",
         error: err.message,
       });
+
+      if (handleZodError(err, res)) return;
 
       if (err instanceof AppError) {
         return res.status(err.statusCode).json({
@@ -322,9 +336,6 @@ export class UserController {
     }
   }
 
-
-
-
   static async logout(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;
@@ -367,10 +378,7 @@ export class UserController {
     }
   }
 
-
-
-
-  static async getFullDetailedProfile(req: AuthRequest, res: Response) {
+  static async getFullDetailedProfile1(req: AuthRequest, res: Response) {
     try {
       const userId = req.user?.id;
 
@@ -412,39 +420,88 @@ export class UserController {
     }
   }
 
+  static async getFullDetailedProfile(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized",
+        });
+      }
+
+      logger.info("Get full detailed profile API called", {
+        functionName: "UserController.getFullDetailedProfile",
+        metadata: { userId },
+      });
+
+      const profile = await UserService.getFullDetailedProfile(userId);
+
+      return res.status(200).json({
+        success: true,
+        message: "Full profile fetched successfully",
+        data: profile,
+      });
+    } catch (err: any) {
+      logger.error(
+        `Get full detailed profile failed: ${err.message}`,
+        {
+          functionName: "UserController.getFullDetailedProfile",
+          error: err.message,
+        }
+      );
+
+      if (err instanceof AppError) {
+        return res.status(err.statusCode).json({
+          success: false,
+          message: err.message,
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  }
 
   static async saveFcmToken(req: AuthRequest, res: Response) {
-  try {
-    const { token } = req.body;
-    const userId = req.user!.id;
+    try {
+      const { token } = req.body;
+      const userId = req.user!.id;
 
-    if (!token) {
-      throw new AppError("FCM token is required", 400);
+      if (!token) {
+        throw new AppError("FCM token is required", 400);
+      }
+
+      logger.info("Saving FCM token", {
+        functionName: "UserController.saveFcmToken",
+        metadata: { userId },
+      });
+
+      await UserService.saveFcmToken(userId, token);
+
+      res.json({
+        success: true,
+        message: "FCM token saved successfully",
+      });
+    } catch (err: any) {
+      logger.error("Save FCM token failed", {
+        functionName: "UserController.saveFcmToken",
+        error: err.message,
+      });
+
+      if (err instanceof AppError) {
+        return res
+          .status(err.statusCode)
+          .json({ success: false, message: err.message });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
     }
-
-    logger.info("Saving FCM token", {
-      functionName: "UserController.saveFcmToken",
-      metadata: { userId },
-    });
-
-    await UserService.saveFcmToken(userId, token);
-
-    res.json({
-      success: true,
-      message: "FCM token saved successfully",
-    });
-  } catch (err: any) {
-    logger.error("Save FCM token failed", { functionName: "UserController.saveFcmToken", error: err.message });
-
-    if (err instanceof AppError) {
-      return res.status(err.statusCode).json({ success: false, message: err.message });
-    }
-
-    return res.status(500).json({ success: false, message: "Internal server error" });
   }
-}
-
-
-
-
 }

@@ -1,183 +1,3 @@
-// import bcrypt from "bcrypt";
-// import { UserRepository } from "./user.repository";
-// import { CreateUserDTO, LoginDTO } from "./user.types";
-// import { AppError } from "../../utils/AppError";
-// import { getLiveTraceId, logger } from "patal-log";
-
-// export class UserService {
-//   static async signup(data: CreateUserDTO) {
-//     logger.info("Processing signup request", {
-//       functionName: "UserService.signup",
-//       metadata: { email: data.email },
-//     });
-
-//     const existing = await UserRepository.findByEmail(data.email);
-//     if (existing) {
-//       logger.warn("Signup failed - email already registered", {
-//         functionName: "UserService.signup",
-//         metadata: { email: data.email },
-//       });
-//       throw new AppError("Email already registered", 400);
-//     }
-
-//     const hashedPassword = await bcrypt.hash(data.password, 10);
-
-//     const user = await UserRepository.create({
-//       ...data,
-//       password: hashedPassword,
-//       timezone: data.timezone ?? "Asia/Kolkata",
-//     });
-
-//     logger.info("User created successfully", {
-//       functionName: "UserService.signup",
-//       metadata: { userId: user.id },
-//     });
-
-//     return user;
-//   }
-
-//   static async login(data: LoginDTO) {
-
-//     logger.info("Processing login request", {
-//       functionName: "UserService.login",
-//       metadata: { email: data.email },
-//     });
-
-//     const user = await UserRepository.findByEmail(data.email);
-
-//     if (!user) {
-//       logger.warn("Login failed - user not found", {
-//         functionName: "UserService.login",
-//         metadata: { email: data.email },
-//       });
-//       throw new AppError("Invalid email or password", 401);
-//     }
-
-//     const isValid = await bcrypt.compare(data.password, user.password);
-
-//     if (!isValid) {
-//       logger.warn("Login failed - password mismatch", {
-//         functionName: "UserService.login",
-//         metadata: { userId: user.id },
-//       });
-//       throw new AppError("Invalid email or password", 401);
-//     }
-
-//     logger.info("Login validation passed", {
-//       functionName: "UserService.login",
-//       metadata: { userId: user.id },
-//     });
-
-//     return {
-//       id: user.id,
-//       email: user.email,
-//       name: user.name,
-//       timezone: user.timezone,
-//     };
-//   }
-
-//   static async getProfile(userId: string) {
-//     const traceId = getLiveTraceId();
-//     logger.info("Fetching user profile", {
-//       functionName: "UserService.getProfile",
-//       metadata: { userId },
-//     });
-
-//     const user = await UserRepository.findById(userId);
-//     if (!user) {
-//       logger.warn("User profile not found", {
-//         functionName: "UserService.getProfile",
-//         metadata: { userId },
-//       });
-//       throw new AppError("User not found", 404);
-//     }
-
-//     logger.info("User profile fetched successfully", {
-//       functionName: "UserService.getProfile",
-//       metadata: { userId },
-//     });
-
-//     return user;
-//   }
-// }
-
-
-
-
-// import bcrypt from "bcrypt";
-// import jwt from "jsonwebtoken";
-// import { UserRepository } from "./user.repository";
-// import { CreateUserDTO, LoginDTO } from "./user.types";
-// import { AppError } from "../../utils/AppError";
-// import { logger } from "patal-log";
-
-// export class UserService {
-//   static async signup(data: CreateUserDTO) {
-//     logger.info("Processing signup request", {
-//       functionName: "UserService.signup",
-//       metadata: { email: data.email },
-//     });
-
-//     const exists = await UserRepository.findByEmail(data.email);
-//     if (exists) throw new AppError("Email already registered", 400);
-
-//     const hashedPassword = await bcrypt.hash(data.password, 12);
-
-//     const user = await UserRepository.create({
-//       ...data,
-//       password: hashedPassword,
-//       timezone: data.timezone ?? "Asia/Kolkata",
-//     });
-
-//     return user;
-//   }
-
-//   static async login(data: LoginDTO) {
-//     logger.info("Processing login request", {
-//       functionName: "UserService.login",
-//       metadata: { email: data.email },
-//     });
-
-//     const user = await UserRepository.findByEmail(data.email);
-//     if (!user) throw new AppError("Invalid email or password", 401);
-
-//     const isValid = await bcrypt.compare(data.password, user.password);
-//     if (!isValid) throw new AppError("Invalid email or password", 401);
-
-//     const token = jwt.sign(
-//       { userId: user.id },
-//       process.env.JWT_SECRET!,
-//       { expiresIn: "15m" }
-//     );
-
-//     return {
-//       accessToken: token,
-//       user: {
-//         id: user.id,
-//         name: user.name,
-//         email: user.email,
-//         timezone: user.timezone,
-//       },
-//     };
-//   }
-
-//   static async getProfile(userId: string) {
-//     const user = await UserRepository.findById(userId);
-//     if (!user) throw new AppError("User not found", 404);
-//     return user;
-//   }
-// }
-
-
-
-
-
-
-
-
-
-
-
 // src/modules/user/user.service.ts
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -222,9 +42,9 @@ export class UserService {
     { expiresIn: "15m" }
   );
 
-  const verifyLink = `https://yourfrontendapp.com/verify-email?token=${token}`;
+  const verifyLink = `${process.env.FRONTEND_URL}/auth/verify-email?token=${token}`;
 
-  await sendVerificationEmail(user.email, verifyLink);
+  await sendVerificationEmail(user.email, token);
 
   logger.info("Verification email sent", {
     functionName: "UserService.signup",
@@ -541,35 +361,29 @@ static async forgotPassword(email: string) {
 
 
   static async getFullDetailedProfile(userId: string) {
-    logger.info("Fetching full detailed user profile", {
+  logger.info("Fetching full detailed user profile", {
+    functionName: "UserService.getFullDetailedProfile",
+    metadata: { userId },
+  });
+
+  const user = await UserRepository.getFullDetailedProfileById(userId);
+
+  if (!user) {
+    logger.warn("Full profile fetch failed - user not found", {
       functionName: "UserService.getFullDetailedProfile",
       metadata: { userId },
     });
 
-    const user = await UserRepository.findById(userId);
-    const userDetails= await UserRepository.getUserDetailsById(userId);
-
-    if (!user) {
-      logger.warn("Full profile fetch failed - user not found", {
-        functionName: "UserService.getFullDetailedProfile",
-        metadata: { userId },
-      });
-      throw new AppError("User not found", 404);
-    }
-
-    // Mix the user details in single variable and return that 
-    const fullProfile = {
-      ...user,
-      ...userDetails
-    };
-
-    logger.info("Full detailed profile fetched successfully", {
-      functionName: "UserService.getFullDetailedProfile",
-      metadata: { userId },
-    });
-
-    return fullProfile;
+    throw new AppError("User not found", 404);
   }
+
+  logger.info("Full detailed profile fetched successfully", {
+    functionName: "UserService.getFullDetailedProfile",
+    metadata: { userId },
+  });
+
+  return user;
+}
 
 
   static async saveFcmToken(userId: string, token: string) {
