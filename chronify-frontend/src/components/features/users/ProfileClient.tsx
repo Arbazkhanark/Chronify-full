@@ -565,7 +565,8 @@ export default function ProfileClient() {
     if (!profile?.email) return
     setIsResendingVerification(true)
     try {
-      await new Promise(resolve => setTimeout(resolve, 700))
+      await AuthService.verifyEmail(profile.email)
+      // await new Promise(resolve => setTimeout(resolve, 700))
       toast.success('Verification email sent', {
         description: `We've sent a verification link to ${profile.email}. Check your inbox.`,
         duration: 6000,

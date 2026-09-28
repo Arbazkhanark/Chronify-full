@@ -360,8 +360,8 @@ export default function GoalClients() {
     setIsResendingVerification(true)
     try {
       // TODO: wire to real endpoint when available:
-      //   await AuthService.resendVerificationEmail(user.email)
-      await new Promise((resolve) => setTimeout(resolve, 700))
+      await AuthService.verifyEmail(user.email)
+      // await new Promise((resolve) => setTimeout(resolve, 700))
       toast.success('Verification email sent', {
         description: `We've sent a verification link to ${user.email}. Check your inbox.`,
         duration: 6000,
