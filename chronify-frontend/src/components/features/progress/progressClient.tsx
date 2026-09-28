@@ -216,6 +216,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { Slider } from '@/components/ui/slider'
 import { AuthService, type User } from '@/hooks/useAuth'
+import { useVerification } from '@/hooks/useVerification'
 import {
   AreaChart,
   Area,
@@ -1033,11 +1034,27 @@ export default function ProgressClient() {
   const [autoRefresh, setAutoRefresh] = useState<boolean>(true)
 
   // ==========================================================
-  // USER / VERIFICATION STATE
+  // USER STATE
   // ==========================================================
   const [user, setUser] = useState<User | null>(null)
   const [showVerifyBanner, setShowVerifyBanner] = useState<boolean>(true)
-  const [isResendingVerification, setIsResendingVerification] = useState<boolean>(false)
+
+  /* ==========================================================
+     🔥 VERIFICATION HOOK
+     Central source of truth for verification state. Handles email
+     send, polling, cache updates, and broadcasts to all other
+     components via verification-bus.
+     ========================================================== */
+  const {
+    isVerified,
+    isSending: isResendingVerification,
+    sendVerificationEmail,
+  } = useVerification({
+    email: user?.email,
+    onVerified: () => {
+      setUser((prev) => (prev ? { ...prev, verified: true } : prev))
+    },
+  })
   
   // Data states
   const [loading, setLoading] = useState<boolean>(true)
@@ -1100,29 +1117,11 @@ export default function ProgressClient() {
 
   // ==========================================================
   // VERIFY EMAIL
+  // 🔥 Thin wrapper over the hook — the hook handles email send,
+  //    polling, cache writes, and cross-component broadcast.
   // ==========================================================
   const handleVerifyEmail = async () => {
-    if (!user?.email) {
-      toast.error('No email address found on your account')
-      return
-    }
-
-    setIsResendingVerification(true)
-    try {
-      // TODO: wire to real endpoint:
-      await AuthService.verifyEmail(user.email)
-      // await new Promise((resolve) => setTimeout(resolve, 700))
-      toast.success('Verification email sent', {
-        description: `We've sent a verification link to ${user.email}. Check your inbox.`,
-        duration: 6000,
-      })
-    } catch {
-      toast.error('Could not send verification email', {
-        description: 'Please try again in a moment.',
-      })
-    } finally {
-      setIsResendingVerification(false)
-    }
+    await sendVerificationEmail()
   }
 
   // Get activity for a specific date
@@ -1332,8 +1331,6 @@ export default function ProgressClient() {
       </div>
     )
   }
-
-  const isVerified = user?.verified === true
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 p-4 md:p-6">

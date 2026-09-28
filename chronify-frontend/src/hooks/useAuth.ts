@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { onVerificationChange } from '@/lib/verification-bus'
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_BACKEND_API_URL ||
@@ -254,15 +255,10 @@ export class AuthServiceClass {
     url: string,
     options: RequestInit = {},
   ): Promise<T> {
-    // FIX: Type `headers` as `Record<string, string>` instead of
-    // `HeadersInit`. `HeadersInit` is a union (Headers | string[][]
-    // | Record<string, string>) and TypeScript won't let you index
-    // into all three with `headers['Authorization']`.
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }
 
-    // Merge any custom headers passed by the caller
     if (options.headers) {
       if (options.headers instanceof Headers) {
         options.headers.forEach((value, key) => {
@@ -989,6 +985,50 @@ export class AuthServiceClass {
   }
 
   // ==========================================================
+  // MARK VERIFIED (🔥 NEW — cross-component helper)
+  // ==========================================================
+
+  /**
+   * Marks the current user as verified in localStorage.
+   *
+   * Called by `useVerification` after backend confirms verification,
+   * so that any component that reads from storage stays in sync.
+   */
+  markVerified(verified: boolean = true): void {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const existingUserStr =
+      localStorage.getItem('current_user')
+
+    if (!existingUserStr) {
+      return
+    }
+
+    try {
+      const parsed: unknown =
+        JSON.parse(existingUserStr)
+
+      if (!isUser(parsed)) {
+        return
+      }
+
+      const updatedUser: User = {
+        ...parsed,
+        verified,
+      }
+
+      localStorage.setItem(
+        'current_user',
+        JSON.stringify(updatedUser),
+      )
+    } catch {
+      // Silent fail — not critical
+    }
+  }
+
+  // ==========================================================
   // LOGOUT
   // ==========================================================
 
@@ -1180,7 +1220,7 @@ export class AuthServiceClass {
   ): Promise<boolean> {
     try {
       await this.handleRequest<unknown>(
-        '/auth/resend-verification-email',
+        '/users/resend-verification-link',
         {
           method: 'POST',
           body: JSON.stringify({
@@ -1248,6 +1288,25 @@ export function useAuth() {
       }
 
     loadUser()
+  }, [])
+
+  /* ==========================================================
+     🔥 VERIFICATION BUS LISTENER
+     Listens for verification events emitted by ANY component
+     (Dashboard, Profile, Progress, Goals, etc.) via
+     `emitVerificationChange(true)` and updates `user.verified`.
+
+     This keeps every consumer of `useAuth()` in sync without
+     each page needing to re-fetch or manage its own state.
+     ========================================================== */
+  useEffect(() => {
+    const unsubscribe = onVerificationChange((verified) => {
+      setUser((prev) =>
+        prev ? { ...prev, verified } : prev,
+      )
+    })
+
+    return unsubscribe
   }, [])
 
   return {

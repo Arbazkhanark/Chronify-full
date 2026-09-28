@@ -113,6 +113,56 @@ export class UserController {
     }
   }
 
+ static async resendVerificationLink(req: Request, res: Response) {
+  try {
+    const { email } = req.body;
+
+    if (!email || typeof email !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    logger.info("Resend verification link API called", {
+      functionName: "UserController.resendVerificationLink",
+      metadata: { email },
+    });
+
+    await UserService.resendVerificationLink(email);
+
+    logger.info("Resend verification link API success", {
+      functionName: "UserController.resendVerificationLink",
+      metadata: { email },
+    });
+
+    // 🔐 Security best-practice: same response whether email exists or not
+    return res.status(200).json({
+      success: true,
+      message:
+        "If the email is registered and unverified, a new verification link has been sent.",
+    });
+  } catch (err: any) {
+    logger.error(`Resend verification failed: ${err.message}`, {
+      functionName: "UserController.resendVerificationLink",
+      error: err.message,
+    });
+
+    if (handleZodError(err, res)) return;
+
+    if (err instanceof AppError) {
+      return res
+        .status(err.statusCode)
+        .json({ success: false, message: err.message });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+}
+
   static async login(req: Request, res: Response) {
     try {
       const payload = loginSchema.parse(req.body);

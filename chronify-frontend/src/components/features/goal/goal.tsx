@@ -89,6 +89,7 @@ import { Toaster, toast } from 'sonner'
 
 import { useGoals, Goal } from '@/hooks/useGoal'
 import { useAuth } from '@/hooks/useAuth'
+import { useVerification } from '@/hooks/useVerification'
 import { Label } from '@/components/ui/label'
 
 // ============================================================
@@ -235,7 +236,21 @@ export default function GoalClients() {
   // ==========================================================
 
   const [showVerifyBanner, setShowVerifyBanner] = useState(true)
-  const [isResendingVerification, setIsResendingVerification] = useState(false)
+
+  /* ==========================================================
+     🔥 VERIFICATION HOOK
+     Central source of truth for verification state. Handles
+     email send, polling, cache updates, and broadcasts to all
+     other components via verification-bus. Replaces the old
+     local `isResendingVerification` state + `handleVerifyEmail`.
+     ========================================================== */
+  const {
+    isVerified,
+    isSending: isResendingVerification,
+    sendVerificationEmail,
+  } = useVerification({
+    email: user?.email,
+  })
 
   // ==========================================================
   // MILESTONE FORM
@@ -349,30 +364,12 @@ export default function GoalClients() {
 
   // ==========================================================
   // VERIFY EMAIL
+  // 🔥 Thin wrapper over the hook — the hook handles email send,
+  //    polling, cache writes, and cross-component broadcast.
   // ==========================================================
 
   const handleVerifyEmail = async () => {
-    if (!user?.email) {
-      toast.error('No email address found on your account')
-      return
-    }
-
-    setIsResendingVerification(true)
-    try {
-      // TODO: wire to real endpoint when available:
-      await AuthService.verifyEmail(user.email)
-      // await new Promise((resolve) => setTimeout(resolve, 700))
-      toast.success('Verification email sent', {
-        description: `We've sent a verification link to ${user.email}. Check your inbox.`,
-        duration: 6000,
-      })
-    } catch {
-      toast.error('Could not send verification email', {
-        description: 'Please try again in a moment.',
-      })
-    } finally {
-      setIsResendingVerification(false)
-    }
+    await sendVerificationEmail()
   }
 
   // ==========================================================
@@ -1480,7 +1477,7 @@ export default function GoalClients() {
               Dismissible for the current session.
           ================================================== */}
 
-          {user && !user.verified && showVerifyBanner && (
+          {user && !isVerified && showVerifyBanner && (
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1585,7 +1582,7 @@ export default function GoalClients() {
                         )[0]}
                     </p>
 
-                    {user.verified ? (
+                    {isVerified ? (
                       <p className="text-xs text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" />
                         Verified
@@ -1800,7 +1797,7 @@ export default function GoalClients() {
               Shown when user is not verified — prominent CTA.
           ================================================== */}
 
-          {user && !user.verified && (
+          {user && !isVerified && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { AuthService, type User } from '@/hooks/useAuth'
+import { useVerification } from '@/hooks/useVerification'
 import {
   Target,
   CheckCircle2,
@@ -399,13 +400,31 @@ export default function DashboardClient() {
   // Verification banner — user can hide it for this session if it's
   // annoying, but it comes back on the next visit until they verify.
   const [showVerifyBanner, setShowVerifyBanner] = useState(true)
-  const [isResendingVerification, setIsResendingVerification] = useState(false)
 
   // Dummy-data state
   const [goals] = useState<DashboardGoal[]>(DUMMY_GOALS)
   const [tasks] = useState<DashboardTask[]>(DUMMY_TASKS)
   const [fixedTimes] = useState<DashboardFixedTime[]>(DUMMY_FIXED_TIMES)
   const [sleepNights] = useState<DashboardSleepNight[]>(DUMMY_SLEEP)
+
+  /* ================================================================
+     🔥 VERIFICATION HOOK
+     Central source of truth for verification state. Handles email
+     send, polling, cache updates (current_user + profile cache),
+     and broadcasts to all other components via verification-bus.
+  */
+  const {
+    isVerified,
+    isSending: isResendingVerification,
+    sendVerificationEmail,
+  } = useVerification({
+    email: user?.email,
+    onVerified: () => {
+      // Keep local `user` state in sync so the badge/avatar update
+      // instantly without waiting for a refetch.
+      setUser((prev) => (prev ? { ...prev, verified: true } : prev))
+    },
+  })
 
   useEffect(() => {
     let isMounted = true
@@ -450,25 +469,10 @@ export default function DashboardClient() {
   }
 
   /* ---------------- Verification ---------------- */
-
+  // 🔥 Thin wrapper over the hook — the hook handles email send,
+  //    polling, cache writes, and cross-component broadcast.
   const handleVerifyEmail = async () => {
-    if (!user?.email) return
-    setIsResendingVerification(true)
-    try {
-      // TODO: wire to real endpoint when available:
-      await AuthService.verifyEmail(user.email)
-      // await new Promise(resolve => setTimeout(resolve, 700))
-      toast.success('Verification email sent', {
-        description: `We've sent a verification link to ${user.email}. Check your inbox.`,
-        duration: 6000,
-      })
-    } catch {
-      toast.error('Could not send verification email', {
-        description: 'Please try again in a moment.',
-      })
-    } finally {
-      setIsResendingVerification(false)
-    }
+    await sendVerificationEmail()
   }
 
   if (loading) {
@@ -488,7 +492,6 @@ export default function DashboardClient() {
 
   const displayName = user.name || user.email
   const isNewUser = user.onboardingStep === 4
-  const isVerified = user.verified === true
   const greeting = isNewUser ? 'Welcome to Chronify' : 'Welcome back'
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
@@ -516,7 +519,7 @@ export default function DashboardClient() {
         {/* ================================================================
             VERIFICATION WARNING STRIP
             Slim, dismissible amber bar above everything else. Only shown
-            while `user.verified === false`.
+            while `isVerified === false`.
             ================================================================ */}
         {!isVerified && showVerifyBanner && (
           <motion.div
@@ -570,7 +573,7 @@ export default function DashboardClient() {
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
           <div className="flex items-center gap-4">
-            {/* Avatar with verification indicator */}
+            {/* Avatar with verification indicator — uses `isVerified` */}
             <div className="relative flex-shrink-0">
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-base md:text-lg font-semibold shadow-sm">
                 {getInitials(user.name, user.email)}

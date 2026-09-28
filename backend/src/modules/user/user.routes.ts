@@ -9,6 +9,7 @@ const router = Router();
 
 router.post("/signup",rateLimiter, UserController.signup);                         //Tested
 router.get("/verify", rateLimiter, UserController.verify);                          //Tested
+router.post('/resend-verification-link',UserController.resendVerificationLink);
 router.post("/login", UserController.login);                           //Tested
 router.post("/forgot-password", rateLimiter, UserController.forgotPassword);        //Tested
 router.post("/reset-password", UserController.resetPassword);                       //Tested

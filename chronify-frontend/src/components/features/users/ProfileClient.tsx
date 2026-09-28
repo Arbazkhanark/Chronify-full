@@ -113,6 +113,7 @@ import {
   clearProfileCache,
 } from '@/lib/profile-cache'
 import { AuthService } from '@/hooks/useAuth'
+import { useVerification } from '@/hooks/useVerification'
 import {
   compressImage,
   uploadToCloudinary,
@@ -428,7 +429,30 @@ export default function ProfileClient() {
   const [showAchievementDetails, setShowAchievementDetails] = useState<Achievement | null>(null)
   const [showShareModal, setShowShareModal] = useState(false)
 
-  const [isResendingVerification, setIsResendingVerification] = useState(false)
+  /* ================================================================
+     🔥 VERIFICATION HOOK
+     Central source of truth for verification state.
+     Handles: email send, polling, cache updates, and cross-component
+     sync via verification-bus. Replaces the old local
+     `isResendingVerification` state + `handleVerifyEmail` function.
+  */
+  const {
+    isVerified,
+    isSending: isResendingVerification,
+    sendVerificationEmail,
+  } = useVerification({
+    email: profile?.email,
+    onVerified: (ui) => {
+      // The hook already updated both caches (`chronify:profile:v1`
+      // and `current_user`) and broadcast to all listeners.
+      // Here we just sync our local React state.
+      setProfile(ui)
+      setEditForm(toFormData(ui))
+      setEditSocialLinks(ui.socialLinks ?? [])
+      setEditEducation(ui.education ?? [])
+      setEditExperience(ui.experience ?? [])
+    },
+  })
 
   const bestCurrentStreak = useMemo(
     () => (subjectStreaks.length ? Math.max(...subjectStreaks.map(s => s.currentStreak)) : 0),
@@ -561,23 +585,10 @@ export default function ProfileClient() {
   }
 
   /* ---------------- Verification ---------------- */
+  // 🔥 Now a thin wrapper over the hook — the hook handles everything
+  //    (email send, polling, cache updates, bus broadcast).
   const handleVerifyEmail = async () => {
-    if (!profile?.email) return
-    setIsResendingVerification(true)
-    try {
-      await AuthService.verifyEmail(profile.email)
-      // await new Promise(resolve => setTimeout(resolve, 700))
-      toast.success('Verification email sent', {
-        description: `We've sent a verification link to ${profile.email}. Check your inbox.`,
-        duration: 6000,
-      })
-    } catch {
-      toast.error('Could not send verification email', {
-        description: 'Please try again in a moment.',
-      })
-    } finally {
-      setIsResendingVerification(false)
-    }
+    await sendVerificationEmail()
   }
 
   /* ================================================================
@@ -958,34 +969,64 @@ export default function ProfileClient() {
       let finalAvatarUrl = editForm.avatarUrl || ''
       let finalCoverUrl = editForm.coverPhoto || ''
 
+      const isBlobUrl = (u: string) => u.startsWith('blob:')
+
+      const cloudinaryConfigured =
+        !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME &&
+        !!process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
+
       if (pendingAvatar) {
-        try {
-          const compressed = await compressImage(pendingAvatar.file, 1200, 0.85)
-          const result = await uploadToCloudinary(compressed, {
-            folder: 'chronify/avatars',
+        if (!cloudinaryConfigured) {
+          toast.error('Image upload unavailable', {
+            description:
+              'Cloudinary is not configured. Paste an image URL instead, or contact admin.',
+            duration: 6000,
           })
-          finalAvatarUrl = result.secureUrl
-        } catch (err: any) {
-          console.error('[Save] Avatar upload failed:', err)
-          toast.error('Avatar upload failed', {
-            description: err instanceof Error ? err.message : 'Please try again.',
-          })
+          finalAvatarUrl = isBlobUrl(finalAvatarUrl) ? '' : finalAvatarUrl
+        } else {
+          try {
+            const compressed = await compressImage(pendingAvatar.file, 1200, 0.85)
+            const result = await uploadToCloudinary(compressed, {
+              folder: 'chronify/avatars',
+            })
+            finalAvatarUrl = result.secureUrl
+          } catch (err: any) {
+            console.error('[Save] Avatar upload failed:', err)
+            toast.error('Avatar upload failed', {
+              description: err instanceof Error ? err.message : 'Please try again.',
+            })
+            finalAvatarUrl = isBlobUrl(finalAvatarUrl) ? '' : finalAvatarUrl
+          }
         }
+      } else if (isBlobUrl(finalAvatarUrl)) {
+        finalAvatarUrl = ''
       }
 
       if (pendingCover) {
-        try {
-          const compressed = await compressImage(pendingCover.file, 1920, 0.85)
-          const result = await uploadToCloudinary(compressed, {
-            folder: 'chronify/covers',
+        if (!cloudinaryConfigured) {
+          toast.error('Image upload unavailable', {
+            description:
+              'Cloudinary is not configured. Paste an image URL instead, or contact admin.',
+            duration: 6000,
           })
-          finalCoverUrl = result.secureUrl
-        } catch (err: any) {
-          console.error('[Save] Cover upload failed:', err)
-          toast.error('Cover upload failed', {
-            description: err instanceof Error ? err.message : 'Please try again.',
-          })
+          finalCoverUrl = isBlobUrl(finalCoverUrl) ? '' : finalCoverUrl
+        } else {
+          try {
+            const compressed = await compressImage(pendingCover.file, 1920, 0.85)
+            const result = await uploadToCloudinary(compressed, {
+              folder: 'chronify/covers',
+            })
+            finalCoverUrl = result.secureUrl
+          } catch (err: any) {
+            console.error('[Save] Cover upload failed:', err)
+            toast.error('Cover upload failed', {
+              description: err instanceof Error ? err.message : 'Please try again.',
+            })
+            finalCoverUrl = isBlobUrl(finalCoverUrl) ? '' : finalCoverUrl
+          }
         }
+      } else if (isBlobUrl(finalCoverUrl)) {
+        finalCoverUrl = ''
       }
 
       const cleanedSocialLinks = editSocialLinks
@@ -1070,7 +1111,6 @@ export default function ProfileClient() {
           subFields: serverSubFields,
         }
 
-        // 🔥 PERSIST TO CACHE
         writeProfileCache({ apiProfile: refreshed, uiProfile: finalProfile })
 
         setProfile(finalProfile)
@@ -1079,7 +1119,6 @@ export default function ProfileClient() {
         setEditEducation(finalProfile.education ?? [])
         setEditExperience(finalProfile.experience ?? [])
       } else {
-        // Fallback — build synthetic cache entry
         setProfile((prev) => {
           if (!prev) return prev
           const updatedProfile: ProfileData = {
@@ -1110,7 +1149,6 @@ export default function ProfileClient() {
             isProfileIncomplete: false,
           }
 
-          // 🔥 Write cache from synthetic api profile
           const cached = readProfileCache()
           if (cached) {
             const syntheticApi: ApiFullProfile = {
@@ -1256,7 +1294,8 @@ export default function ProfileClient() {
               </div>
 
               <div className="flex-1 min-w-0 flex justify-center">
-                {!isLoadingProfile && profile && !profile.verified && (
+                {/* 🔥 Uses `isVerified` from the hook instead of `profile.verified` */}
+                {!isLoadingProfile && profile && !isVerified && (
                   <div className="flex items-center gap-2 sm:gap-3 px-3 py-2 rounded-lg border border-amber-300/70 dark:border-amber-500/40 bg-amber-50/95 dark:bg-amber-950/85 backdrop-blur-md shadow-md max-w-full">
                     <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
                     <span className="text-xs sm:text-sm text-amber-900 dark:text-amber-100 font-medium">
@@ -1409,7 +1448,8 @@ export default function ProfileClient() {
                             {profile.name || 'Unnamed User'}
                           </h1>
 
-                          {profile.verified ? (
+                          {/* 🔥 Hook value, not profile.verified */}
+                          {isVerified ? (
                             <CheckCircle2
                               className="w-5 h-5 text-blue-500 flex-shrink-0"
                               aria-label="Verified"
@@ -1462,7 +1502,8 @@ export default function ProfileClient() {
                             <DropdownMenuItem onClick={handleExportData}>
                               <Download className="w-4 h-4 mr-2" /> Export Data
                             </DropdownMenuItem>
-                            {!profile.verified && (
+                            {/* 🔥 Hook value */}
+                            {!isVerified && (
                               <>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={handleVerifyEmail}>
@@ -1508,7 +1549,8 @@ export default function ProfileClient() {
                       <span className="flex items-center gap-1">
                         <Mail className="w-3 h-3" />
                         {profile.email}
-                        {!profile.verified && (
+                        {/* 🔥 Hook value */}
+                        {!isVerified && (
                           <span className="ml-1 text-amber-600 dark:text-amber-400 font-medium">
                             · Unverified
                           </span>
@@ -3276,6 +3318,12 @@ export default function ProfileClient() {
         }}
       >
         <DialogContent className="max-w-4xl w-[92vw] bg-black/95 border-none p-2 sm:p-4">
+          {/* 🔥 Hidden title + description for screen readers (a11y) */}
+          <DialogTitle className="sr-only">Image Preview</DialogTitle>
+          <DialogDescription className="sr-only">
+            Full size preview of the selected image.
+          </DialogDescription>
+
           {lightboxUrl && (
             <div className="relative w-full h-[80vh] flex items-center justify-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -97,6 +97,63 @@ static async verifyEmail(token: string) {
 }
 
 
+static async resendVerificationLink(email: string) {
+  logger.info("Resend verification link requested", {
+    functionName: "UserService.resendVerificationLink",
+    metadata: { email },
+  });
+
+  // 1️⃣ Find user
+  const user = await UserRepository.findByEmail(email);
+
+  // 🔐 Security: Do NOT leak whether email exists
+  if (!user) {
+    logger.warn("Resend verification - user not found (silent)", {
+      functionName: "UserService.resendVerificationLink",
+      metadata: { email },
+    });
+    return; // silent success
+  }
+
+  // 2️⃣ Already verified? Nothing to do — silent success
+  if (user.verified) {
+    logger.info("Resend verification - user already verified (silent)", {
+      functionName: "UserService.resendVerificationLink",
+      metadata: { userId: user.id },
+    });
+    return;
+  }
+
+  // 3️⃣ Generate a fresh email-verification JWT (15 min)
+  const token = jwt.sign(
+    {
+      userId: user.id,
+      email: user.email,
+      purpose: "email-verification",
+    },
+    process.env.SECRET_KEY!,
+    { expiresIn: "15m" }
+  );
+
+  // 4️⃣ (Optional) Log the would-be link for debugging in dev
+  if (process.env.NODE_ENV !== "production") {
+    const verifyLink = `${process.env.FRONTEND_URL}/auth/verify-email?token=${token}`;
+    logger.info("Dev: Verification link generated", {
+      functionName: "UserService.resendVerificationLink",
+      metadata: { verifyLink },
+    });
+  }
+
+  // 5️⃣ Send the email
+  await sendVerificationEmail(user.email, token);
+
+  logger.info("Verification email re-sent", {
+    functionName: "UserService.resendVerificationLink",
+    metadata: { userId: user.id },
+  });
+}
+
+
   static async login(data: LoginDTO) {
     logger.info("Processing login request", {
       functionName: "UserService.login",
