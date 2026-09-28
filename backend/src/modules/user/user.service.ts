@@ -12,146 +12,146 @@ import { UpdateProfileDTO } from "./user.validation";
 
 export class UserService {
   static async signup(data: CreateUserDTO) {
-  logger.info("Processing signup request", {
-    functionName: "UserService.signup",
-    metadata: { email: data.email },
-  });
-
-  const existingUser = await UserRepository.findByEmail(data.email);
-  if (existingUser) {
-    throw new AppError("Email already registered", 400);
-  }
-
-  const hashedPassword = await bcrypt.hash(data.password, 12);
-
-  const user = await UserRepository.create({
-    ...data,
-    password: hashedPassword,
-    timezone: data.timezone ?? "Asia/Kolkata",
-    verified: false,
-  });
-
-  // 🔑 Email verification token
-  const token = jwt.sign(
-    {
-      userId: user.id,
-      email: user.email,
-      purpose: "email-verification",
-    },
-    process.env.SECRET_KEY!,
-    { expiresIn: "15m" }
-  );
-
-  const verifyLink = `${process.env.FRONTEND_URL}/auth/verify-email?token=${token}`;
-
-  await sendVerificationEmail(user.email, token);
-
-  logger.info("Verification email sent", {
-    functionName: "UserService.signup",
-    metadata: { userId: user.id },
-  });
-
-  return user;
-}
-
-
-
-
-static async verifyEmail(token: string) {
-  logger.info("Email verification attempt", {
-    functionName: "UserService.verifyEmail",
-  });
-
-  let decoded: any;
-  try {
-    decoded = jwt.verify(token, process.env.SECRET_KEY!);
-  } catch (error: any) {
-    logger.warn("Email verification failed - invalid token", {
-      functionName: "UserService.verifyEmail",
-      error: error.message,
+    logger.info("Processing signup request", {
+      functionName: "UserService.signup",
+      metadata: { email: data.email },
     });
-    throw new AppError("Invalid or expired verification link", 400);
+
+    const existingUser = await UserRepository.findByEmail(data.email);
+    if (existingUser) {
+      throw new AppError("Email already registered", 400);
+    }
+
+    const hashedPassword = await bcrypt.hash(data.password, 12);
+
+    const user = await UserRepository.create({
+      ...data,
+      password: hashedPassword,
+      timezone: data.timezone ?? "Asia/Kolkata",
+      verified: false,
+    });
+
+    // 🔑 Email verification token
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        purpose: "email-verification",
+      },
+      process.env.SECRET_KEY!,
+      { expiresIn: "15m" }
+    );
+
+    const verifyLink = `${process.env.FRONTEND_URL}/auth/verify-email?token=${token}`;
+
+    await sendVerificationEmail(user.email, token);
+
+    logger.info("Verification email sent", {
+      functionName: "UserService.signup",
+      metadata: { userId: user.id },
+    });
+
+    return user;
   }
 
-  if (decoded.purpose !== "email-verification") {
-    throw new AppError("Invalid token purpose", 400);
+
+
+
+  static async verifyEmail(token: string) {
+    logger.info("Email verification attempt", {
+      functionName: "UserService.verifyEmail",
+    });
+
+    let decoded: any;
+    try {
+      decoded = jwt.verify(token, process.env.SECRET_KEY!);
+    } catch (error: any) {
+      logger.warn("Email verification failed - invalid token", {
+        functionName: "UserService.verifyEmail",
+        error: error.message,
+      });
+      throw new AppError("Invalid or expired verification link", 400);
+    }
+
+    if (decoded.purpose !== "email-verification") {
+      throw new AppError("Invalid token purpose", 400);
+    }
+
+    const user = await UserRepository.findById(decoded.userId);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    if (user.verified) {
+      return; // already verified → silent success
+    }
+
+    await UserRepository.updateUser(user.id, {
+      verified: true,
+    });
+
+    logger.info("Email verified successfully", {
+      functionName: "UserService.verifyEmail",
+      metadata: { userId: user.id },
+    });
   }
 
-  const user = await UserRepository.findById(decoded.userId);
-  if (!user) {
-    throw new AppError("User not found", 404);
-  }
 
-  if (user.verified) {
-    return; // already verified → silent success
-  }
-
-  await UserRepository.updateUser(user.id, {
-    verified: true,
-  });
-
-  logger.info("Email verified successfully", {
-    functionName: "UserService.verifyEmail",
-    metadata: { userId: user.id },
-  });
-}
-
-
-static async resendVerificationLink(email: string) {
-  logger.info("Resend verification link requested", {
-    functionName: "UserService.resendVerificationLink",
-    metadata: { email },
-  });
-
-  // 1️⃣ Find user
-  const user = await UserRepository.findByEmail(email);
-
-  // 🔐 Security: Do NOT leak whether email exists
-  if (!user) {
-    logger.warn("Resend verification - user not found (silent)", {
+  static async resendVerificationLink(email: string) {
+    logger.info("Resend verification link requested", {
       functionName: "UserService.resendVerificationLink",
       metadata: { email },
     });
-    return; // silent success
-  }
 
-  // 2️⃣ Already verified? Nothing to do — silent success
-  if (user.verified) {
-    logger.info("Resend verification - user already verified (silent)", {
+    // 1️⃣ Find user
+    const user = await UserRepository.findByEmail(email);
+
+    // 🔐 Security: Do NOT leak whether email exists
+    if (!user) {
+      logger.warn("Resend verification - user not found (silent)", {
+        functionName: "UserService.resendVerificationLink",
+        metadata: { email },
+      });
+      return; // silent success
+    }
+
+    // 2️⃣ Already verified? Nothing to do — silent success
+    if (user.verified) {
+      logger.info("Resend verification - user already verified (silent)", {
+        functionName: "UserService.resendVerificationLink",
+        metadata: { userId: user.id },
+      });
+      return;
+    }
+
+    // 3️⃣ Generate a fresh email-verification JWT (15 min)
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        purpose: "email-verification",
+      },
+      process.env.SECRET_KEY!,
+      { expiresIn: "15m" }
+    );
+
+    // 4️⃣ (Optional) Log the would-be link for debugging in dev
+    if (process.env.NODE_ENV !== "production") {
+      const verifyLink = `${process.env.FRONTEND_URL}/auth/verify-email?token=${token}`;
+      logger.info("Dev: Verification link generated", {
+        functionName: "UserService.resendVerificationLink",
+        metadata: { verifyLink },
+      });
+    }
+
+    // 5️⃣ Send the email
+    await sendVerificationEmail(user.email, token);
+
+    logger.info("Verification email re-sent", {
       functionName: "UserService.resendVerificationLink",
       metadata: { userId: user.id },
     });
-    return;
   }
-
-  // 3️⃣ Generate a fresh email-verification JWT (15 min)
-  const token = jwt.sign(
-    {
-      userId: user.id,
-      email: user.email,
-      purpose: "email-verification",
-    },
-    process.env.SECRET_KEY!,
-    { expiresIn: "15m" }
-  );
-
-  // 4️⃣ (Optional) Log the would-be link for debugging in dev
-  if (process.env.NODE_ENV !== "production") {
-    const verifyLink = `${process.env.FRONTEND_URL}/auth/verify-email?token=${token}`;
-    logger.info("Dev: Verification link generated", {
-      functionName: "UserService.resendVerificationLink",
-      metadata: { verifyLink },
-    });
-  }
-
-  // 5️⃣ Send the email
-  await sendVerificationEmail(user.email, token);
-
-  logger.info("Verification email re-sent", {
-    functionName: "UserService.resendVerificationLink",
-    metadata: { userId: user.id },
-  });
-}
 
 
   static async login(data: LoginDTO) {
@@ -213,52 +213,52 @@ static async resendVerificationLink(email: string) {
 
 
 
-static async forgotPassword(email: string) {
-  logger.info("Forgot password request received", {
-    functionName: "UserService.forgotPassword",
-    metadata: { email },
-  });
-
-  // Find user by email
-  const user = await UserRepository.findByEmail(email);
-
-  // 🔐 Security best-practice: Always return same response for security purposes
-  if (!user) {
-    logger.warn("Forgot password - User not found", {
+  static async forgotPassword(email: string) {
+    logger.info("Forgot password request received", {
       functionName: "UserService.forgotPassword",
       metadata: { email },
     });
-    return; // Do not leak information about whether the user exists or not
-  }
+
+    // Find user by email
+    const user = await UserRepository.findByEmail(email);
+
+    // 🔐 Security best-practice: Always return same response for security purposes
+    if (!user) {
+      logger.warn("Forgot password - User not found", {
+        functionName: "UserService.forgotPassword",
+        metadata: { email },
+      });
+      return; // Do not leak information about whether the user exists or not
+    }
 
     logger.info("Token generating for preparing forgot password link", {
-    functionName: "UserService.forgotPassword",
-    metadata: { email },
-  });
+      functionName: "UserService.forgotPassword",
+      metadata: { email },
+    });
 
-  // 🔑 Generate password reset token with user details and expiry (15 minutes)
-  const token = jwt.sign(
-    { userId: user.id, email: user.email },  // User details in the payload
-    process.env.SECRET_KEY || 'huyhiuhh87uhewgyugw98uy783',                             // Secret key for signing the token
-    { expiresIn: '15m' }                    // Token expiry set to 15 minutes
-  );
+    // 🔑 Generate password reset token with user details and expiry (15 minutes)
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },  // User details in the payload
+      process.env.SECRET_KEY || 'huyhiuhh87uhewgyugw98uy783',                             // Secret key for signing the token
+      { expiresIn: '15m' }                    // Token expiry set to 15 minutes
+    );
 
-  logger.info("Token generated for preparing forgot password link", {
-    functionName: "UserService.forgotPassword",
-    metadata: { email },
-  });
+    logger.info("Token generated for preparing forgot password link", {
+      functionName: "UserService.forgotPassword",
+      metadata: { email },
+    });
 
-  // 📧 Send password reset email (Frontend will generate the link with the token)
-  const resetLink = `https://yourfrontendapp.com/reset-password?token=${token}`;
-  await sendResetPasswordEmail(user.email, resetLink);
+    // 📧 Send password reset email (Frontend will generate the link with the token)
+    const resetLink = `https://yourfrontendapp.com/reset-password?token=${token}`;
+    await sendResetPasswordEmail(user.email, resetLink);
 
-  logger.info("Password reset email sent", {
-    functionName: "UserService.forgotPassword",
-    metadata: { userId: user.id },
-  });
-}
+    logger.info("Password reset email sent", {
+      functionName: "UserService.forgotPassword",
+      metadata: { userId: user.id },
+    });
+  }
 
-    static async resetPassword(token: string, newPassword: string) {
+  static async resetPassword(token: string, newPassword: string) {
     logger.info("Reset password attempt", {
       functionName: "UserService.resetPassword",
     });
@@ -340,30 +340,30 @@ static async forgotPassword(email: string) {
   }
 
   static async updateProfile(
-  userId: string,
-  data: UpdateProfileDTO
-) {
-  logger.info("Updating user profile", {
-    functionName: "UserService.updateProfile",
-    metadata: {
+    userId: string,
+    data: UpdateProfileDTO
+  ) {
+    logger.info("Updating user profile", {
+      functionName: "UserService.updateProfile",
+      metadata: {
+        userId,
+      },
+    });
+
+    const profile = await UserRepository.updateProfile(
       userId,
-    },
-  });
+      data
+    );
 
-  const profile = await UserRepository.updateProfile(
-    userId,
-    data
-  );
+    logger.info("User profile updated", {
+      functionName: "UserService.updateProfile",
+      metadata: {
+        userId,
+      },
+    });
 
-  logger.info("User profile updated", {
-    functionName: "UserService.updateProfile",
-    metadata: {
-      userId,
-    },
-  });
-
-  return profile;
-}
+    return profile;
+  }
 
   static async getProfile(userId: string) {
     logger.info("Fetching user profile", {
@@ -389,12 +389,86 @@ static async forgotPassword(email: string) {
   }
 
 
+
+
+  static async getPublicProfile(username: string, viewerId?: string) {
+    const user = await UserRepository.findByUsername(username)
+
+    if (!user) {
+      throw new AppError('Profile not found', 404)
+    }
+
+    const isOwnProfile = viewerId === user.id
+
+    // Visibility checks
+    if (!isOwnProfile) {
+      const visibility = user.profileVisibility ?? 'PUBLIC'
+
+      if (visibility === 'PRIVATE') {
+        throw new AppError('This profile is private', 403)
+      }
+
+      if (visibility === 'FRIENDS_ONLY') {
+        // No connection model is currently available in this codebase.
+        // Treat non-owners as not connected until the connection layer is implemented.
+        const isConnected = false
+
+        if (!isConnected) {
+          throw new AppError('This profile is visible to connections only', 403)
+        }
+      }
+    }
+
+    // Return ONLY safe fields — no email, phone, password
+    return {
+      id: user.id,
+      name: user.name,
+      userName: user.profile?.userName ?? `user_${user.id.slice(0, 8)}`,
+      accountType: user.accountType,
+      verified: user.verified,
+      avatarUrl: user.profile?.avatarUrl ?? null,
+      coverPhoto: user.profile?.coverPhoto ?? null,
+      bio: user.profile?.bio ?? null,
+      profession: user.profile?.profession ?? null,
+      hobbies: user.profile?.hobbies ?? [],
+      city: user.profile?.city ?? null,
+      state: user.profile?.state ?? null,
+      country: user.profile?.country ?? null,
+      fields: user.fields ?? [],
+      subFields: user.subFields ?? [],
+      profileVisibility: user.profileVisibility,
+      memberSince: user.createdAt.toISOString(),
+
+      socialLinks: user.profile?.socialLinks ?? [],
+      education: user.profile?.education ?? [],
+      experience: user.profile?.experience ?? [],
+
+      // Only include stats if user allows  // TODO: LATTER I WILL THINK ABOUT IT
+      // stats: user.showStatsPublicly !== false
+      //   ? {
+      //     totalGoals: 0,          // TODO: hook into goals
+      //     completedGoals: 0,
+      //     currentStreak: 0,
+      //     longestStreak: 0,
+      //     totalHours: 0,
+      //     completedTasks: 0,
+      //     consistencyScore: 0,
+      //   }
+      //   : null,
+
+      isOwnProfile,
+      isConnected: false,         // TODO: hook into connections
+      isPending: false,
+    }
+  }
+
+
   static async logout(userId: string) {
     logger.info("User logout initiated", {
       functionName: "UserService.logout",
       metadata: { userId },
     });
-    
+
 
     // const accessToken = jwt.sign(
     //   { userId: userId },
@@ -418,39 +492,39 @@ static async forgotPassword(email: string) {
 
 
   static async getFullDetailedProfile(userId: string) {
-  logger.info("Fetching full detailed user profile", {
-    functionName: "UserService.getFullDetailedProfile",
-    metadata: { userId },
-  });
-
-  const user = await UserRepository.getFullDetailedProfileById(userId);
-
-  if (!user) {
-    logger.warn("Full profile fetch failed - user not found", {
+    logger.info("Fetching full detailed user profile", {
       functionName: "UserService.getFullDetailedProfile",
       metadata: { userId },
     });
 
-    throw new AppError("User not found", 404);
+    const user = await UserRepository.getFullDetailedProfileById(userId);
+
+    if (!user) {
+      logger.warn("Full profile fetch failed - user not found", {
+        functionName: "UserService.getFullDetailedProfile",
+        metadata: { userId },
+      });
+
+      throw new AppError("User not found", 404);
+    }
+
+    logger.info("Full detailed profile fetched successfully", {
+      functionName: "UserService.getFullDetailedProfile",
+      metadata: { userId },
+    });
+
+    return user;
   }
-
-  logger.info("Full detailed profile fetched successfully", {
-    functionName: "UserService.getFullDetailedProfile",
-    metadata: { userId },
-  });
-
-  return user;
-}
 
 
   static async saveFcmToken(userId: string, token: string) {
-  logger.info("Saving FCM token to DB", {
-    functionName: "UserService.saveFcmToken",
-    metadata: { userId },
-  });
+    logger.info("Saving FCM token to DB", {
+      functionName: "UserService.saveFcmToken",
+      metadata: { userId },
+    });
 
-  await UserRepository.saveFcmToken(userId, token);
-}
+    await UserRepository.saveFcmToken(userId, token);
+  }
 
 
 }

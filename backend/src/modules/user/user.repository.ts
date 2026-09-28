@@ -394,4 +394,45 @@ export class UserRepository {
       },
     });
   }
+
+
+  // src/modules/user/user.repository.ts — add this method
+
+static findByUsername(username: string) {
+  return prisma.user.findFirst({
+    where: {
+      profile: {
+        userName: username,
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      email: false,     // 🔒 never expose
+      verified: true,
+      accountType: true,
+      fields: true,
+      subFields: true,
+      createdAt: true,
+      profileVisibility: true,
+      // showStatsPublicly: true,
+      profile: {
+        select: {
+          userName: true,
+          avatarUrl: true,
+          coverPhoto: true,
+          bio: true,
+          profession: true,
+          hobbies: true,
+          city: true,
+          state: true,
+          country: true,
+          socialLinks: true,
+          education: { orderBy: { order: 'asc' } },
+          experience: { orderBy: { order: 'asc' } },
+        },
+      },
+    },
+  })
+}
 }

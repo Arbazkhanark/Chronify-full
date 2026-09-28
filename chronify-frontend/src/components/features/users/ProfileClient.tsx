@@ -58,6 +58,9 @@ import {
   Building2,
   Award,
   MapPinned,
+  Copy,
+  Check,
+  MessageCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -429,12 +432,11 @@ export default function ProfileClient() {
   const [showAchievementDetails, setShowAchievementDetails] = useState<Achievement | null>(null)
   const [showShareModal, setShowShareModal] = useState(false)
 
+  // 🔥 Share state
+  const [copiedProfileLink, setCopiedProfileLink] = useState(false)
+
   /* ================================================================
      🔥 VERIFICATION HOOK
-     Central source of truth for verification state.
-     Handles: email send, polling, cache updates, and cross-component
-     sync via verification-bus. Replaces the old local
-     `isResendingVerification` state + `handleVerifyEmail` function.
   */
   const {
     isVerified,
@@ -443,9 +445,6 @@ export default function ProfileClient() {
   } = useVerification({
     email: profile?.email,
     onVerified: (ui) => {
-      // The hook already updated both caches (`chronify:profile:v1`
-      // and `current_user`) and broadcast to all listeners.
-      // Here we just sync our local React state.
       setProfile(ui)
       setEditForm(toFormData(ui))
       setEditSocialLinks(ui.socialLinks ?? [])
@@ -458,6 +457,16 @@ export default function ProfileClient() {
     () => (subjectStreaks.length ? Math.max(...subjectStreaks.map(s => s.currentStreak)) : 0),
     [subjectStreaks]
   )
+
+  /* ================================================================
+     🔥 PUBLIC PROFILE URL
+     Computed once from username; only valid when username is set.
+  */
+  const publicProfileUrl = useMemo(() => {
+    if (!profile?.userName) return ''
+    if (typeof window === 'undefined') return ''
+    return `${window.location.origin}/u/${profile.userName}`
+  }, [profile?.userName])
 
   /* ================================================================
      FETCH FULL PROFILE — stale-while-revalidate with cache
@@ -504,7 +513,6 @@ export default function ProfileClient() {
     }
 
     const loadProfile = async () => {
-      // 1️⃣ HYDRATE FROM CACHE INSTANTLY
       const cached = readProfileCache()
       if (cached && !cancelled) {
         setProfile(cached.uiProfile)
@@ -525,7 +533,6 @@ export default function ProfileClient() {
 
         if (cancelled) return
 
-        // Fresh cache hit → already hydrated, but check auto-create case
         if (!fresh && cachedEntry) {
           if (cachedEntry.apiProfile.profile === null) {
             await autoCreateProfile(cachedEntry.apiProfile)
@@ -533,7 +540,6 @@ export default function ProfileClient() {
           return
         }
 
-        // Fresh network data
         if (fresh) {
           if (fresh.profile === null) {
             await autoCreateProfile(fresh)
@@ -585,10 +591,86 @@ export default function ProfileClient() {
   }
 
   /* ---------------- Verification ---------------- */
-  // 🔥 Now a thin wrapper over the hook — the hook handles everything
-  //    (email send, polling, cache updates, bus broadcast).
   const handleVerifyEmail = async () => {
     await sendVerificationEmail()
+  }
+
+  /* ================================================================
+     🔥 SHARE HANDLERS
+  */
+  const handleOpenShareModal = () => {
+    if (!profile?.userName) {
+      toast.error('Set a username first', {
+        description: 'You need a username before your profile can be shared.',
+      })
+      handleOpenEditProfile()
+      return
+    }
+    setShowShareModal(true)
+  }
+
+  const handleCopyProfileLink = async () => {
+    if (!publicProfileUrl) {
+      toast.error('Username not set')
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(publicProfileUrl)
+      setCopiedProfileLink(true)
+      toast.success('Link copied!', {
+        description: 'Share it anywhere — anyone can view your profile.',
+      })
+      setTimeout(() => setCopiedProfileLink(false), 2000)
+    } catch {
+      toast.error('Could not copy link')
+    }
+  }
+
+  const handleNativeShare = async () => {
+    if (!publicProfileUrl) return
+    if (typeof navigator === 'undefined' || !navigator.share) {
+      setShowShareModal(true)
+      return
+    }
+    try {
+      await navigator.share({
+        title: `${profile?.name || 'My'} · Chronify`,
+        text: `Check out my Chronify profile`,
+        url: publicProfileUrl,
+      })
+    } catch {
+      /* user cancelled */
+    }
+  }
+
+  const handleShareToTwitter = () => {
+    if (!publicProfileUrl) return
+    window.open(
+      `https://twitter.com/intent/tweet?url=${encodeURIComponent(publicProfileUrl)}&text=${encodeURIComponent('Check out my Chronify profile!')}`,
+      '_blank',
+      'noopener,noreferrer'
+    )
+    setShowShareModal(false)
+  }
+
+  const handleShareToLinkedIn = () => {
+    if (!publicProfileUrl) return
+    window.open(
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(publicProfileUrl)}`,
+      '_blank',
+      'noopener,noreferrer'
+    )
+    setShowShareModal(false)
+  }
+
+  const handleShareToWhatsApp = () => {
+    if (!publicProfileUrl) return
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(`Check out my Chronify profile: ${publicProfileUrl}`)}`,
+      '_blank',
+      'noopener,noreferrer'
+    )
+    setShowShareModal(false)
   }
 
   /* ================================================================
@@ -1218,8 +1300,6 @@ export default function ProfileClient() {
   }
 
   /* ---------------- Misc ---------------- */
-  const handleShareProgress = () => setShowShareModal(true)
-
   const handleExportData = () => {
     toast.success('Data export started', { description: 'Your data will be downloaded shortly.' })
   }
@@ -1294,7 +1374,6 @@ export default function ProfileClient() {
               </div>
 
               <div className="flex-1 min-w-0 flex justify-center">
-                {/* 🔥 Uses `isVerified` from the hook instead of `profile.verified` */}
                 {!isLoadingProfile && profile && !isVerified && (
                   <div className="flex items-center gap-2 sm:gap-3 px-3 py-2 rounded-lg border border-amber-300/70 dark:border-amber-500/40 bg-amber-50/95 dark:bg-amber-950/85 backdrop-blur-md shadow-md max-w-full">
                     <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
@@ -1448,7 +1527,6 @@ export default function ProfileClient() {
                             {profile.name || 'Unnamed User'}
                           </h1>
 
-                          {/* 🔥 Hook value, not profile.verified */}
                           {isVerified ? (
                             <CheckCircle2
                               className="w-5 h-5 text-blue-500 flex-shrink-0"
@@ -1480,7 +1558,7 @@ export default function ProfileClient() {
 
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <button
-                          onClick={handleShareProgress}
+                          onClick={handleOpenShareModal}
                           className="p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                           aria-label="Share profile"
                         >
@@ -1497,12 +1575,38 @@ export default function ProfileClient() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent
                             align="end"
-                            className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                            className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 w-52"
                           >
+                            {/* 🔥 Settings — proper App Router Link */}
+                            <DropdownMenuItem asChild>
+                              <Link
+                                href="/dashboard/settings"
+                                className="flex items-center gap-2 cursor-pointer w-full"
+                              >
+                                <Settings className="w-4 h-4" />
+                                Settings
+                              </Link>
+                            </DropdownMenuItem>
+
+                            {/* 🔥 View public profile */}
+                            {profile.userName && (
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  href={`/u/${profile.userName}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-2 cursor-pointer w-full"
+                                >
+                                  <UserCircle2 className="w-4 h-4" />
+                                  View Public Profile
+                                </Link>
+                              </DropdownMenuItem>
+                            )}
+
                             <DropdownMenuItem onClick={handleExportData}>
                               <Download className="w-4 h-4 mr-2" /> Export Data
                             </DropdownMenuItem>
-                            {/* 🔥 Hook value */}
+
                             {!isVerified && (
                               <>
                                 <DropdownMenuSeparator />
@@ -1511,6 +1615,7 @@ export default function ProfileClient() {
                                 </DropdownMenuItem>
                               </>
                             )}
+
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               onClick={handleLogout}
@@ -1549,7 +1654,6 @@ export default function ProfileClient() {
                       <span className="flex items-center gap-1">
                         <Mail className="w-3 h-3" />
                         {profile.email}
-                        {/* 🔥 Hook value */}
                         {!isVerified && (
                           <span className="ml-1 text-amber-600 dark:text-amber-400 font-medium">
                             · Unverified
@@ -2448,6 +2552,12 @@ export default function ProfileClient() {
                         onChange={e => setEditForm({ ...editForm, userName: e.target.value })}
                         className="dark:bg-gray-700 dark:border-gray-600"
                       />
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Your profile will be at{' '}
+                        <span className="font-mono">
+                          /u/{editForm.userName || 'username'}
+                        </span>
+                      </p>
                     </div>
                   </div>
                   <div className="space-y-1.5">
@@ -3282,30 +3392,94 @@ export default function ProfileClient() {
               <Share2 className="w-5 h-5" /> Share Your Profile
             </DialogTitle>
             <DialogDescription className="dark:text-gray-400">
-              Choose how you want to share
+              Anyone with this link can view your public profile
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-2 py-2">
-            {[
-              { platform: 'Twitter', icon: Twitter },
-              { platform: 'LinkedIn', icon: Linkedin },
-              { platform: 'Copy Link', icon: LinkIcon },
-            ].map(option => {
-              const Icon = option.icon
-              return (
-                <Button
-                  key={option.platform}
-                  variant="outline"
-                  className="justify-start gap-3"
-                  onClick={() => {
-                    toast.success(`Shared to ${option.platform}`)
-                    setShowShareModal(false)
-                  }}
-                >
-                  <Icon className="w-4 h-4" /> Share on {option.platform}
-                </Button>
-              )
-            })}
+
+          <div className="space-y-3 py-2">
+            {/* Link preview + copy */}
+            <div className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
+              <LinkIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <span className="text-xs text-gray-700 dark:text-gray-300 truncate flex-1 font-mono">
+                {publicProfileUrl || 'No username set'}
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleCopyProfileLink}
+                disabled={!publicProfileUrl}
+                className="flex-shrink-0 gap-1.5"
+              >
+                {copiedProfileLink ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" /> Copy
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Native share (mobile) */}
+            {typeof navigator !== 'undefined' && 'share' in navigator && (
+              <Button
+                variant="outline"
+                onClick={handleNativeShare}
+                className="w-full justify-start gap-2"
+              >
+                <Share2 className="w-4 h-4" />
+                Share via device
+              </Button>
+            )}
+
+            {/* Social share buttons */}
+            <div className="grid grid-cols-3 gap-2">
+              <Button
+                variant="outline"
+                onClick={handleShareToTwitter}
+                disabled={!publicProfileUrl}
+                className="gap-2 justify-center"
+              >
+                <Twitter className="w-4 h-4" />
+                Twitter
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleShareToLinkedIn}
+                disabled={!publicProfileUrl}
+                className="gap-2 justify-center"
+              >
+                <Linkedin className="w-4 h-4" />
+                LinkedIn
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleShareToWhatsApp}
+                disabled={!publicProfileUrl}
+                className="gap-2 justify-center"
+              >
+                <MessageCircle className="w-4 h-4" />
+                WhatsApp
+              </Button>
+            </div>
+
+            {/* Preview link */}
+            {publicProfileUrl && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  window.open(publicProfileUrl, '_blank', 'noopener,noreferrer')
+                  setShowShareModal(false)
+                }}
+                className="w-full text-xs gap-1.5 text-blue-600 dark:text-blue-400"
+              >
+                Preview public profile
+                <ArrowLeft className="w-3 h-3 rotate-180" />
+              </Button>
+            )}
           </div>
         </DialogContent>
       </Dialog>
@@ -3318,7 +3492,6 @@ export default function ProfileClient() {
         }}
       >
         <DialogContent className="max-w-4xl w-[92vw] bg-black/95 border-none p-2 sm:p-4">
-          {/* 🔥 Hidden title + description for screen readers (a11y) */}
           <DialogTitle className="sr-only">Image Preview</DialogTitle>
           <DialogDescription className="sr-only">
             Full size preview of the selected image.
