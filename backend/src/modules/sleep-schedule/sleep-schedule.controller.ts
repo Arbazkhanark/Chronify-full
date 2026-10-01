@@ -12,13 +12,12 @@ import {
   bulkUpdateSleepScheduleSchema,
   bulkDeleteSleepScheduleSchema,
 } from "./sleep-schedule.validation"
-import { AuthRequest } from "../../middlewares/auth.middleware"
 import { AppError } from "../../utils/AppError"
 import { logger } from "patal-log"
 
 export class SleepScheduleController {
   // Create sleep schedule
-  static async createSleepSchedule1(req: AuthRequest, res: Response) {
+  static async createSleepSchedule1(req: Request, res: Response) {
     try {
       const payload = createSleepScheduleSchema.parse(req.body)
       const userId = req.user!.id
@@ -65,7 +64,7 @@ export class SleepScheduleController {
   }
 
 
-  static async createSleepSchedule(req: AuthRequest, res: Response) {
+  static async createSleepSchedule(req: Request, res: Response) {
   try {
     const payload = createSleepScheduleSchema.parse(req.body)
     const userId = req.user!.id
@@ -118,7 +117,7 @@ export class SleepScheduleController {
 }
 
   // Bulk create/update sleep schedules
-  static async bulkCreateSleepSchedules(req: AuthRequest, res: Response) {
+  static async bulkCreateSleepSchedules(req: Request, res: Response) {
     try {
       const payload = bulkSleepScheduleSchema.parse(req.body)
       const userId = req.user!.id
@@ -161,7 +160,7 @@ export class SleepScheduleController {
 
 
   // Bulk update sleep schedules
-static async bulkUpdateSleepSchedules(req: AuthRequest, res: Response) {
+static async bulkUpdateSleepSchedules(req: Request, res: Response) {
   try {
     const payload = bulkUpdateSleepScheduleSchema.parse(req.body);
     const userId = req.user!.id;
@@ -208,7 +207,7 @@ static async bulkUpdateSleepSchedules(req: AuthRequest, res: Response) {
 }
 
 // Bulk delete sleep schedules
-static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
+static async bulkDeleteSleepSchedules(req: Request, res: Response) {
   try {
     const payload = bulkDeleteSleepScheduleSchema.parse(req.body);
     const userId = req.user!.id;
@@ -260,7 +259,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
 
 
   // Get sleep schedule by ID
-  static async getSleepSchedule(req: AuthRequest, res: Response) {
+  static async getSleepSchedule(req: Request, res: Response) {
     try {
       let { scheduleId } = req.params
       const userId = req.user!.id
@@ -305,7 +304,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   }
 
   // Get sleep schedule by day
-  static async getSleepScheduleByDay(req: AuthRequest, res: Response) {
+  static async getSleepScheduleByDay(req: Request, res: Response) {
     try {
       const { day } = req.params
       const userId = req.user!.id
@@ -346,7 +345,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   }
 
   // Get all sleep schedules
-  static async getSleepSchedules(req: AuthRequest, res: Response) {
+  static async getSleepSchedules(req: Request, res: Response) {
     console.log("Get sleep schedules API called with query:", req.query)
     try {
       const filters = sleepFilterSchema.parse(req.query)
@@ -391,7 +390,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   }
 
   // Update sleep schedule
-  static async updateSleepSchedule(req: AuthRequest, res: Response) {
+  static async updateSleepSchedule(req: Request, res: Response) {
     try {
       const { scheduleId } = req.params
       // const scheduleId = this.getParam(req.params.scheduleId, "scheduleId")
@@ -438,7 +437,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   }
 
   // Update sleep schedule by day
-  static async updateSleepScheduleByDay(req: AuthRequest, res: Response) {
+  static async updateSleepScheduleByDay(req: Request, res: Response) {
     try {
       const { day } = req.params
       const payload = updateSleepScheduleSchema.parse(req.body)
@@ -484,7 +483,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   }
 
   // Delete sleep schedule
-  static async deleteSleepSchedule(req: AuthRequest, res: Response) {
+  static async deleteSleepSchedule(req: Request, res: Response) {
     try {
       const { scheduleId } = req.params
       const userId = req.user!.id
@@ -528,7 +527,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   }
 
   // Delete sleep schedule by day
-  static async deleteSleepScheduleByDay(req: AuthRequest, res: Response) {
+  static async deleteSleepScheduleByDay(req: Request, res: Response) {
     try {
       const { day } = req.params
       const userId = req.user!.id
@@ -569,7 +568,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   }
 
   // Toggle sleep schedule active status
-  static async toggleSleepSchedule(req: AuthRequest, res: Response) {
+  static async toggleSleepSchedule(req: Request, res: Response) {
     try {
       const { scheduleId } = req.params
       const { isActive } = req.body
@@ -619,7 +618,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   }
 
   // Apply schedule to all days
-  static async applyToAllDays(req: AuthRequest, res: Response) {
+  static async applyToAllDays(req: Request, res: Response) {
     try {
       const payload = applyToAllSchema.parse(req.body)
       const userId = req.user!.id
@@ -664,7 +663,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   }
 
   // Get sleep statistics
-  static async getSleepStatistics(req: AuthRequest, res: Response) {
+  static async getSleepStatistics(req: Request, res: Response) {
     try {
       const query = sleepStatsQuerySchema.parse(req.query)
       const userId = req.user!.id
@@ -708,7 +707,7 @@ static async bulkDeleteSleepSchedules(req: AuthRequest, res: Response) {
   }
 
   // Regenerate all sleep tasks
-  static async regenerateSleepTasks(req: AuthRequest, res: Response) {
+  static async regenerateSleepTasks(req: Request, res: Response) {
     try {
       const userId = req.user!.id
 

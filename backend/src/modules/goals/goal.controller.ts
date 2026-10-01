@@ -9,13 +9,12 @@ import {
   progressUpdateSchema,
   goalFilterSchema,
 } from "./goal.validation"
-import { AuthRequest } from "../../middlewares/auth.middleware"
 import { AppError } from "../../utils/AppError"
 import { logger } from "patal-log"
 import { GoalFilterDTO, UpdateGoalDTO } from "./goal.types"
 
 export class GoalController {
-  static async createGoal(req: AuthRequest, res: Response) {
+  static async createGoal(req: Request, res: Response) {
     try {
       console.log("req.body", req.body,"INPUT BODY-------");
       const payload = createGoalSchema.parse(req.body)
@@ -61,7 +60,7 @@ export class GoalController {
     }
   }
 
-  static async getGoal(req: AuthRequest, res: Response) {
+  static async getGoal(req: Request, res: Response) {
     try {
       let { goalId } = req.params
       const userId = req.user!.id
@@ -105,7 +104,7 @@ export class GoalController {
     }
   }
 
-  static async getGoals(req: AuthRequest, res: Response) {
+  static async getGoals(req: Request, res: Response) {
     try {
       const filters = goalFilterSchema.parse(req.query)
       const userId = req.user!.id
@@ -145,7 +144,7 @@ export class GoalController {
     }
   }
 
-  static async updateGoal(req: AuthRequest, res: Response) {
+  static async updateGoal(req: Request, res: Response) {
     try {
       const { goalId } = req.params
       const payload = updateGoalSchema.parse(req.body)
@@ -187,7 +186,7 @@ export class GoalController {
     }
   }
 
-  static async deleteGoal(req: AuthRequest, res: Response) {
+  static async deleteGoal(req: Request, res: Response) {
     try {
       const { goalId } = req.params
       const userId = req.user!.id
@@ -227,7 +226,7 @@ export class GoalController {
     }
   }
 
-  static async addMilestone(req: AuthRequest, res: Response) {
+  static async addMilestone(req: Request, res: Response) {
     try {
       const { goalId } = req.params
       const payload = createMilestoneSchema.parse(req.body)
@@ -269,7 +268,7 @@ export class GoalController {
     }
   }
 
-  static async updateMilestone(req: AuthRequest, res: Response) {
+  static async updateMilestone(req: Request, res: Response) {
     try {
       const { goalId, milestoneId } = req.params
       const payload = updateMilestoneSchema.parse(req.body)
@@ -316,7 +315,7 @@ export class GoalController {
     }
   }
 
-  static async deleteMilestone(req: AuthRequest, res: Response) {
+  static async deleteMilestone(req: Request, res: Response) {
     try {
       const { goalId, milestoneId } = req.params
       const userId = req.user!.id
@@ -356,7 +355,7 @@ export class GoalController {
     }
   }
 
-  static async updateProgress(req: AuthRequest, res: Response) {
+  static async updateProgress(req: Request, res: Response) {
     try {
       const { goalId } = req.params
       const { hours } = progressUpdateSchema.parse(req.body)
@@ -399,7 +398,7 @@ export class GoalController {
     }
   }
 
-  static async getStatistics(req: AuthRequest, res: Response) {
+  static async getStatistics(req: Request, res: Response) {
     try {
       const userId = req.user!.id
 

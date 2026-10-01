@@ -152,6 +152,10 @@ model User {
   lastTimetableLockAt DateTime? // - Track when user last locked timetable
 
 
+  // 🔥 NEW: OAuth accounts linked to this user
+  oauthAccounts OAuthAccount[]
+
+
   // Core
   goals      Goal[]
   tasks      Task[]
@@ -193,6 +197,36 @@ model User {
   sleepSchedules SleepSchedule[]
   taskFeedbacks  TaskFeedback[]
 }
+
+
+// 🔥 NEW: OAuth provider accounts
+enum OAuthProvider {
+  GOOGLE
+  GITHUB
+}
+
+
+
+model OAuthAccount {
+  id         String        @id @default(uuid())
+  userId     String
+  provider   OAuthProvider
+  providerId String        // Provider's user id (e.g. Google "sub", GitHub "id")
+
+  // Provider-specific snapshot (optional, useful for debugging/display)
+  email      String?
+  name       String?
+  avatarUrl  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerId])
+  @@index([userId])
+}
+
 
 model Profile {
   id     String @id @default(uuid())

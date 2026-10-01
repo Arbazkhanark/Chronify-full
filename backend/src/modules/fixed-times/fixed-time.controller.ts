@@ -14,12 +14,11 @@ import {
   bulkAddMultipleFreePeriodsSchema,
   getFreePeriodsQuerySchema,
 } from "./fixed-time.validation"
-import { AuthRequest } from "../../middlewares/auth.middleware"
 import { AppError } from "../../utils/AppError"
 import { logger } from "patal-log"
 
 export class FixedTimeController {
-  static async createFixedTime(req: AuthRequest, res: Response) {
+  static async createFixedTime(req: Request, res: Response) {
     try {
       const payload = createFixedTimeSchema.parse(req.body)
       const userId = req.user!.id
@@ -60,7 +59,7 @@ export class FixedTimeController {
     }
   }
 
-  // static async getFixedTime(req: AuthRequest, res: Response) {
+  // static async getFixedTime(req: Request, res: Response) {
   //   try {
   //     let { fixedTimeId } = req?.params
   //     const userId = req.user!.id
@@ -105,7 +104,7 @@ export class FixedTimeController {
   //   }
   // }
 
-  static async getFixedTimes(req: AuthRequest, res: Response) {
+  static async getFixedTimes(req: Request, res: Response) {
     try {
       const userId = req.user!.id
 
@@ -144,7 +143,7 @@ export class FixedTimeController {
     }
   }
 
-  static async updateFixedTime(req: AuthRequest, res: Response) {
+  static async updateFixedTime(req: Request, res: Response) {
     try {
       const { fixedTimeId } = req.params 
       const payload = updateFixedTimeSchema.parse(req.body)
@@ -186,7 +185,7 @@ export class FixedTimeController {
     }
   }
 
-  static async deleteFixedTime(req: AuthRequest, res: Response) {
+  static async deleteFixedTime(req: Request, res: Response) {
     try {
       const { fixedTimeId } = req.params
       const userId = req.user!.id
@@ -226,7 +225,7 @@ export class FixedTimeController {
     }
   }
 
-  static async addFreePeriod(req: AuthRequest, res: Response) {
+  static async addFreePeriod(req: Request, res: Response) {
     try {
       const { fixedTimeId } = req.params
       const payload = createFreePeriodSchema.parse(req.body)
@@ -268,7 +267,7 @@ export class FixedTimeController {
     }
   }
 
-  static async updateFreePeriod(req: AuthRequest, res: Response) {
+  static async updateFreePeriod(req: Request, res: Response) {
     try {
       const { fixedTimeId, freePeriodId } = req.params
       const payload = updateFreePeriodSchema.parse(req.body)
@@ -310,7 +309,7 @@ export class FixedTimeController {
     }
   }
 
-  static async deleteFreePeriod(req: AuthRequest, res: Response) {
+  static async deleteFreePeriod(req: Request, res: Response) {
     try {
       const { fixedTimeId, freePeriodId } = req.params
       const userId = req.user!.id
@@ -350,7 +349,7 @@ export class FixedTimeController {
     }
   }
 
-  static async getTasksInFixedTime(req: AuthRequest, res: Response) {
+  static async getTasksInFixedTime(req: Request, res: Response) {
     try {
       const { fixedTimeId } = req.params
       const userId = req.user!.id
@@ -394,7 +393,7 @@ export class FixedTimeController {
 
 
   // Bulk create
-static async bulkCreateFixedTimes(req: AuthRequest, res: Response) {
+static async bulkCreateFixedTimes(req: Request, res: Response) {
   try {
     const payload = bulkCreateFixedTimeSchema.parse(req.body);
     const userId = req.user!.id;
@@ -429,7 +428,7 @@ static async bulkCreateFixedTimes(req: AuthRequest, res: Response) {
 }
 
 // Bulk update
-static async bulkUpdateFixedTimes(req: AuthRequest, res: Response) {
+static async bulkUpdateFixedTimes(req: Request, res: Response) {
   try {
     const payload = bulkUpdateFixedTimeSchema.parse(req.body);
     const userId = req.user!.id;
@@ -464,7 +463,7 @@ static async bulkUpdateFixedTimes(req: AuthRequest, res: Response) {
 }
 
 // Bulk delete
-static async bulkDeleteFixedTimes(req: AuthRequest, res: Response) {
+static async bulkDeleteFixedTimes(req: Request, res: Response) {
   try {
     const payload = bulkDeleteFixedTimeSchema.parse(req.body);
     const userId = req.user!.id;
@@ -504,7 +503,7 @@ static async bulkDeleteFixedTimes(req: AuthRequest, res: Response) {
 
 
 // Bulk Add Free Periods to a Fixed Time
-static async bulkAddMultipleFreePeriods(req: AuthRequest, res: Response) {
+static async bulkAddMultipleFreePeriods(req: Request, res: Response) {
 
   try {
     const payload = bulkAddMultipleFreePeriodsSchema.parse(req.body);
@@ -534,7 +533,7 @@ static async bulkAddMultipleFreePeriods(req: AuthRequest, res: Response) {
 
 
 // Bulk Delete Free Periods
-static async bulkDeleteFreePeriods(req: AuthRequest, res: Response) {
+static async bulkDeleteFreePeriods(req: Request, res: Response) {
   try {
     const payload = bulkDeleteFreePeriodSchema.parse(req.body);
     const userId = req.user!.id;
@@ -569,7 +568,7 @@ static async bulkDeleteFreePeriods(req: AuthRequest, res: Response) {
 
 
 
-static async getAllFreePeriods(req: AuthRequest, res: Response) {
+static async getAllFreePeriods(req: Request, res: Response) {
   try {
     const query = getFreePeriodsQuerySchema.parse(req.query);
     const userId = req.user!.id;

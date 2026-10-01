@@ -9,7 +9,6 @@ import {
   changePasswordSchema,
   updateProfileSchema,
 } from "./user.validation";
-import { AuthRequest } from "../../middlewares/auth.middleware";
 import { AppError } from "../../utils/AppError";
 import { logger } from "patal-log";
 import { UserRepository } from "./user.repository";
@@ -270,13 +269,13 @@ export class UserController {
     }
   }
 
-  static async changePassword(req: AuthRequest, res: Response) {
+  static async changePassword(req: Request, res: Response) {
     try {
       const { oldPassword, newPassword } = changePasswordSchema.parse(req.body);
 
       logger.info("Change password API called", {
         functionName: "UserController.changePassword",
-        metadata: { userId: req.user!.id },
+        metadata: { userId: req.user },
       });
 
       await UserService.changePassword(
@@ -310,7 +309,7 @@ export class UserController {
     }
   }
 
-  static async updateProfile(req: AuthRequest, res: Response) {
+  static async updateProfile(req: Request, res: Response) {
     try {
       const data = updateProfileSchema.parse(req.body);
       console.log(data, "Updated Data")
@@ -354,7 +353,7 @@ export class UserController {
     }
   }
 
-  static async profile(req: AuthRequest, res: Response) {
+  static async profile(req: Request, res: Response) {
     try {
       logger.info("Profile API called", {
         functionName: "UserController.profile",
@@ -394,7 +393,7 @@ export class UserController {
       const username = Array.isArray(usernameParam)
         ? usernameParam[0]
         : usernameParam;
-      const viewerId = (req as AuthRequest).user?.id; // optional
+      const viewerId = (req).user?.id; // optional
 
       logger.info("Get public profile API called", {
         functionName: "UserController.getPublicProfile",
@@ -428,7 +427,7 @@ export class UserController {
     }
   }
 
-  static async logout(req: AuthRequest, res: Response) {
+  static async logout(req: Request, res: Response) {
     try {
       const userId = req.user?.id;
 
@@ -470,49 +469,7 @@ export class UserController {
     }
   }
 
-  static async getFullDetailedProfile1(req: AuthRequest, res: Response) {
-    try {
-      const userId = req.user?.id;
-
-      if (!userId) {
-        return res.status(401).json({
-          success: false,
-          message: "Unauthorized",
-        });
-      }
-
-      logger.info("Get full detailed profile API called", {
-        functionName: "UserController.getFullDetailedProfile",
-        metadata: { userId },
-      });
-
-      const profile = await UserService.getFullDetailedProfile(userId);
-
-      return res.status(200).json({
-        success: true,
-        data: profile,
-      });
-    } catch (err: any) {
-      logger.error(`Get full detailed profile failed: ${err.message}`, {
-        functionName: "UserController.getFullDetailedProfile",
-        error: err.message,
-      });
-
-      if (err instanceof AppError) {
-        return res.status(err.statusCode).json({
-          success: false,
-          message: err.message,
-        });
-      }
-
-      return res.status(500).json({
-        success: false,
-        message: "Internal server error",
-      });
-    }
-  }
-
-  static async getFullDetailedProfile(req: AuthRequest, res: Response) {
+  static async getFullDetailedProfile(req: Request, res: Response) {
     try {
       const userId = req.user?.id;
 
@@ -558,7 +515,7 @@ export class UserController {
     }
   }
 
-  static async saveFcmToken(req: AuthRequest, res: Response) {
+  static async saveFcmToken(req: Request, res: Response) {
     try {
       const { token } = req.body;
       const userId = req.user!.id;

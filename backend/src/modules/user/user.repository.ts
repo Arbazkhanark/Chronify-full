@@ -435,4 +435,19 @@ static findByUsername(username: string) {
     },
   })
 }
+
+
+// src/modules/user/user.repository.ts — add this method inside UserRepository class
+
+static findOAuthAccount(provider: 'GOOGLE' | 'GITHUB', providerId: string) {
+  return prisma.oAuthAccount.findUnique({
+    where: {
+      provider_providerId: { provider, providerId },
+    },
+    include: { user: true },
+  })
+}
+
+
+
 }

@@ -17,7 +17,6 @@ import {
   resetTimetableSchema,
   timetableFilterSchema, // Make sure this is imported
 } from './timetable.validation'
-import { AuthRequest } from '../../middlewares/auth.middleware'
 import { AppError } from '../../utils/AppError'
 import { logger } from 'patal-log'
 import { ApplySmartDelayDTO, GetTimetableDTO, UpdateTaskStatusDTO } from './timetable.types'
@@ -29,7 +28,7 @@ export class TimetableController {
   /**
    * Get timetable for today or specific day
    */
-  static async getTimetable(req: AuthRequest, res: Response) {
+  static async getTimetable(req: Request, res: Response) {
     try {
       const query = getTimetableSchema.parse(req.query)
       const userId = req.user!.id
@@ -66,7 +65,7 @@ export class TimetableController {
    * Get full timetable with all slots (sleep, fixed, free, tasks)
    * GET /api/v1/timetable/full?day=MONDAY
    */
-  static async getFullTimetable(req: AuthRequest, res: Response) {
+  static async getFullTimetable(req: Request, res: Response) {
     try {
       // First, check if timetableFilterSchema exists
       if (!timetableFilterSchema) {
@@ -120,7 +119,7 @@ export class TimetableController {
   /**
    * Get tasks for a specific day
    */
-  static async getTasksByDay(req: AuthRequest, res: Response) {
+  static async getTasksByDay(req: Request, res: Response) {
     try {
       const { day } = req.params
       const userId = req.user!.id
@@ -156,7 +155,7 @@ export class TimetableController {
   /**
    * Get active tasks (currently running)
    */
-  static async getActiveTasks(req: AuthRequest, res: Response) {
+  static async getActiveTasks(req: Request, res: Response) {
     try {
       const userId = req.user!.id
 
@@ -191,7 +190,7 @@ export class TimetableController {
   /**
    * Get upcoming tasks
    */
-  static async getUpcomingTasks(req: AuthRequest, res: Response) {
+  static async getUpcomingTasks(req: Request, res: Response) {
     try {
       const userId = req.user!.id
       const { limit = 10 } = req.query
@@ -227,7 +226,7 @@ export class TimetableController {
   /**
    * Get today's bedtime from sleep schedule
    */
-  static async getTodayBedtime(req: AuthRequest, res: Response) {
+  static async getTodayBedtime(req: Request, res: Response) {
     try {
       const userId = req.user!.id
 
@@ -264,7 +263,7 @@ export class TimetableController {
   /**
    * Start a task
    */
-  static async startTask(req: AuthRequest, res: Response) {
+  static async startTask(req: Request, res: Response) {
     try {
       const { taskId } = req.params
       const userId = req.user!.id
@@ -301,7 +300,7 @@ export class TimetableController {
   /**
    * Complete a task with feedback
    */
-  static async completeTask(req: AuthRequest, res: Response) {
+  static async completeTask(req: Request, res: Response) {
     try {
       const { taskId } = req.params
       const feedback = taskFeedbackSchema.parse({ ...req.body, taskId })
@@ -339,7 +338,7 @@ export class TimetableController {
   /**
    * Skip a task
    */
-  static async skipTask(req: AuthRequest, res: Response) {
+  static async skipTask(req: Request, res: Response) {
     try {
       const { taskId } = req.params
       const { notes } = req.body
@@ -377,7 +376,7 @@ export class TimetableController {
   /**
    * Mark task as missed
    */
-  static async markAsMissed(req: AuthRequest, res: Response) {
+  static async markAsMissed(req: Request, res: Response) {
     try {
       const { taskId } = req.params
       const { notes } = req.body
@@ -415,7 +414,7 @@ export class TimetableController {
   /**
    * Update task status (generic)
    */
-  static async updateTaskStatus(req: AuthRequest, res: Response) {
+  static async updateTaskStatus(req: Request, res: Response) {
     try {
       const { taskId } = req.params
       const payload = updateTaskStatusSchema.parse({ ...req.body, taskId })
@@ -455,7 +454,7 @@ export class TimetableController {
   /**
    * Get smart delay options for a task
    */
-  static async getSmartDelayOptions(req: AuthRequest, res: Response) {
+  static async getSmartDelayOptions(req: Request, res: Response) {
     try {
       const payload = smartDelayRequestSchema.parse(req.body)
       const userId = req.user!.id
@@ -491,7 +490,7 @@ export class TimetableController {
   /**
    * Apply smart delay
    */
-  static async applySmartDelay(req: AuthRequest, res: Response) {
+  static async applySmartDelay(req: Request, res: Response) {
     try {
       const payload = applySmartDelaySchema.parse(req.body)
       const userId = req.user!.id
@@ -529,7 +528,7 @@ export class TimetableController {
   /**
    * Simple delay (backward compatibility)
    */
-  static async simpleDelay(req: AuthRequest, res: Response) {
+  static async simpleDelay(req: Request, res: Response) {
     try {
       const payload = simpleDelaySchema.parse(req.body)
       const userId = req.user!.id
@@ -566,7 +565,7 @@ export class TimetableController {
   /**
    * Reschedule missed task to free period
    */
-  static async rescheduleToFreePeriod(req: AuthRequest, res: Response) {
+  static async rescheduleToFreePeriod(req: Request, res: Response) {
     try {
       const payload = rescheduleToFreePeriodSchema.parse(req.body)
       const userId = req.user!.id
@@ -605,7 +604,7 @@ export class TimetableController {
   /**
    * Submit task feedback
    */
-  static async submitTaskFeedback(req: AuthRequest, res: Response) {
+  static async submitTaskFeedback(req: Request, res: Response) {
     try {
       const { taskId } = req.params
       const payload = taskFeedbackSchema.parse({ ...req.body, taskId })
@@ -643,7 +642,7 @@ export class TimetableController {
   /**
    * Get task feedback
    */
-  static async getTaskFeedback(req: AuthRequest, res: Response) {
+  static async getTaskFeedback(req: Request, res: Response) {
     try {
       const { taskId } = req.params
       const userId = req.user!.id
@@ -681,7 +680,7 @@ export class TimetableController {
   /**
    * Get tasks in grace period (ended within last 1 hour)
    */
-  static async getGracePeriodTasks(req: AuthRequest, res: Response) {
+  static async getGracePeriodTasks(req: Request, res: Response) {
     try {
       const userId = req.user!.id
 
@@ -716,7 +715,7 @@ export class TimetableController {
   /**
    * Get missed tasks (can still complete today)
    */
-  static async getMissedTasks(req: AuthRequest, res: Response) {
+  static async getMissedTasks(req: Request, res: Response) {
     try {
       const userId = req.user!.id
 
@@ -753,7 +752,7 @@ export class TimetableController {
   /**
    * Get timetable statistics
    */
-  static async getStatistics(req: AuthRequest, res: Response) {
+  static async getStatistics(req: Request, res: Response) {
     try {
       const query = timetableStatsSchema.parse(req.query)
       const userId = req.user!.id
@@ -791,7 +790,7 @@ export class TimetableController {
   /**
    * Complete multiple tasks at once
    */
-  static async bulkCompleteTasks(req: AuthRequest, res: Response) {
+  static async bulkCompleteTasks(req: Request, res: Response) {
     try {
       const payload = bulkCompleteTasksSchema.parse(req.body)
       const userId = req.user!.id
@@ -828,7 +827,7 @@ export class TimetableController {
   /**
    * Delay multiple tasks at once
    */
-  static async bulkDelayTasks(req: AuthRequest, res: Response) {
+  static async bulkDelayTasks(req: Request, res: Response) {
     try {
       const payload = bulkDelayTasksSchema.parse(req.body)
       const userId = req.user!.id
@@ -866,7 +865,7 @@ export class TimetableController {
   /**
    * Lock the Time Table
    */
-  static async lockTimetable(req: AuthRequest, res: Response) {
+  static async lockTimetable(req: Request, res: Response) {
     try {
 
 
@@ -930,7 +929,7 @@ export class TimetableController {
    * Reset/clear entire user timetable
    * DELETE /api/v1/timetable/reset
    */
-  static async resetTimetable(req: AuthRequest, res: Response) {
+  static async resetTimetable(req: Request, res: Response) {
     try {
       const payload = resetTimetableSchema.parse(req.body);
       const userId = req.user!.id;

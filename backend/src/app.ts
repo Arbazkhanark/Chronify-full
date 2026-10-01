@@ -2,6 +2,7 @@ import express from "express";
 import routes from "./routes";
 import { logger,httpLogger } from 'patal-log'
 import cors from "cors"
+import passport from './config/passport'
 
 const app = express();
 
@@ -26,6 +27,11 @@ if (process.env.VERCEL !== "1") {
 // Use HTTP middleware
 app.use(express.json());
 app.use(httpLogger());
+
+
+
+// 🔥 ADD THIS — initialize passport
+app.use(passport.initialize())
 
 
 const allowedOrigins = [

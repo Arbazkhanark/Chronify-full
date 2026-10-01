@@ -22,7 +22,12 @@ export class UserService {
       throw new AppError("Email already registered", 400);
     }
 
-    const hashedPassword = await bcrypt.hash(data.password, 12);
+    // 🔥 Password is required for email/password signup
+    if (!data.password) {
+      throw new AppError("Password is required", 400);
+    }
+
+    const hashedPassword = await bcrypt.hash(data?.password, 12);
 
     const user = await UserRepository.create({
       ...data,

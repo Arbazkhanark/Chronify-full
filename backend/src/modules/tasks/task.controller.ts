@@ -10,14 +10,13 @@ import {
   bulkUpdateTaskSchema,
   bulkDeleteTaskSchema,
 } from "./task.validation"
-import { AuthRequest } from "../../middlewares/auth.middleware"
 import { AppError } from "../../utils/AppError"
 import { logger } from "patal-log"
 import { TaskFilterDTO } from "./task.types"
 import z from "zod"
 
 export class TaskController {
-  static async createTask(req: AuthRequest, res: Response) {
+  static async createTask(req: Request, res: Response) {
     try {
         console.log('🚀 Create task route hit!')
       const payload = createTaskSchema.parse(req.body)
@@ -62,7 +61,7 @@ export class TaskController {
     }
   }
 
-  static async getTask(req: AuthRequest, res: Response) {
+  static async getTask(req: Request, res: Response) {
     try {
       let { taskId } = req.params
       const userId = req.user!.id
@@ -109,7 +108,7 @@ export class TaskController {
     }
   }
 
-  static async getTasks(req: AuthRequest, res: Response) {
+  static async getTasks(req: Request, res: Response) {
     try {
       const filters = taskFilterSchema.parse(req.query)
       const userId = req.user!.id
@@ -152,7 +151,7 @@ export class TaskController {
     }
   }
 
-  static async updateTask(req: AuthRequest, res: Response) {
+  static async updateTask(req: Request, res: Response) {
     try {
       const { taskId } = req.params
       const payload = updateTaskSchema.parse(req.body)
@@ -197,7 +196,7 @@ export class TaskController {
     }
   }
 
-  static async deleteTask(req: AuthRequest, res: Response) {
+  static async deleteTask(req: Request, res: Response) {
     try {
       const { taskId:rawTaskId } = req.params
       const userId = req.user!.id
@@ -246,7 +245,7 @@ export class TaskController {
     }
   }
 
-  static async completeTask(req: AuthRequest, res: Response) {
+  static async completeTask(req: Request, res: Response) {
     try {
       const { taskId:rawTaskId } = req.params
       const userId = req.user!.id
@@ -294,7 +293,7 @@ export class TaskController {
     }
   }
 
-  static async bulkCreateTasks(req: AuthRequest, res: Response) {
+  static async bulkCreateTasks(req: Request, res: Response) {
     try {
       // console.log(req.body,"Body--.............")
       const payload = bulkCreateTaskSchema.parse(req.body)
@@ -342,7 +341,7 @@ export class TaskController {
 
   // src/modules/tasks/task.controller.ts
 
-static async bulkUpdateTasks(req: AuthRequest, res: Response) {
+static async bulkUpdateTasks(req: Request, res: Response) {
   try {
     const payload = bulkUpdateTaskSchema.parse(req.body);
     const userId = req.user!.id;
@@ -400,7 +399,7 @@ static async bulkUpdateTasks(req: AuthRequest, res: Response) {
 
 // src/modules/tasks/task.controller.ts
 
-static async bulkDeleteTasks(req: AuthRequest, res: Response) {
+static async bulkDeleteTasks(req: Request, res: Response) {
   try {
     const payload = bulkDeleteTaskSchema.parse(req.body);
     const userId = req.user!.id;
@@ -461,7 +460,7 @@ static async bulkDeleteTasks(req: AuthRequest, res: Response) {
 }
 
 
-  static async getTasksByDay(req: AuthRequest, res: Response) {
+  static async getTasksByDay(req: Request, res: Response) {
     try {
       const { day: rawDay } = req.params
       const userId = req.user!.id
@@ -508,7 +507,7 @@ static async bulkDeleteTasks(req: AuthRequest, res: Response) {
     }
   }
 
-  static async getTasksByGoal(req: AuthRequest, res: Response) {
+  static async getTasksByGoal(req: Request, res: Response) {
     try {
       const { goalId: rawGoalId } = req.params
       const userId = req.user!.id
@@ -555,7 +554,7 @@ static async bulkDeleteTasks(req: AuthRequest, res: Response) {
     }
   }
 
-  static async getStatistics(req: AuthRequest, res: Response) {
+  static async getStatistics(req: Request, res: Response) {
     try {
       const userId = req.user!.id
 
