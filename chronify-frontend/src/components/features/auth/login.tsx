@@ -31,7 +31,7 @@ export function LoginForm() {
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit1 = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
       const response = await AuthService.login(data.email, data.password);
@@ -65,6 +65,69 @@ export function LoginForm() {
       setIsLoading(false);
     }
   };
+
+
+  const onSubmit = async (data: LoginFormData) => {
+  setIsLoading(true)
+  try {
+    await AuthService.login(data.email, data.password)
+
+    // 🔥 Read the LATEST user state after login()
+    // (login() internally calls getCurrentUser which refreshes cache)
+    const user = AuthService.getCurrentUserFromStorage()
+
+    if (!user) {
+      toast.error('Login failed', {
+        description: 'Could not load your account. Please try again.',
+      })
+      return
+    }
+
+    // 1️⃣ Not verified → verification page
+    if (!user.verified) {
+      toast.info('Email not verified', {
+        description: 'Please verify your email before continuing.',
+        duration: 5000,
+      })
+      router.push('/auth/verify-email')
+      return
+    }
+
+    // 2️⃣ Onboarding incomplete → resume onboarding
+    const step = user.onboardingStep ?? 0
+
+    if (step < 4) {
+      toast.success('Login successful!', {
+        description: 'Let\u2019s finish your profile setup.',
+      })
+
+      // Resume from wherever they left off
+      if (step === 0) {
+        router.push('/onboarding/role')
+      } else if (step === 1) {
+        router.push('/onboarding/details')
+      } else if (step === 2) {
+        router.push('/onboarding/profile')
+      } else if (step === 3) {
+        router.push('/onboarding/complete')
+      } else {
+        router.push('/onboarding/role')
+      }
+      return
+    }
+
+    // 3️⃣ Fully onboarded → dashboard
+    toast.success('Welcome back!', {
+      description: `Logged in as ${user.name || user.email}`,
+    })
+    router.push('/dashboard')
+  } catch (error) {
+    // AuthService already showed the toast
+    console.error('Login error:', error)
+  } finally {
+    setIsLoading(false)
+  }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-secondary/30 p-4">

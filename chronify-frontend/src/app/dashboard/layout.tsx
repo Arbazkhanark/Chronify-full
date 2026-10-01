@@ -16,26 +16,57 @@ export default function DashboardLayout({
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
+    let isMounted = true
+
     const checkAuth = async () => {
       try {
+        const token = AuthService.getAccessToken()
+
+        // 🔥 No token at all → straight to login.
+        //    No backend call, no cached-user fallback.
+        if (!token) {
+          sessionStorage.setItem(
+            'redirectAfterLogin',
+            pathname,
+          )
+          router.replace('/auth/login')
+          return
+        }
+
         const user = await AuthService.getCurrentUser()
-        
+
+        // 🔥 Token was present but backend rejected it
+        //    (invalid / expired / revoked) → login.
         if (!user) {
-          // Store the attempted URL to redirect back after login
-          sessionStorage.setItem('redirectAfterLogin', pathname)
-          router.push('/auth/login')
-        } else {
+          sessionStorage.setItem(
+            'redirectAfterLogin',
+            pathname,
+          )
+          router.replace('/auth/login')
+          return
+        }
+
+        if (isMounted) {
           setIsAuthenticated(true)
         }
       } catch (error) {
         console.error('Auth check failed:', error)
-        router.push('/auth/login')
+
+        if (isMounted) {
+          router.replace('/auth/login')
+        }
       } finally {
-        setIsLoading(false)
+        if (isMounted) {
+          setIsLoading(false)
+        }
       }
     }
 
-    checkAuth()
+    void checkAuth()
+
+    return () => {
+      isMounted = false
+    }
   }, [router, pathname])
 
   if (isLoading) {

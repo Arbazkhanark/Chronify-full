@@ -20,7 +20,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
@@ -75,10 +74,12 @@ export function Header() {
       try {
         const token = AuthService.getAccessToken()
 
+        // 🔥 No token → user is definitely logged out.
+        //    Don't fall back to cached user (which could be stale).
+        //    Don't redirect either — Header is rendered on public
+        //    pages too.
         if (!token) {
-          // No token — check localStorage just in case
-          const stored = AuthService.getCurrentUserFromStorage()
-          if (!cancelled) setUser(stored)
+          if (!cancelled) setUser(null)
           return
         }
 
@@ -127,7 +128,7 @@ export function Header() {
   }
 
   /* --------------------------------------------------------------------
-     Nav links (used in both desktop nav and mobile)
+     Nav links
      -------------------------------------------------------------------- */
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -169,7 +170,6 @@ export function Header() {
           <div className="flex items-center gap-2 sm:gap-3">
             {/* ---------- AUTH AREA ---------- */}
             {userLoading ? (
-              // Show a small skeleton while loading
               <div className="w-20 h-9 rounded-lg bg-muted animate-pulse" />
             ) : user ? (
               // ==============================

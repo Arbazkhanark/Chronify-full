@@ -426,26 +426,76 @@ export default function DashboardClient() {
     },
   })
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   let isMounted = true
+
+  //   const fetchUser = async () => {
+  //     try {
+  //       const currentUser = await AuthService.getCurrentUser()
+
+  //       if (!isMounted) return
+
+  //       if (!currentUser) {
+  //         router.push('/auth/login')
+  //         return
+  //       }
+
+  //       setUser(currentUser)
+  //     } catch (error: unknown) {
+  //       console.error('Failed to fetch current user:', error)
+  //       if (isMounted) router.push('/auth/login')
+  //     } finally {
+  //       if (isMounted) setLoading(false)
+  //     }
+  //   }
+
+  //   void fetchUser()
+
+  //   return () => {
+  //     isMounted = false
+  //   }
+  // }, [router])
+
+
+
+
+
+
+    useEffect(() => {
     let isMounted = true
 
     const fetchUser = async () => {
       try {
+        const token = AuthService.getAccessToken()
+
+        // 🔥 No token → redirect immediately.
+        if (!token) {
+          router.replace('/auth/login')
+          return
+        }
+
         const currentUser = await AuthService.getCurrentUser()
 
         if (!isMounted) return
 
+        // 🔥 Token existed but backend rejected it
+        //    → redirect to login.
         if (!currentUser) {
-          router.push('/auth/login')
+          router.replace('/auth/login')
           return
         }
 
         setUser(currentUser)
       } catch (error: unknown) {
         console.error('Failed to fetch current user:', error)
-        if (isMounted) router.push('/auth/login')
+
+        if (isMounted) {
+          router.replace('/auth/login')
+        }
       } finally {
-        if (isMounted) setLoading(false)
+        if (isMounted) {
+          setLoading(false)
+        }
       }
     }
 
