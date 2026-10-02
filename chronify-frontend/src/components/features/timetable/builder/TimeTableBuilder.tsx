@@ -154,6 +154,16 @@ interface SleepSchedule {
   notes?: string
 }
 
+// Editable copy of one day's sleep settings, used by the Sleep Schedule modal.
+// Nothing here touches the real timetable until the user presses "Save".
+interface SleepDraftDay {
+  isActive: boolean
+  bedtime: string
+  wakeTime: string
+  type: SleepSchedule['type']
+  notes: string
+}
+
 interface Milestone {
   id: string
   title: string
@@ -339,6 +349,13 @@ interface ResetPayload {
   resetSleepSchedules: boolean
 }
 
+// Result of checking whether a task can be placed at a given day/time.
+interface PlacementResult {
+  error?: string
+  fixedTimeId?: string
+  freePeriodId?: string
+}
+
 const FIXED_TIME_TYPES = [
   { id: 'COLLEGE', label: 'College/Class', icon: GraduationCap, color: '#EF4444' },
   { id: 'OFFICE', label: 'Office/Work', icon: Briefcase, color: '#3B82F6' },
@@ -387,7 +404,12 @@ const TASK_TYPES = [
   { id: 'OTHER', label: 'Other', icon: Clock }
 ]
 
-// ==================== FIXED: Task Type Mapping Functions ====================
+// All 7 days, always. (The visible `days` list can hide weekends, but data
+// like sleep schedules and fixed commitments must still work for them.)
+const ALL_DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
+const MINUTES_IN_DAY = 24 * 60
+
+// ==================== Task Type Mapping Functions ====================
 
 // Map UI task type to API task type (UPPERCASE)
 const mapUITypeToAPIType = (uiType: TimeSlot['type']): ApiTask['type'] => {
@@ -432,7 +454,32 @@ const mapAPITypeToUIType = (apiType: string): TimeSlot['type'] => {
   }
 }
 
-// ==================== END FIXED ====================
+const guessFixedTypeFromTitle = (title: string): FixedTime['type'] => {
+  const t = title.toLowerCase()
+  if (t.includes('college') || t.includes('lecture') || t.includes('class')) return 'COLLEGE'
+  if (t.includes('gym') || t.includes('workout')) return 'WORKOUT'
+  if (t.includes('office') || t.includes('work')) return 'OFFICE'
+  if (t.includes('meeting')) return 'MEETING'
+  if (t.includes('meal') || t.includes('lunch') || t.includes('breakfast') || t.includes('dinner')) return 'MEAL'
+  if (t.includes('sleep') || t.includes('bed')) return 'SLEEP'
+  return 'OTHER'
+}
+
+const guessSleepTypeFromTitle = (title: string): SleepSchedule['type'] => {
+  const t = title.toLowerCase()
+  if (t.includes('late')) return 'LATE'
+  if (t.includes('power') || t.includes('nap')) return 'POWER_NAP'
+  if (t.includes('recovery')) return 'RECOVERY'
+  if (t.includes('early')) return 'EARLY'
+  return 'REGULAR'
+}
+
+// "no-goal" / "no-milestone" are only UI placeholders for the Select — they
+// must never be sent to the backend as real ids.
+const cleanId = (value?: string | null): string | undefined => {
+  if (!value || value === 'no-goal' || value === 'no-milestone') return undefined
+  return value
+}
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8181/v0/api'}`
 
@@ -457,9 +504,13 @@ export default function TimetableBuilderPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isResetting, setIsResetting] = useState(false)
 
-  // ==================== NEW: Lock Confirmation State ====================
+  // Lock Confirmation State
   const [showLockConfirm, setShowLockConfirm] = useState(false)
   const [lockConfirmed, setLockConfirmed] = useState(false)
+
+  // NEW: Problems found by the frontend BEFORE we ever call the lock API
+  const [lockIssues, setLockIssues] = useState<string[]>([])
+  const [showLockIssues, setShowLockIssues] = useState(false)
 
   const [userType, setUserType] = useState<'student' | 'professional' | 'jobseeker' | 'other'>('student')
   const [showSetupModal, setShowSetupModal] = useState(false)
@@ -475,7 +526,7 @@ export default function TimetableBuilderPage() {
   const [selectedFixedTimeForFreePeriod, setSelectedFixedTimeForFreePeriod] = useState<FixedTime | null>(null)
   const [selectedCell, setSelectedCell] = useState<{day: string, time: string} | null>(null)
 
-  // NEW: Quick "Add Free Period" flow — carries the exact day/time the user clicked on
+  // Quick "Add Free Period" flow — carries the exact day/time the user clicked on
   const [showQuickFreePeriodModal, setShowQuickFreePeriodModal] = useState(false)
   const [quickFreePeriodContext, setQuickFreePeriodContext] = useState<{day: string, time: string, fixedTime: FixedTime} | null>(null)
   const [editingTask, setEditingTask] = useState<TimeSlot | null>(null)
@@ -483,10 +534,17 @@ export default function TimetableBuilderPage() {
   const [showGoalsModal, setShowGoalsModal] = useState(false)
   const [selectedGoalForMilestone, setSelectedGoalForMilestone] = useState<Goal | null>(null)
   const [editingSleepSchedule, setEditingSleepSchedule] = useState<SleepSchedule | null>(null)
+
+  // NEW: Draft state for the Sleep Schedule modal (applied only on "Save")
+  const [sleepDraft, setSleepDraft] = useState<Record<string, SleepDraftDay>>({})
+  const [sleepDraftDirty, setSleepDraftDirty] = useState(false)
   
   const [taskCreationFlow, setTaskCreationFlow] = useState<'simple' | 'withGoal'>('simple')
   const [showTaskCreationDialog, setShowTaskCreationDialog] = useState(false)
   const [taskCreationContext, setTaskCreationContext] = useState<{day: string, time: string} | null>(null)
+
+  // Used to guarantee unique ids when several tasks are created in one go
+  const idCounter = useRef(0)
   
   const [newFreePeriod, setNewFreePeriod] = useState({
     title: 'Free Period',
@@ -547,7 +605,7 @@ export default function TimetableBuilderPage() {
     return token ? `Bearer ${token}` : ''
   }
 
-  // ==================== NEW: Local Draft Persistence (per-user) ====================
+  // ==================== Local Draft Persistence (per-user) ====================
   // Prevents loss of unsaved timetable changes on refresh / network issues.
   // Each user gets their own localStorage key (derived from their auth token),
   // so multiple users on the same browser/device never see each other's drafts.
@@ -640,12 +698,9 @@ export default function TimetableBuilderPage() {
       console.error('Failed to clear local timetable draft:', e)
     }
   }
-  // ==================== END NEW ====================
 
-  // NEW: On mount, prefer restoring an unsaved local draft (per logged-in user)
-  // over re-fetching from the server. This protects against losing in-progress
-  // work on refresh or network hiccups, until the user actually locks/saves
-  // the timetable to the server.
+  // On mount, prefer restoring an unsaved local draft (per logged-in user)
+  // over re-fetching from the server.
   const initializeTimetable = async () => {
     setIsLoading(true)
     const draft = loadDraftLocally()
@@ -689,7 +744,7 @@ export default function TimetableBuilderPage() {
     if (timeSettings.showSleepBlocks) {
       generateSleepTasks()
     } else {
-      setTasks(tasks.filter(task => !task.isSleepTime))
+      setTasks(prev => prev.filter(task => !task.isSleepTime))
     }
   }, [sleepSchedules, timeSettings.showSleepBlocks])
 
@@ -697,16 +752,31 @@ export default function TimetableBuilderPage() {
     setHasUnsavedChanges(tasks.length > 0 || fixedTimes.length > 0 || sleepSchedules.length > 0)
   }, [tasks, fixedTimes, sleepSchedules])
 
-  // NEW: Auto-save the in-progress timetable to localStorage (per user) any
-  // time it changes, so nothing is lost on refresh or a dropped connection.
-  // Skipped while the initial data is still loading (to avoid overwriting a
-  // draft with empty state) and while the timetable is locked (locked state
-  // mirrors the server and doesn't need a local draft).
+  // Auto-save the in-progress timetable to localStorage (per user).
   useEffect(() => {
     if (isLoading) return
     if (isLocked) return
     saveDraftLocally(fixedTimes, sleepSchedules, tasks, timeSettings)
   }, [tasks, fixedTimes, sleepSchedules, timeSettings, isLoading, isLocked])
+
+  // NEW: Every time the Sleep Schedule modal opens, build a fresh editable
+  // draft from the real schedules. Edits stay in this draft until "Save".
+  useEffect(() => {
+    if (!showSleepScheduleModal) return
+    const draft: Record<string, SleepDraftDay> = {}
+    ALL_DAYS.forEach(day => {
+      const existing = sleepSchedules.find(s => s.day === day)
+      draft[day] = {
+        isActive: existing ? existing.isActive : false,
+        bedtime: existing?.bedtime ?? '23:00',
+        wakeTime: existing?.wakeTime ?? '07:00',
+        type: existing?.type ?? 'REGULAR',
+        notes: existing?.notes ?? ''
+      }
+    })
+    setSleepDraft(draft)
+    setSleepDraftDirty(false)
+  }, [showSleepScheduleModal])
 
   const fetchFullTimeTable = async () => {
     setIsLoading(true)
@@ -738,32 +808,17 @@ export default function TimetableBuilderPage() {
         setFixedTimes([])
         setSleepSchedules([])
         
-        // Process each day's slots
         const fixedTimesMap = new Map<string, FixedTime>()
-        const sleepSchedulesMap = new Map<string, SleepSchedule>()
+        const sleepSlotsById = new Map<string, { day: string; slot: FullTimeTableSlot }[]>()
         const allTasks: TimeSlot[] = []
-        
+
+        // ---- Pass 1: FIXED slots (so FREE slots can always find their parent) ----
         apiData.forEach(dayData => {
           dayData.slots.forEach(slot => {
-            // Handle FIXED slots
             if (slot.type === 'FIXED' && slot.fixedTimeId) {
-              if (!fixedTimesMap.has(slot.fixedTimeId)) {
-                // Determine the type based on title
-                let type: FixedTime['type'] = 'OTHER'
-                if (slot.title.toLowerCase().includes('college') || slot.title.toLowerCase().includes('lecture') || slot.title.toLowerCase().includes('class')) {
-                  type = 'COLLEGE'
-                } else if (slot.title.toLowerCase().includes('gym') || slot.title.toLowerCase().includes('workout')) {
-                  type = 'WORKOUT'
-                } else if (slot.title.toLowerCase().includes('office') || slot.title.toLowerCase().includes('work')) {
-                  type = 'OFFICE'
-                } else if (slot.title.toLowerCase().includes('meeting')) {
-                  type = 'MEETING'
-                } else if (slot.title.toLowerCase().includes('meal') || slot.title.toLowerCase().includes('lunch') || slot.title.toLowerCase().includes('breakfast') || slot.title.toLowerCase().includes('dinner')) {
-                  type = 'MEAL'
-                } else if (slot.title.toLowerCase().includes('sleep') || slot.title.toLowerCase().includes('bed')) {
-                  type = 'SLEEP'
-                }
-
+              const existing = fixedTimesMap.get(slot.fixedTimeId)
+              if (!existing) {
+                const type = guessFixedTypeFromTitle(slot.title)
                 fixedTimesMap.set(slot.fixedTimeId, {
                   id: `fixed-${Date.now()}-${Math.random()}`,
                   serverId: slot.fixedTimeId,
@@ -772,31 +827,29 @@ export default function TimetableBuilderPage() {
                   days: [dayData.day],
                   startTime: slot.startTime,
                   endTime: slot.endTime,
-                  type: type,
+                  type,
                   color: slot.color || getFixedTimeColor(type),
                   isEditable: true,
                   freePeriods: []
                 })
-              } else {
-                // Add day to existing fixed time
-                const existing = fixedTimesMap.get(slot.fixedTimeId)
-                if (existing && !existing.days.includes(dayData.day)) {
-                  existing.days.push(dayData.day)
-                }
+              } else if (!existing.days.includes(dayData.day)) {
+                existing.days.push(dayData.day)
               }
             }
-            
-            // Handle FREE slots (these are free periods within fixed commitments)
+          })
+        })
+
+        // ---- Pass 2: FREE periods, SLEEP slots and TASK slots ----
+        const taskTypes = ['STUDY', 'PROJECT', 'CLASS', 'HEALTH', 'MEETING', 'WORKOUT', 'MEAL', 'ENTERTAINMENT']
+        apiData.forEach(dayData => {
+          dayData.slots.forEach(slot => {
+            // FREE slots (free periods within fixed commitments)
             if (slot.type === 'FREE' && slot.fixedTimeId && slot.freePeriodId) {
               const fixedTime = fixedTimesMap.get(slot.fixedTimeId)
               if (fixedTime) {
-                if (!fixedTime.freePeriods) {
-                  fixedTime.freePeriods = []
-                }
-                
-                // Check if free period already exists
-                const existingFreePeriod = fixedTime.freePeriods.find(fp => fp.id === slot.freePeriodId)
-                if (!existingFreePeriod) {
+                if (!fixedTime.freePeriods) fixedTime.freePeriods = []
+                const exists = fixedTime.freePeriods.find(fp => fp.id === slot.freePeriodId)
+                if (!exists) {
                   fixedTime.freePeriods.push({
                     id: slot.freePeriodId,
                     title: slot.title,
@@ -808,52 +861,32 @@ export default function TimetableBuilderPage() {
                 }
               }
             }
-            
-            // Handle SLEEP slots
-            if (slot.type === 'SLEEP' && slot.sleepScheduleId) {
-              if (!sleepSchedulesMap.has(slot.sleepScheduleId)) {
-                // Parse sleep type from title
-                let sleepType: 'REGULAR' | 'POWER_NAP' | 'RECOVERY' | 'EARLY' | 'LATE' = 'REGULAR'
-                if (slot.title.toLowerCase().includes('late')) {
-                  sleepType = 'LATE'
-                } else if (slot.title.toLowerCase().includes('power') || slot.title.toLowerCase().includes('nap')) {
-                  sleepType = 'POWER_NAP'
-                } else if (slot.title.toLowerCase().includes('recovery')) {
-                  sleepType = 'RECOVERY'
-                } else if (slot.title.toLowerCase().includes('early')) {
-                  sleepType = 'EARLY'
-                }
 
-                sleepSchedulesMap.set(slot.sleepScheduleId, {
-                  id: slot.sleepScheduleId,
-                  day: dayData.day,
-                  bedtime: slot.startTime,
-                  wakeTime: slot.endTime,
-                  duration: slot.duration || calculateDuration(slot.startTime, slot.endTime),
-                  isActive: true,
-                  type: sleepType,
-                  notes: slot.description || undefined,
-                  color: slot.color || '#4B5563'
-                })
-              }
+            // SLEEP slots — collected first, merged below
+            if (slot.type === 'SLEEP' && slot.sleepScheduleId) {
+              const list = sleepSlotsById.get(slot.sleepScheduleId) || []
+              list.push({ day: dayData.day, slot })
+              sleepSlotsById.set(slot.sleepScheduleId, list)
             }
-            
-            // Handle TASK slots - USING THE FIXED MAPPING FUNCTION
-            const taskTypes = ['STUDY', 'PROJECT', 'CLASS', 'HEALTH', 'MEETING', 'WORKOUT', 'MEAL', 'ENTERTAINMENT']
+
+            // TASK slots
             if (taskTypes.includes(slot.type) && slot.taskId) {
-              const taskType = mapAPITypeToUIType(slot.type)
-              
+              // A task that ends exactly at midnight can come back as "00:00";
+              // inside the UI that must be "24:00" so it renders and validates.
+              const endTime =
+                slot.endTime === '00:00' && slot.startTime !== '00:00' ? '24:00' : slot.endTime
+
               allTasks.push({
                 id: slot.taskId,
                 title: slot.title,
                 subject: slot.subject || 'General',
                 startTime: slot.startTime,
-                endTime: slot.endTime,
-                duration: slot.duration || calculateDuration(slot.startTime, slot.endTime),
+                endTime,
+                duration: slot.duration || calculateDuration(slot.startTime, endTime),
                 priority: (slot.priority as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL') || 'MEDIUM',
                 color: slot.color || '#3B82F6',
                 day: dayData.day,
-                type: taskType,
+                type: mapAPITypeToUIType(slot.type),
                 description: slot.description || undefined,
                 serverId: slot.taskId,
                 status: slot.status || 'PENDING',
@@ -862,18 +895,50 @@ export default function TimetableBuilderPage() {
             }
           })
         })
+
+        // ---- Merge sleep slots into one schedule each ----
+        // If the server split an overnight sleep in two (night part ending at
+        // midnight + morning part starting at 00:00) we glue them back together
+        // and keep the day the user chose for the schedule.
+        const sleepSchedulesArray: SleepSchedule[] = []
+        sleepSlotsById.forEach((entries, id) => {
+          const first = entries[0]
+          let day = first.day
+          let bedtime = first.slot.startTime
+          let wakeTime = first.slot.endTime
+
+          if (entries.length > 1) {
+            const night = entries.find(e =>
+              (e.slot.endTime === '24:00' || e.slot.endTime === '00:00') && e.slot.startTime !== '00:00'
+            )
+            const morning = entries.find(e =>
+              e.slot.startTime === '00:00' && e.slot.endTime !== '00:00' && e.slot.endTime !== '24:00'
+            )
+            if (night && morning) {
+              day = night.day
+              bedtime = night.slot.startTime
+              wakeTime = morning.slot.endTime
+            }
+          }
+
+          sleepSchedulesArray.push({
+            id,
+            day,
+            bedtime,
+            wakeTime,
+            duration: calculateDuration(bedtime, wakeTime),
+            isActive: true,
+            type: guessSleepTypeFromTitle(first.slot.title),
+            notes: first.slot.description || undefined,
+            color: first.slot.color || '#4B5563'
+          })
+        })
         
-        // Convert maps to arrays
         const fixedTimesArray = Array.from(fixedTimesMap.values())
-        const sleepSchedulesArray = Array.from(sleepSchedulesMap.values())
         
         setFixedTimes(fixedTimesArray)
         setSleepSchedules(sleepSchedulesArray)
         setTasks(allTasks)
-        
-        console.log('Loaded tasks:', allTasks)
-        console.log('Loaded fixed times:', fixedTimesArray)
-        console.log('Loaded sleep schedules:', sleepSchedulesArray)
         
         if (fixedTimesArray.length === 0 && sleepSchedulesArray.length === 0 && allTasks.length === 0) {
           toast.info('No existing timetable found. Start building your schedule!')
@@ -1016,6 +1081,13 @@ export default function TimetableBuilderPage() {
     return hours * 60 + minutes
   }
 
+  const minutesToTime = (total: number): string => {
+    if (total >= MINUTES_IN_DAY) return '24:00'
+    const h = Math.floor(total / 60)
+    const m = total % 60
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
+  }
+
   const calculateTaskSpan = (task: TimeSlot): number => {
     if (task.span) return task.span
     
@@ -1025,13 +1097,316 @@ export default function TimetableBuilderPage() {
     return Math.max(1, Math.ceil(duration / timeSettings.interval))
   }
 
+  // FIXED: a task that ends exactly at midnight now gets "24:00" instead of
+  // "00:00". "00:00" is EARLIER than the start time, so the old code made
+  // 11 PM – 12 AM tasks invisible (they never matched any cell).
   const calculateEndTime = (startTime: string, duration: number): string => {
     const [hours, minutes] = startTime.split(':').map(Number)
     const totalMinutes = hours * 60 + minutes + duration
-    const endHours = Math.floor(totalMinutes / 60) % 24
+    if (totalMinutes >= MINUTES_IN_DAY) return '24:00'
+    const endHours = Math.floor(totalMinutes / 60)
     const endMinutes = totalMinutes % 60
     return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`
   }
+
+  const newTaskId = (): string => {
+    idCounter.current += 1
+    return `task-${Date.now()}-${idCounter.current}`
+  }
+
+  // Safely formats a day constant ("MONDAY" -> "Monday").
+  const formatDayLabel = (day?: string): string => {
+    if (!day) return ''
+    return day.charAt(0) + day.slice(1).toLowerCase()
+  }
+
+  const cn = (...classes: (string | boolean | undefined)[]) => {
+    return classes.filter(Boolean).join(' ')
+  }
+
+  // Shows a toast with a short bullet list of problems.
+  const showIssuesToast = (title: string, lines: string[]) => {
+    toast.error(title, {
+      description: (
+        <div className="space-y-1 mt-1">
+          {lines.slice(0, 5).map((line, i) => (
+            <div key={i}>• {line}</div>
+          ))}
+          {lines.length > 5 && <div>…and {lines.length - 5} more</div>}
+        </div>
+      ),
+      duration: 10000
+    })
+  }
+
+  // ==================== Frontend validation helpers ====================
+  // Everything below lets the UI refuse bad data BEFORE the user ever hits
+  // "Lock", so the backend never has to reject the timetable.
+
+  // A time that is used as an END (24:00 / 00:00 / 23:59 all mean "end of day").
+  const toEndMinutes = (time: string): number => {
+    const m = convertTimeToMinutes(time)
+    return m === 0 || m === 1439 ? MINUTES_IN_DAY : m
+  }
+
+  // Minute ranges a fixed commitment occupies on each of its days.
+  const getFixedIntervals = (ft: FixedTime): Array<[number, number]> => {
+    const rawStart = convertTimeToMinutes(ft.startTime)
+    const rawEnd = convertTimeToMinutes(ft.endTime)
+    if (rawStart === rawEnd) return []
+    if (rawEnd < rawStart && rawEnd !== 0) {
+      // Overnight commitment (e.g. 22:00 -> 02:00)
+      return [[0, rawEnd], [rawStart, MINUTES_IN_DAY]]
+    }
+    return [[rawStart, toEndMinutes(ft.endTime)]]
+  }
+
+  const getFreeIntervals = (ft: FixedTime, day: string): Array<[number, number]> => {
+    return (ft.freePeriods || [])
+      .filter(fp => fp.day === day)
+      .map(fp => [convertTimeToMinutes(fp.startTime), toEndMinutes(fp.endTime)] as [number, number])
+      .filter(([s, e]) => e > s)
+  }
+
+  // Is [a, b) completely covered by the union of the given intervals?
+  const isCovered = (a: number, b: number, intervals: Array<[number, number]>): boolean => {
+    const sorted = [...intervals].sort((x, y) => x[0] - y[0])
+    let cursor = a
+    for (const [s, e] of sorted) {
+      if (s > cursor) break
+      cursor = Math.max(cursor, e)
+      if (cursor >= b) return true
+    }
+    return cursor >= b
+  }
+
+  const isTimeInFixedSlot = (day: string, time: string): FixedTime | null => {
+    const t = convertTimeToMinutes(time)
+    for (const ft of fixedTimes) {
+      if (!ft.days.includes(day)) continue
+      if (getFixedIntervals(ft).some(([s, e]) => t >= s && t < e)) return ft
+    }
+    return null
+  }
+
+  const isTimeInFreePeriodRange = (time: string, startTime: string, endTime: string): boolean => {
+    const t = convertTimeToMinutes(time)
+    return t >= convertTimeToMinutes(startTime) && t < toEndMinutes(endTime)
+  }
+
+  const isTimeInFreePeriod = (day: string, time: string): {fixedTime: FixedTime, freePeriod: any} | null => {
+    const fixedTime = isTimeInFixedSlot(day, time)
+    if (!fixedTime) return null
+    
+    for (const fp of fixedTime.freePeriods || []) {
+      if (fp.day === day && isTimeInFreePeriodRange(time, fp.startTime, fp.endTime)) {
+        return { fixedTime, freePeriod: fp }
+      }
+    }
+    return null
+  }
+
+  // THE central check: can a task of `duration` minutes start at `startTime`
+  // on `day`? Returns an error message, or (when OK) the fixed commitment /
+  // free period it sits inside so the link is always saved correctly.
+  const analyzePlacement = (
+    day: string,
+    startTime: string,
+    duration: number,
+    fixedList: FixedTime[] = fixedTimes
+  ): PlacementResult => {
+    const start = convertTimeToMinutes(startTime)
+
+    if (start >= MINUTES_IN_DAY) {
+      return { error: 'The 12:00 AM (end of day) slot cannot hold a task. Please pick a time before midnight.' }
+    }
+    if (!duration || duration <= 0) {
+      return { error: 'Duration must be greater than 0 minutes.' }
+    }
+    const end = start + duration
+    if (end > MINUTES_IN_DAY) {
+      const maxFit = MINUTES_IN_DAY - start
+      return {
+        error: `This task would run past midnight (starts ${formatTimeDisplay(startTime)}, ${duration} min). Tasks cannot cross midnight — use ${maxFit} minutes or less, or start earlier.`
+      }
+    }
+
+    let link: PlacementResult = {}
+    for (const ft of fixedList) {
+      if (!ft.days.includes(day)) continue
+      const free = getFreeIntervals(ft, day)
+      for (const [fs, fe] of getFixedIntervals(ft)) {
+        const a = Math.max(start, fs)
+        const b = Math.min(end, fe)
+        if (a >= b) continue // no overlap with this commitment
+
+        if (!isCovered(a, b, free)) {
+          return {
+            error: `Overlaps with fixed commitment "${ft.title}" (${formatTimeDisplay(ft.startTime)} – ${formatTimeDisplay(ft.endTime)}) on ${formatDayLabel(day)}. Add a free period inside it for this time first, or choose another time.`
+          }
+        }
+        if (!link.fixedTimeId) {
+          const fp = (ft.freePeriods || []).find(f =>
+            f.day === day &&
+            convertTimeToMinutes(f.startTime) <= a &&
+            toEndMinutes(f.endTime) > a
+          )
+          link = { fixedTimeId: ft.id, freePeriodId: fp?.id }
+        }
+      }
+    }
+    return link
+  }
+
+  // Minute ranges of one day that a sleep schedule occupies.
+  // Overnight sleep (23:00 -> 07:00) shows on the SAME day as two pieces:
+  // the morning part (00:00 -> 07:00) and the night part (23:00 -> 24:00).
+  const getSleepWindows = (bedtime: string, wakeTime: string): Array<[number, number]> => {
+    const bed = convertTimeToMinutes(bedtime)
+    const wake = convertTimeToMinutes(wakeTime)
+    if (bed === wake) return []
+    if (wake < bed) {
+      return ([[0, wake], [bed, MINUTES_IN_DAY]] as Array<[number, number]>).filter(([s, e]) => e > s)
+    }
+    return [[bed, wake]]
+  }
+
+  const describeTask = (t: TimeSlot): string =>
+    `"${t.title}" (${formatDayLabel(t.day)} ${formatTimeDisplay(t.startTime)} – ${formatTimeDisplay(t.endTime)})`
+
+  // Real tasks (never the generated sleep blocks) that overlap this sleep window.
+  const findTasksInSleepWindow = (day: string, bedtime: string, wakeTime: string): TimeSlot[] => {
+    const windows = getSleepWindows(bedtime, wakeTime)
+    return tasks.filter(t => {
+      if (t.isSleepTime || t.day !== day) return false
+      const ts = convertTimeToMinutes(t.startTime)
+      const te = t.endTime === '24:00' || t.endTime === '00:00' ? MINUTES_IN_DAY : convertTimeToMinutes(t.endTime)
+      return windows.some(([s, e]) => ts < e && te > s)
+    })
+  }
+
+  // Free period must sit inside its fixed commitment, on one of its days, and
+  // must not overlap another free period of the same day.
+  const validateNewFreePeriod = (
+    ft: FixedTime,
+    fp: { day: string; startTime: string; endTime: string }
+  ): string | null => {
+    if (!ft.days.includes(fp.day)) {
+      return `"${ft.title}" does not run on ${formatDayLabel(fp.day)}.`
+    }
+    const s = convertTimeToMinutes(fp.startTime)
+    const e = toEndMinutes(fp.endTime)
+    if (e <= s) return 'End time must be after start time.'
+    const inside = getFixedIntervals(ft).some(([fs, fe]) => s >= fs && e <= fe)
+    if (!inside) {
+      return `Free period must be inside "${ft.title}" (${formatTimeDisplay(ft.startTime)} – ${formatTimeDisplay(ft.endTime)}).`
+    }
+    const overlaps = getFreeIntervals(ft, fp.day).some(([fs, fe]) => s < fe && e > fs)
+    if (overlaps) {
+      return `Another free period already exists on ${formatDayLabel(fp.day)} in that time range.`
+    }
+    return null
+  }
+
+  const validateFixedTimeDefinition = (ft: { title: string; startTime: string; endTime: string; days: string[] }): string | null => {
+    if (!ft.title.trim()) return 'Please enter a title'
+    if (ft.days.length === 0) return 'Please select at least one day'
+    if (!ft.startTime || !ft.endTime) return 'Please set start and end time'
+    if (ft.startTime === ft.endTime) return 'Start time and end time cannot be the same'
+    return null
+  }
+
+  // Tasks that would START conflicting because of a change to fixed commitments
+  // (new commitment, edited times/days, removed free period).
+  const findNewTaskConflicts = (oldList: FixedTime[], newList: FixedTime[]): TimeSlot[] => {
+    return tasks.filter(t => {
+      if (t.isSleepTime) return false
+      const before = analyzePlacement(t.day, t.startTime, t.duration, oldList)
+      const after = analyzePlacement(t.day, t.startTime, t.duration, newList)
+      return !before.error && !!after.error
+    })
+  }
+
+  // Looks through the WHOLE timetable and lists everything the backend would
+  // reject — shown to the user before the lock request is ever sent.
+  const validateWholeTimetable = (): string[] => {
+    const issues: string[] = []
+
+    fixedTimes.forEach(ft => {
+      const defError = validateFixedTimeDefinition(ft)
+      if (defError) issues.push(`Fixed commitment "${ft.title || 'Untitled'}": ${defError}.`)
+      ;(ft.freePeriods || []).forEach(fp => {
+        const inside =
+          ft.days.includes(fp.day) &&
+          getFixedIntervals(ft).some(([fs, fe]) =>
+            convertTimeToMinutes(fp.startTime) >= fs && toEndMinutes(fp.endTime) <= fe
+          )
+        if (!inside) {
+          issues.push(`Free period "${fp.title}" (${formatDayLabel(fp.day)}) is outside its fixed commitment "${ft.title}". Remove it or edit the commitment.`)
+        }
+      })
+    })
+
+    tasks.filter(t => !t.isSleepTime).forEach(t => {
+      const check = analyzePlacement(t.day, t.startTime, t.duration)
+      if (check.error) issues.push(`Task ${describeTask(t)}: ${check.error}`)
+    })
+
+    sleepSchedules.filter(s => s.isActive).forEach(s => {
+      if (s.bedtime === s.wakeTime) {
+        issues.push(`Sleep on ${formatDayLabel(s.day)}: bedtime and wake time are the same.`)
+      }
+    })
+
+    return issues
+  }
+
+  // First free slot (preferring 8 AM onwards) where a task of `duration`
+  // fits without touching fixed commitments, other tasks or sleep.
+  const findAvailableSlot = (
+    duration: number,
+    existingTasks: TimeSlot[]
+  ): { day: string; time: string; link: PlacementResult } | null => {
+    const candidates = timeSlots.filter(t => t !== '24:00')
+    const ordered = [
+      ...candidates.filter(t => convertTimeToMinutes(t) >= 8 * 60),
+      ...candidates.filter(t => convertTimeToMinutes(t) < 8 * 60)
+    ]
+    for (const day of days) {
+      for (const time of ordered) {
+        const check = analyzePlacement(day, time, duration)
+        if (check.error) continue
+        const s = convertTimeToMinutes(time)
+        const e = s + duration
+        const clashesTask = existingTasks.some(t =>
+          !t.isSleepTime && t.day === day &&
+          s < (t.endTime === '24:00' ? MINUTES_IN_DAY : convertTimeToMinutes(t.endTime)) &&
+          e > convertTimeToMinutes(t.startTime)
+        )
+        if (clashesTask) continue
+        const clashesSleep = sleepSchedules.some(sl =>
+          sl.isActive && sl.day === day &&
+          getSleepWindows(sl.bedtime, sl.wakeTime).some(([ws, we]) => s < we && e > ws)
+        )
+        if (clashesSleep) continue
+        return { day, time, link: check }
+      }
+    }
+    return null
+  }
+
+  // Duration choices for the "add task" dialog — only options that still end
+  // before midnight are offered.
+  const getDurationOptions = (startTime: string): number[] => {
+    const start = convertTimeToMinutes(startTime)
+    const opts = [1, 2, 3, 4]
+      .map(m => timeSettings.interval * m)
+      .filter(d => start + d <= MINUTES_IN_DAY)
+    if (opts.length === 0 && start < MINUTES_IN_DAY) return [MINUTES_IN_DAY - start]
+    return opts
+  }
+
+  // ==================== Goals / stats ====================
 
   const getScheduledHoursByGoal = () => {
     const goalHours: Record<string, number> = {}
@@ -1112,6 +1487,11 @@ export default function TimetableBuilderPage() {
     setGoals(updatedGoals)
   }, [tasks])
 
+  // ==================== Sleep blocks ====================
+  // FIXED: a sleep schedule now stays on the day the user picked.
+  // Before, an overnight sleep put its long morning part (00:00 -> wake) on
+  // the NEXT day, so "Monday" looked like "Tuesday". Now both pieces
+  // (morning part + night part) are drawn on the selected day.
   const generateSleepTasks = () => {
     const sleepTasks: TimeSlot[] = []
     
@@ -1120,65 +1500,83 @@ export default function TimetableBuilderPage() {
       
       const bedtimeMinutes = convertTimeToMinutes(schedule.bedtime)
       const wakeTimeMinutes = convertTimeToMinutes(schedule.wakeTime)
+      if (bedtimeMinutes === wakeTimeMinutes) return
+
+      const title = schedule.type === 'POWER_NAP' ? 'Power Nap' : 'Sleep'
+      const base = {
+        title,
+        subject: 'Rest',
+        priority: 'MEDIUM' as const,
+        color: schedule.color || '#4B5563',
+        day: schedule.day,
+        type: 'sleep' as const,
+        isSleepTime: true,
+        sleepScheduleId: schedule.id,
+        isCompleted: false
+      }
       
       if (wakeTimeMinutes < bedtimeMinutes) {
-        const midnight = convertTimeToMinutes('24:00')
-        const firstDayDuration = midnight - bedtimeMinutes
-        
+        // Morning part: 00:00 -> wake time
+        if (wakeTimeMinutes > 0) {
+          sleepTasks.push({
+            ...base,
+            id: `sleep-${schedule.id}-morning`,
+            startTime: '00:00',
+            endTime: schedule.wakeTime,
+            duration: wakeTimeMinutes
+          })
+        }
+        // Night part: bedtime -> midnight
         sleepTasks.push({
-          id: `sleep-${schedule.id}-part1`,
-          title: schedule.type === 'POWER_NAP' ? 'Power Nap' : 'Sleep',
-          subject: 'Rest',
+          ...base,
+          id: `sleep-${schedule.id}-night`,
           startTime: schedule.bedtime,
           endTime: '24:00',
-          duration: firstDayDuration,
-          priority: 'MEDIUM',
-          color: schedule.color || '#4B5563',
-          day: schedule.day,
-          type: 'sleep',
-          isSleepTime: true,
-          sleepScheduleId: schedule.id,
-          isCompleted: false
-        })
-        
-        const nextDayIndex = (days.indexOf(schedule.day) + 1) % days.length
-        const nextDay = days[nextDayIndex]
-        
-        sleepTasks.push({
-          id: `sleep-${schedule.id}-part2`,
-          title: schedule.type === 'POWER_NAP' ? 'Power Nap' : 'Sleep',
-          subject: 'Rest',
-          startTime: '00:00',
-          endTime: schedule.wakeTime,
-          duration: wakeTimeMinutes,
-          priority: 'MEDIUM',
-          color: schedule.color || '#4B5563',
-          day: nextDay,
-          type: 'sleep',
-          isSleepTime: true,
-          sleepScheduleId: schedule.id,
-          isCompleted: false
+          duration: MINUTES_IN_DAY - bedtimeMinutes
         })
       } else {
         sleepTasks.push({
+          ...base,
           id: `sleep-${schedule.id}`,
-          title: schedule.type === 'POWER_NAP' ? 'Power Nap' : 'Sleep',
-          subject: 'Rest',
           startTime: schedule.bedtime,
           endTime: schedule.wakeTime,
-          duration: schedule.duration,
-          priority: 'MEDIUM',
-          color: schedule.color || '#4B5563',
-          day: schedule.day,
-          type: 'sleep',
-          isSleepTime: true,
-          sleepScheduleId: schedule.id,
-          isCompleted: false
+          duration: wakeTimeMinutes - bedtimeMinutes
         })
       }
     })
     
     setTasks(prev => [...prev.filter(task => !task.isSleepTime), ...sleepTasks])
+  }
+
+  // ==================== Task handlers ====================
+
+  const getTaskPool = (): TimeSlot[] => {
+    return [
+      {
+        id: 'pool-1',
+        title: 'Study React Hooks',
+        subject: 'Web Development',
+        startTime: '',
+        endTime: '',
+        duration: 60,
+        priority: 'HIGH' as const,
+        color: '#3B82F6',
+        day: '',
+        type: 'study' as const
+      },
+      {
+        id: 'pool-2',
+        title: 'DSA Arrays Practice',
+        subject: 'DSA',
+        startTime: '',
+        endTime: '',
+        duration: 90,
+        priority: 'CRITICAL' as const,
+        color: '#EF4444',
+        day: '',
+        type: 'study' as const
+      }
+    ]
   }
 
   const handleDragEnd = (result: any) => {
@@ -1191,6 +1589,17 @@ export default function TimetableBuilderPage() {
       toast.error('Sleep time blocks cannot be moved. Adjust sleep schedule instead.')
       return
     }
+
+    const goal = goals.find(g => g.id === taskId)
+    const milestone = goal?.milestones.find(m => m.id === taskId)
+    const taskFromPool = getTaskPool().find(t => t.id === taskId)
+    const finalDuration = duration || existingTask?.duration || taskFromPool?.duration || 60
+
+    const check = analyzePlacement(day, time, finalDuration)
+    if (check.error) {
+      toast.error('Cannot place the task here', { description: check.error, duration: 7000 })
+      return
+    }
     
     const existingTaskIndex = tasks.findIndex(t => t.id === taskId)
     
@@ -1200,67 +1609,69 @@ export default function TimetableBuilderPage() {
         ...updatedTasks[existingTaskIndex],
         day,
         startTime: time,
-        endTime: calculateEndTime(time, duration || updatedTasks[existingTaskIndex].duration),
-        duration: duration || updatedTasks[existingTaskIndex].duration
+        endTime: calculateEndTime(time, finalDuration),
+        duration: finalDuration,
+        fixedCommitmentId: check.fixedTimeId,
+        freePeriodId: check.freePeriodId
       }
       setTasks(updatedTasks)
-    } else {
-      const goal = goals.find(g => g.id === taskId)
-      const milestone = goal?.milestones.find(m => m.id === taskId)
-      
-      if (goal || milestone) {
-        const newTaskObj: TimeSlot = {
-          id: `task-${Date.now()}`,
-          title: milestone ? milestone.title : goal!.title,
-          subject: goal!.subject || goal!.title,
-          startTime: time,
-          endTime: calculateEndTime(time, 60),
-          duration: 60,
-          priority: goal!.priority,
-          color: goal!.color,
-          day,
-          type: 'task',
-          goalId: goal!.id,
-          milestoneId: milestone?.id
-        }
-        setTasks([...tasks, newTaskObj])
-        toast.success('Task added from goal')
-      } else {
-        const taskPool = getTaskPool()
-        const taskFromPool = taskPool.find(t => t.id === taskId)
-        
-        if (taskFromPool) {
-          const newTaskObj: TimeSlot = {
-            ...taskFromPool,
-            day,
-            startTime: time,
-            endTime: calculateEndTime(time, taskFromPool.duration),
-            id: `task-${Date.now()}`
-          }
-          setTasks([...tasks, newTaskObj])
-          toast.success('Task added from pool')
-        }
+    } else if (goal || milestone) {
+      const newTaskObj: TimeSlot = {
+        id: newTaskId(),
+        title: milestone ? milestone.title : goal!.title,
+        subject: goal!.subject || goal!.title,
+        startTime: time,
+        endTime: calculateEndTime(time, finalDuration),
+        duration: finalDuration,
+        priority: goal!.priority,
+        color: goal!.color,
+        day,
+        type: 'task',
+        goalId: goal!.id,
+        milestoneId: milestone?.id,
+        fixedCommitmentId: check.fixedTimeId,
+        freePeriodId: check.freePeriodId
       }
+      setTasks([...tasks, newTaskObj])
+      toast.success('Task added from goal')
+    } else if (taskFromPool) {
+      const newTaskObj: TimeSlot = {
+        ...taskFromPool,
+        day,
+        startTime: time,
+        endTime: calculateEndTime(time, taskFromPool.duration),
+        id: newTaskId(),
+        fixedCommitmentId: check.fixedTimeId,
+        freePeriodId: check.freePeriodId
+      }
+      setTasks([...tasks, newTaskObj])
+      toast.success('Task added from pool')
     }
+  }
+
+  // Opens the "add task" dialog for a given slot with sensible defaults.
+  const openTaskDialog = (day: string, time: string) => {
+    setNewTask(prev => ({
+      ...prev,
+      day,
+      startTime: time,
+      duration: Math.min(timeSettings.interval, Math.max(MINUTES_IN_DAY - convertTimeToMinutes(time), 1))
+    }))
+    setTaskCreationFlow('simple')
+    setTaskCreationContext({ day, time })
+    setShowTaskCreationDialog(true)
   }
 
   const handleCellClick = (day: string, time: string) => {
     if (isLocked) return
-    
-    // Check if it's sleep time
-    const isSleepTime = tasks.some(t => 
-      t.day === day && 
-      t.isSleepTime && 
-      convertTimeToMinutes(t.startTime) <= convertTimeToMinutes(time) && 
-      convertTimeToMinutes(t.endTime) > convertTimeToMinutes(time)
-    )
-    
-    if (isSleepTime && timeSettings.autoLockSleep) {
-      toast.warning('This is your scheduled sleep time. Please adjust your sleep schedule if you need to change this.')
+
+    if (convertTimeToMinutes(time) >= MINUTES_IN_DAY) {
+      toast.info('This is the end-of-day marker. Pick a slot before midnight to add a task.')
       return
     }
     
-    // Check if it's a fixed time slot
+    // NOTE: Tasks are ALLOWED during sleep time — we no longer block the click.
+
     const fixedTime = isTimeInFixedSlot(day, time)
     
     if (fixedTime) {
@@ -1269,11 +1680,9 @@ export default function TimetableBuilderPage() {
       )
       
       if (!isInFreePeriod) {
-        // FIXED: Instead of opening the generic "Fixed Commitment Details" modal
-        // (which always defaulted the Free Period form to Monday), open a quick
-        // "Add Free Period" modal that is pre-filled with the EXACT day and time
-        // slot the user just clicked on.
-        const defaultEnd = getNextTimeSlot(time)
+        // Quick "Add Free Period" modal, pre-filled with the clicked day/time
+        const nextSlot = getNextTimeSlot(time)
+        const defaultEnd = convertTimeToMinutes(nextSlot) === 0 ? '23:59' : nextSlot
         setNewFreePeriod({
           title: 'Free Period',
           startTime: time,
@@ -1287,15 +1696,7 @@ export default function TimetableBuilderPage() {
       }
     }
 
-    setTaskCreationContext({ day, time })
-    setShowTaskCreationDialog(true)
-  }
-
-  const isTimeInFreePeriodRange = (time: string, startTime: string, endTime: string): boolean => {
-    const timeInMinutes = convertTimeToMinutes(time)
-    const startMinutes = convertTimeToMinutes(startTime)
-    const endMinutes = convertTimeToMinutes(endTime)
-    return timeInMinutes >= startMinutes && timeInMinutes < endMinutes
+    openTaskDialog(day, time)
   }
 
   const handleFixedTimeClick = (fixedTime: FixedTime) => {
@@ -1308,8 +1709,14 @@ export default function TimetableBuilderPage() {
       return
     }
 
+    const check = analyzePlacement(newTask.day, newTask.startTime, newTask.duration)
+    if (check.error) {
+      toast.error('Cannot add this task', { description: check.error, duration: 7000 })
+      return
+    }
+
     const task: TimeSlot = {
-      id: `task-${Date.now()}`,
+      id: newTaskId(),
       title: newTask.title,
       subject: newTask.subject || 'General',
       startTime: newTask.startTime,
@@ -1319,8 +1726,10 @@ export default function TimetableBuilderPage() {
       color: newTask.color,
       day: newTask.day,
       type: 'task',
-      goalId: newTask.goalId || undefined,
-      milestoneId: newTask.milestoneId || undefined,
+      fixedCommitmentId: check.fixedTimeId,
+      freePeriodId: check.freePeriodId,
+      goalId: cleanId(newTask.goalId),
+      milestoneId: cleanId(newTask.milestoneId),
       note: newTask.note,
       status: 'PENDING'
     }
@@ -1331,7 +1740,45 @@ export default function TimetableBuilderPage() {
     toast.success('Task added successfully')
   }
 
-  const handleAddTaskToCell = (flow: 'simple' | 'withGoal' = 'simple') => {
+  const handleUpdateTask = () => {
+    if (!editingTask) return
+    if (!newTask.title.trim()) {
+      toast.error('Please enter a task title')
+      return
+    }
+
+    const check = analyzePlacement(newTask.day, newTask.startTime, newTask.duration)
+    if (check.error) {
+      toast.error('Cannot save this change', { description: check.error, duration: 7000 })
+      return
+    }
+
+    // Copy fields explicitly (newTask.type is the UPPERCASE API form while
+    // TimeSlot.type is lowercase), keeping the task's own type and category.
+    const updatedTask: TimeSlot = {
+      ...editingTask,
+      title: newTask.title,
+      subject: newTask.subject,
+      note: newTask.note,
+      duration: newTask.duration,
+      priority: newTask.priority,
+      color: newTask.color,
+      day: newTask.day,
+      startTime: newTask.startTime,
+      goalId: cleanId(newTask.goalId),
+      milestoneId: cleanId(newTask.milestoneId),
+      endTime: calculateEndTime(newTask.startTime, newTask.duration),
+      fixedCommitmentId: check.fixedTimeId,
+      freePeriodId: check.freePeriodId
+    }
+    setTasks(tasks.map(t => t.id === editingTask.id ? updatedTask : t))
+    setEditingTask(null)
+    setShowAddTaskModal(false)
+    resetTaskForm()
+    toast.success('Task updated')
+  }
+
+  const handleAddTaskToCell = () => {
     if (!newTask.title.trim()) {
       toast.error('Please enter a task title')
       return
@@ -1342,22 +1789,14 @@ export default function TimetableBuilderPage() {
       return
     }
 
-    let fixedCommitmentId: string | undefined = undefined
-    let freePeriodId: string | undefined = undefined
-    const fixedTime = isTimeInFixedSlot(taskCreationContext.day, taskCreationContext.time)
-    if (fixedTime) {
-      const freePeriod = fixedTime.freePeriods?.find(fp => 
-        fp.day === taskCreationContext.day && 
-        isTimeInFreePeriodRange(taskCreationContext.time, fp.startTime, fp.endTime)
-      )
-      if (freePeriod) {
-        fixedCommitmentId = fixedTime.id
-        freePeriodId = freePeriod.id
-      }
+    const check = analyzePlacement(taskCreationContext.day, taskCreationContext.time, newTask.duration)
+    if (check.error) {
+      toast.error('Cannot add this task', { description: check.error, duration: 7000 })
+      return
     }
 
     const task: TimeSlot = {
-      id: `task-${Date.now()}`,
+      id: newTaskId(),
       title: newTask.title,
       subject: newTask.subject || 'General',
       startTime: taskCreationContext.time,
@@ -1367,10 +1806,10 @@ export default function TimetableBuilderPage() {
       color: newTask.color,
       day: taskCreationContext.day,
       type: 'task',
-      fixedCommitmentId,
-      freePeriodId,
-      goalId: newTask.goalId || undefined,
-      milestoneId: newTask.milestoneId || undefined,
+      fixedCommitmentId: check.fixedTimeId,
+      freePeriodId: check.freePeriodId,
+      goalId: cleanId(newTask.goalId),
+      milestoneId: cleanId(newTask.milestoneId),
       note: newTask.note,
       status: 'PENDING'
     }
@@ -1400,25 +1839,10 @@ export default function TimetableBuilderPage() {
     setTaskCreationFlow('simple')
   }
 
-  const startTaskCreation = (flow: 'simple' | 'withGoal') => {
-    setTaskCreationFlow(flow)
-    if (taskCreationContext) {
-      setNewTask({
-        ...newTask,
-        day: taskCreationContext.day,
-        startTime: taskCreationContext.time,
-        duration: timeSettings.interval
-      })
-    }
-  }
-
   const handleEditTask = (task: TimeSlot) => {
     if (task.isSleepTime) {
-      const sleepSchedule = sleepSchedules.find(s => s.id === task.sleepScheduleId)
-      if (sleepSchedule) {
-        setEditingSleepSchedule(sleepSchedule)
-        setShowSleepScheduleModal(true)
-      }
+      setEditingSleepSchedule(sleepSchedules.find(s => s.id === task.sleepScheduleId) || null)
+      setShowSleepScheduleModal(true)
       return
     }
     
@@ -1445,10 +1869,9 @@ export default function TimetableBuilderPage() {
     if (task?.isSleepTime) {
       const sleepSchedule = sleepSchedules.find(s => s.id === task.sleepScheduleId)
       if (sleepSchedule) {
-        updateSleepSchedule({
-          ...sleepSchedule,
-          isActive: false
-        })
+        setSleepSchedules(sleepSchedules.map(s =>
+          s.id === sleepSchedule.id ? { ...s, isActive: false } : s
+        ))
         toast.success('Sleep schedule deactivated')
       }
       return
@@ -1465,21 +1888,33 @@ export default function TimetableBuilderPage() {
     
     const duplicatedTask = {
       ...task,
-      id: `task-${Date.now()}`,
+      id: newTaskId(),
       title: `${task.title} (Copy)`
     }
     setTasks([...tasks, duplicatedTask])
     toast.success('Task duplicated')
   }
 
+  // ==================== Fixed commitment handlers ====================
+
+  const resetNewFixedTime = () => {
+    setNewFixedTime({
+      title: '',
+      description: '',
+      days: [],
+      startTime: '09:00',
+      endTime: '17:00',
+      type: 'OTHER',
+      color: '#6B7280',
+      isEditable: true,
+      freePeriods: []
+    })
+  }
+
   const handleAddFixedTime = () => {
-    if (!newFixedTime.title.trim()) {
-      toast.error('Please enter a title')
-      return
-    }
-    
-    if (newFixedTime.days.length === 0) {
-      toast.error('Please select at least one day')
+    const defError = validateFixedTimeDefinition(newFixedTime)
+    if (defError) {
+      toast.error(defError)
       return
     }
 
@@ -1496,18 +1931,22 @@ export default function TimetableBuilderPage() {
       freePeriods: newFixedTime.freePeriods || []
     }
 
-    setFixedTimes([...fixedTimes, fixedTime])
-    setNewFixedTime({
-      title: '',
-      description: '',
-      days: [],
-      startTime: '09:00',
-      endTime: '17:00',
-      type: 'OTHER',
-      color: '#6B7280',
-      isEditable: true,
-      freePeriods: []
-    })
+    // Don't allow a commitment on top of tasks that already exist there.
+    const newList = [...fixedTimes, fixedTime]
+    const conflicts = findNewTaskConflicts(fixedTimes, newList)
+    if (conflicts.length > 0) {
+      showIssuesToast(
+        `Cannot add "${fixedTime.title}" — tasks already exist in that time`,
+        [
+          ...conflicts.map(describeTask),
+          'Delete or move these tasks first (or add a free period for them), then add the commitment.'
+        ]
+      )
+      return
+    }
+
+    setFixedTimes(newList)
+    resetNewFixedTime()
     setShowAddFixedTimeModal(false)
     toast.success('Fixed commitment added')
   }
@@ -1518,9 +1957,48 @@ export default function TimetableBuilderPage() {
   }
 
   const handleSaveFixedTime = (updatedFixedTime: FixedTime) => {
-    setFixedTimes(fixedTimes.map(ft => 
-      ft.id === updatedFixedTime.id ? updatedFixedTime : ft
-    ))
+    const defError = validateFixedTimeDefinition(updatedFixedTime)
+    if (defError) {
+      toast.error(defError)
+      return
+    }
+
+    // Free periods must still fit inside the (possibly changed) commitment
+    const stray = (updatedFixedTime.freePeriods || []).filter(fp => {
+      const inside =
+        updatedFixedTime.days.includes(fp.day) &&
+        getFixedIntervals(updatedFixedTime).some(([fs, fe]) =>
+          convertTimeToMinutes(fp.startTime) >= fs && toEndMinutes(fp.endTime) <= fe
+        )
+      return !inside
+    })
+    if (stray.length > 0) {
+      showIssuesToast(
+        'Some free periods no longer fit this commitment',
+        [
+          ...stray.map(fp => `"${fp.title}" on ${formatDayLabel(fp.day)} (${formatTimeDisplay(fp.startTime)} – ${formatTimeDisplay(fp.endTime)})`),
+          'Remove those free periods first, then change the days/time.'
+        ]
+      )
+      return
+    }
+
+    const newList = fixedTimes.map(ft => ft.id === updatedFixedTime.id ? updatedFixedTime : ft)
+    const conflicts = findNewTaskConflicts(fixedTimes, newList)
+    if (conflicts.length > 0) {
+      showIssuesToast(
+        'This change would clash with existing tasks',
+        [
+          ...conflicts.map(describeTask),
+          'Delete or move these tasks first, then save this change.'
+        ]
+      )
+      return
+    }
+
+    setFixedTimes(newList)
+    // keep the open details dialog in sync (e.g. after removing a free period)
+    setSelectedFixedTime(prev => (prev && prev.id === updatedFixedTime.id ? updatedFixedTime : prev))
     setShowEditFixedTimeModal(false)
     setEditingFixedTime(null)
     toast.success('Fixed commitment updated')
@@ -1537,13 +2015,23 @@ export default function TimetableBuilderPage() {
       toast.error('Please select a fixed commitment and day')
       return
     }
+    if (!newFreePeriod.title.trim()) {
+      toast.error('Please enter a title for the free period')
+      return
+    }
+
+    const error = validateNewFreePeriod(selectedFixedTimeForFreePeriod, newFreePeriod)
+    if (error) {
+      toast.error('Cannot add free period', { description: error, duration: 6000 })
+      return
+    }
     
     const freePeriod = {
       id: `free-${Date.now()}-${newFreePeriod.day}`,
       title: newFreePeriod.title,
       startTime: newFreePeriod.startTime,
       endTime: newFreePeriod.endTime,
-      duration: newFreePeriod.duration,
+      duration: calculateDuration(newFreePeriod.startTime, newFreePeriod.endTime),
       day: newFreePeriod.day
     }
     
@@ -1555,6 +2043,7 @@ export default function TimetableBuilderPage() {
     setFixedTimes(fixedTimes.map(ft => 
       ft.id === selectedFixedTimeForFreePeriod.id ? updatedFixedTime : ft
     ))
+    setSelectedFixedTime(prev => (prev && prev.id === updatedFixedTime.id ? updatedFixedTime : prev))
     
     setNewFreePeriod({
       title: 'Free Period',
@@ -1568,30 +2057,31 @@ export default function TimetableBuilderPage() {
     toast.success('Free period added')
   }
 
-  // NEW: Adds the free period using the exact day/time that was clicked
-  // (from quickFreePeriodContext), then immediately opens the Add Task
-  // dialog for that same slot so the user can add their task right away.
+  // Adds the free period using the exact day/time that was clicked, then
+  // immediately opens the Add Task dialog for that same slot.
   const handleQuickAddFreePeriod = () => {
     if (!quickFreePeriodContext) return
 
-    const { fixedTime, day, time } = quickFreePeriodContext
+    const { fixedTime, day } = quickFreePeriodContext
 
     if (!newFreePeriod.title.trim()) {
       toast.error('Please enter a title for the free period')
       return
     }
 
-    if (convertTimeToMinutes(newFreePeriod.endTime) <= convertTimeToMinutes(newFreePeriod.startTime)) {
-      toast.error('End time must be after start time')
+    const error = validateNewFreePeriod(fixedTime, { day, startTime: newFreePeriod.startTime, endTime: newFreePeriod.endTime })
+    if (error) {
+      toast.error('Cannot add free period', { description: error, duration: 6000 })
       return
     }
 
+    const fpDuration = calculateDuration(newFreePeriod.startTime, newFreePeriod.endTime)
     const freePeriod = {
       id: `free-${Date.now()}-${day}`,
       title: newFreePeriod.title,
       startTime: newFreePeriod.startTime,
       endTime: newFreePeriod.endTime,
-      duration: calculateDuration(newFreePeriod.startTime, newFreePeriod.endTime),
+      duration: fpDuration,
       day: day
     }
 
@@ -1604,19 +2094,20 @@ export default function TimetableBuilderPage() {
       ft.id === fixedTime.id ? updatedFixedTime : ft
     ))
 
-    toast.success(`Free period added on ${day.charAt(0) + day.slice(1).toLowerCase()} at ${formatTimeDisplay(newFreePeriod.startTime)}`)
+    toast.success(`Free period added on ${formatDayLabel(day)} at ${formatTimeDisplay(newFreePeriod.startTime)}`)
 
     setShowQuickFreePeriodModal(false)
     setQuickFreePeriodContext(null)
 
-    // Immediately let the user add a task into the free period they just created
-    setTaskCreationContext({ day, time: newFreePeriod.startTime })
-    setNewTask({
-      ...newTask,
+    // Let the user add a task into the free period they just created
+    setNewTask(prev => ({
+      ...prev,
       day,
       startTime: newFreePeriod.startTime,
-      duration: Math.min(timeSettings.interval, calculateDuration(newFreePeriod.startTime, newFreePeriod.endTime))
-    })
+      duration: Math.min(timeSettings.interval, fpDuration)
+    }))
+    setTaskCreationFlow('simple')
+    setTaskCreationContext({ day, time: newFreePeriod.startTime })
     setShowTaskCreationDialog(true)
   }
 
@@ -1629,56 +2120,146 @@ export default function TimetableBuilderPage() {
     setShowAddFreePeriodModal(true)
   }
 
-  const handleOpenSleepScheduleModal = () => {
-    setShowSleepScheduleModal(true)
+  // ==================== Sleep schedule modal (draft + Save) ====================
+
+  const updateSleepDraft = (day: string, patch: Partial<SleepDraftDay>) => {
+    setSleepDraft(prev => ({ ...prev, [day]: { ...prev[day], ...patch } }))
+    setSleepDraftDirty(true)
   }
 
-  const handleSaveSleepSchedule = (schedule: SleepSchedule) => {
-    const existingIndex = sleepSchedules.findIndex(s => s.id === schedule.id)
-    
-    if (existingIndex >= 0) {
-      const updatedSchedules = [...sleepSchedules]
-      updatedSchedules[existingIndex] = schedule
-      setSleepSchedules(updatedSchedules)
-      toast.success('Sleep schedule updated')
-    } else {
-      setSleepSchedules([...sleepSchedules, schedule])
-      toast.success('Sleep schedule added')
+  const applySleepToAllDays = (sourceDay: string) => {
+    const src = sleepDraft[sourceDay]
+    if (!src) return
+    setSleepDraft(prev => {
+      const next: Record<string, SleepDraftDay> = {}
+      ALL_DAYS.forEach(day => {
+        next[day] = {
+          ...prev[day],
+          isActive: true,
+          bedtime: src.bedtime,
+          wakeTime: src.wakeTime,
+          type: src.type
+        }
+      })
+      return next
+    })
+    setSleepDraftDirty(true)
+    toast.info(`Applied ${formatTimeDisplay(src.bedtime)} → ${formatTimeDisplay(src.wakeTime)} to all days. Click Save to keep it.`)
+  }
+
+  const handleSleepModalOpenChange = (open: boolean) => {
+    if (!open && sleepDraftDirty) {
+      toast.info('Sleep schedule changes were not saved.')
     }
-    
+    if (!open) setEditingSleepSchedule(null)
+    setShowSleepScheduleModal(open)
+  }
+
+  const handleSaveSleepDraft = () => {
+    const errors: string[] = []
+    const changes: string[] = []
+    const nextSchedules: SleepSchedule[] = []
+
+    ALL_DAYS.forEach(day => {
+      const draft = sleepDraft[day]
+      if (!draft) return
+      const existing = sleepSchedules.find(s => s.day === day)
+
+      if (!draft.isActive) {
+        if (existing) {
+          nextSchedules.push({ ...existing, isActive: false })
+          if (existing.isActive) changes.push(`${formatDayLabel(day)}: sleep turned off`)
+        }
+        return
+      }
+
+      const duration = calculateDuration(draft.bedtime, draft.wakeTime)
+      if (!draft.bedtime || !draft.wakeTime || draft.bedtime === draft.wakeTime || duration <= 0) {
+        errors.push(`${formatDayLabel(day)}: bedtime and wake time cannot be the same.`)
+        return
+      }
+
+      const conflicts = findTasksInSleepWindow(day, draft.bedtime, draft.wakeTime)
+      if (conflicts.length > 0) {
+        errors.push(
+          `${formatDayLabel(day)} (${formatTimeDisplay(draft.bedtime)} – ${formatTimeDisplay(draft.wakeTime)}): task ${conflicts.map(c => `"${c.title}" at ${formatTimeDisplay(c.startTime)}`).join(', ')} already scheduled. Delete or move it first.`
+        )
+        return
+      }
+
+      const schedule: SleepSchedule = {
+        id: existing?.id ?? `sleep-${day}-${Date.now()}`,
+        day,
+        bedtime: draft.bedtime,
+        wakeTime: draft.wakeTime,
+        duration,
+        isActive: true,
+        color: existing?.color || '#4B5563',
+        type: draft.type,
+        notes: draft.notes.trim() ? draft.notes.trim() : undefined
+      }
+      nextSchedules.push(schedule)
+
+      const label = `${formatDayLabel(day)}: ${formatTimeDisplay(draft.bedtime)} → ${formatTimeDisplay(draft.wakeTime)} (${Math.floor(duration / 60)}h ${duration % 60}m)`
+      if (!existing || !existing.isActive) {
+        changes.push(`${label} — added`)
+      } else if (
+        existing.bedtime !== schedule.bedtime ||
+        existing.wakeTime !== schedule.wakeTime ||
+        existing.type !== schedule.type ||
+        (existing.notes || '') !== (schedule.notes || '')
+      ) {
+        changes.push(`${label} — updated`)
+      }
+    })
+
+    if (errors.length > 0) {
+      showIssuesToast('Sleep schedule not saved', errors)
+      return
+    }
+
+    if (changes.length === 0) {
+      toast.info('No changes to save')
+      setSleepDraftDirty(false)
+      setShowSleepScheduleModal(false)
+      return
+    }
+
+    setSleepSchedules(nextSchedules)
+    setSleepDraftDirty(false)
     setEditingSleepSchedule(null)
     setShowSleepScheduleModal(false)
-    generateSleepTasks()
+    toast.success('Sleep schedule saved', {
+      description: (
+        <div className="space-y-1 mt-1">
+          {changes.map((c, i) => (
+            <div key={i}>• {c}</div>
+          ))}
+        </div>
+      ),
+      duration: 8000
+    })
   }
 
-  const updateSleepSchedule = (schedule: SleepSchedule) => {
-    const existingIndex = sleepSchedules.findIndex(s => s.id === schedule.id)
-    
-    if (existingIndex >= 0) {
-      const updatedSchedules = [...sleepSchedules]
-      updatedSchedules[existingIndex] = schedule
-      setSleepSchedules(updatedSchedules)
-    }
-    
-    generateSleepTasks()
-  }
+  // ==================== Lock / unlock ====================
 
-  const handleDeleteSleepSchedule = (id: string) => {
-    setSleepSchedules(sleepSchedules.filter(s => s.id !== id))
-    setTasks(tasks.filter(task => task.sleepScheduleId !== id))
-    setEditingSleepSchedule(null)
-    setShowSleepScheduleModal(false)
-    toast.success('Sleep schedule deleted')
-  }
-
-  // ==================== MODIFIED: Lock Timetable with Confirmation ====================
   const handleLockTimetable = () => {
     if (!hasUnsavedChanges) {
       toast.info('No changes to save')
       return
     }
+
+    // Catch every problem on the frontend first — the server should never be
+    // the one telling the user their timetable has conflicts.
+    const issues = validateWholeTimetable()
+    if (issues.length > 0) {
+      setLockIssues(issues)
+      setShowLockIssues(true)
+      toast.error(`Fix ${issues.length} issue${issues.length > 1 ? 's' : ''} before locking`)
+      return
+    }
     
-    // Show confirmation dialog first
+    // Show confirmation dialog
     setShowLockConfirm(true)
     setLockConfirmed(false)
   }
@@ -1727,7 +2308,7 @@ export default function TimetableBuilderPage() {
         setHasUnsavedChanges(false)
         toast.success(result.message || 'Timetable locked and saved successfully!')
 
-        // NEW: The server now holds the authoritative saved timetable —
+        // The server now holds the authoritative saved timetable —
         // the local draft is no longer needed, so remove it.
         clearDraftLocally()
 
@@ -1749,13 +2330,10 @@ export default function TimetableBuilderPage() {
     }
   }
 
-  // ==================== FIXED: prepareLockPayload with proper type mapping ====================
   const prepareLockPayload = () => {
     const apiFixedTimes: any[] = fixedTimes.map(ft => ({
-      // NEW: The backend uses this to link tasks (sent with the same
-      // fixedTimeId value) to the FixedTime it creates/finds in this same
-      // request, since at this point the FixedTime doesn't have a real
-      // database id yet.
+      // The backend uses this to link tasks (sent with the same fixedTimeId
+      // value) to the FixedTime it creates in this same request.
       clientId: ft.id,
       title: ft.title,
       description: ft.description,
@@ -1784,45 +2362,39 @@ export default function TimetableBuilderPage() {
       color: s.color
     }))
 
-    // FIXED: Map UI task types to API task types using the mapping function
     const apiTasks: any[] = tasks
       .filter(t => !t.isSleepTime)
       .map(task => {
-        // Use the mapping function to convert UI type to API type
-        const apiTaskType = mapUITypeToAPIType(task.type)
+        // Always recompute which fixed commitment (if any) this task sits in,
+        // so tasks loaded from the server or edited later are linked too.
+        const link = analyzePlacement(task.day, task.startTime, task.duration)
 
         const apiTask: any = {
           title: task.title,
           subject: task.subject,
           note: task.note,
           startTime: task.startTime,
-          endTime: task.endTime,
+          // The UI uses "24:00" for "ends at midnight". Send "23:59" instead:
+          // it is a valid HH:mm and still sorts after the start time.
+          endTime: task.endTime === '24:00' ? '23:59' : task.endTime,
           duration: task.duration,
           priority: task.priority,
           color: task.color,
           day: task.day,
-          type: apiTaskType, // This is now properly mapped to uppercase
+          type: mapUITypeToAPIType(task.type),
           category: task.category || 'ACADEMIC',
           status: task.status || 'PENDING'
         }
 
-        if (task.goalId) {
-          apiTask.goalId = task.goalId
-        }
-        if (task.milestoneId) {
-          apiTask.milestoneId = task.milestoneId
-        }
-        if (task.fixedCommitmentId) {
-          apiTask.fixedTimeId = task.fixedCommitmentId
-        }
-        if (task.completedAt) {
-          apiTask.completedAt = task.completedAt
-        }
+        const goalId = cleanId(task.goalId)
+        const milestoneId = cleanId(task.milestoneId)
+        if (goalId) apiTask.goalId = goalId
+        if (milestoneId) apiTask.milestoneId = milestoneId
+        if (link.fixedTimeId) apiTask.fixedTimeId = link.fixedTimeId
+        if (task.completedAt) apiTask.completedAt = task.completedAt
 
         return apiTask
       })
-
-    console.log('Prepared API Tasks with mapped types:', apiTasks.map(t => ({ title: t.title, type: t.type })))
 
     return {
       fixedTimes: apiFixedTimes,
@@ -1830,7 +2402,6 @@ export default function TimetableBuilderPage() {
       tasks: apiTasks
     }
   }
-  // ==================== END FIXED ====================
 
   const lockTimetable = async (payload: any): Promise<LockApiResponse> => {
     const token = getAuthToken()
@@ -1872,7 +2443,6 @@ export default function TimetableBuilderPage() {
         return
       }
 
-      // Prepare the reset payload with correct structure
       const resetPayload: ResetPayload = {
         confirm: true,
         resetTasks: true,
@@ -1897,19 +2467,17 @@ export default function TimetableBuilderPage() {
       const data = await response.json()
       
       if (data.success) {
-        // Clear local state
         setTasks([])
         setFixedTimes([])
         setSleepSchedules([])
         setHasUnsavedChanges(false)
 
-        // NEW: Also remove any locally saved draft so it doesn't come back
+        // Also remove any locally saved draft so it doesn't come back
         // on the next refresh after an intentional reset.
         clearDraftLocally()
         
         toast.success(data.message || `Timetable reset successfully! Deleted ${data.data.totalDeleted} items.`)
         
-        // Refresh the timetable to show empty state
         await fetchFullTimeTable()
       } else {
         throw new Error(data.message || 'Failed to reset timetable')
@@ -1922,37 +2490,7 @@ export default function TimetableBuilderPage() {
     }
   }
 
-  // Explicit TimeSlot[] return type: without it TS infers a narrow literal
-  // union, and `.find()` on the result collapses to `never`, which is what
-  // caused "Property 'priority' does not exist on type 'never'".
-  const getTaskPool = (): TimeSlot[] => {
-    return [
-      {
-        id: 'pool-1',
-        title: 'Study React Hooks',
-        subject: 'Web Development',
-        startTime: '',
-        endTime: '',
-        duration: 60,
-        priority: 'HIGH' as const,
-        color: '#3B82F6',
-        day: '',
-        type: 'study' as const
-      },
-      {
-        id: 'pool-2',
-        title: 'DSA Arrays Practice',
-        subject: 'DSA',
-        startTime: '',
-        endTime: '',
-        duration: 90,
-        priority: 'CRITICAL' as const,
-        color: '#EF4444',
-        day: '',
-        type: 'study' as const
-      }
-    ]
-  }
+  // ==================== Grid helpers ====================
 
   const getTasksForCell = (day: string, time: string) => {
     return tasks.filter(task => {
@@ -1964,43 +2502,6 @@ export default function TimetableBuilderPage() {
       
       return cellMinutes >= taskStartMinutes && cellMinutes < taskEndMinutes
     })
-  }
-
-  const isTimeInFixedSlot = (day: string, time: string): FixedTime | null => {
-    const timeInMinutes = convertTimeToMinutes(time)
-    
-    for (const ft of fixedTimes) {
-      if (!ft.days.includes(day)) continue
-      
-      const startMinutes = convertTimeToMinutes(ft.startTime)
-      const endMinutes = convertTimeToMinutes(ft.endTime)
-      
-      // Handle overnight fixed times
-      if (endMinutes < startMinutes) {
-        // Fixed time spans across midnight
-        if (timeInMinutes >= startMinutes || timeInMinutes < endMinutes) {
-          return ft
-        }
-      } else {
-        // Normal fixed time
-        if (timeInMinutes >= startMinutes && timeInMinutes < endMinutes) {
-          return ft
-        }
-      }
-    }
-    return null
-  }
-
-  const isTimeInFreePeriod = (day: string, time: string): {fixedTime: FixedTime, freePeriod: any} | null => {
-    const fixedTime = isTimeInFixedSlot(day, time)
-    if (!fixedTime) return null
-    
-    for (const fp of fixedTime.freePeriods || []) {
-      if (fp.day === day && isTimeInFreePeriodRange(time, fp.startTime, fp.endTime)) {
-        return { fixedTime, freePeriod: fp }
-      }
-    }
-    return null
   }
 
   const getNextTimeSlot = (time: string): string => {
@@ -2027,7 +2528,22 @@ export default function TimetableBuilderPage() {
     if (duration < 0) {
       duration += 24 * 60 // Handle overnight tasks
     }
-    return Math.ceil(duration / timeSettings.interval)
+    return Math.max(1, Math.ceil(duration / timeSettings.interval))
+  }
+
+  // Size of a task/sleep block: it grows to the right in "horizontal" mode and
+  // downwards in "vertical" mode (before, vertical mode drew it sideways).
+  const getBlockSize = (span: number, cellWidth: number) => {
+    if (timeSettings.displayMode === 'vertical') {
+      return {
+        height: `${span * timeSettings.cellHeight - 4}px`,
+        width: `${cellWidth - 8}px`
+      }
+    }
+    return {
+      height: `${timeSettings.cellHeight - 4}px`,
+      width: `calc(${span} * ${cellWidth}px - 8px)`
+    }
   }
 
   const isExtendedTime = (time: string) => {
@@ -2099,42 +2615,61 @@ export default function TimetableBuilderPage() {
     }
   }
 
+  // Schedules goal/milestone items into the first slot that is actually free
+  // (no fixed commitment, no other task, no sleep) instead of always using
+  // "Monday 10:00", which used to collide with fixed commitments.
+  const scheduleItems = (
+    items: Array<{ title: string; subject: string; priority: Goal['priority']; color: string; goalId: string; milestoneId?: string }>
+  ): TimeSlot[] => {
+    const added: TimeSlot[] = []
+    let failed = 0
+    items.forEach(item => {
+      const slot = findAvailableSlot(60, [...tasks, ...added])
+      if (!slot) {
+        failed += 1
+        return
+      }
+      added.push({
+        id: newTaskId(),
+        title: item.title,
+        subject: item.subject,
+        startTime: slot.time,
+        endTime: calculateEndTime(slot.time, 60),
+        duration: 60,
+        priority: item.priority,
+        color: item.color,
+        day: slot.day,
+        type: 'task',
+        goalId: item.goalId,
+        milestoneId: item.milestoneId,
+        fixedCommitmentId: slot.link.fixedTimeId,
+        freePeriodId: slot.link.freePeriodId,
+        status: 'PENDING'
+      })
+    })
+    if (added.length > 0) {
+      setTasks(prev => [...prev, ...added])
+    }
+    if (failed > 0) {
+      toast.warning(`${failed} item${failed > 1 ? 's' : ''} could not be scheduled — no free 1-hour slot left. Free up some time or add free periods.`)
+    }
+    return added
+  }
+
   const handleScheduleMilestone = (goal: Goal, milestone: Milestone) => {
     setSelectedGoalForMilestone(null)
-    
-    const day = 'MONDAY'
-    const defaultTime = '10:00'
-    
-    const isSleepTime = tasks.some(t => 
-      t.day === day && 
-      t.isSleepTime && 
-      convertTimeToMinutes(t.startTime) <= convertTimeToMinutes(defaultTime) && 
-      convertTimeToMinutes(t.endTime) > convertTimeToMinutes(defaultTime)
-    )
-    
-    if (isSleepTime && timeSettings.autoLockSleep) {
-      toast.warning('This time conflicts with your sleep schedule. Please choose a different time or adjust your sleep schedule.')
-      return
-    }
-    
-    const task: TimeSlot = {
-      id: `task-${Date.now()}`,
+    const added = scheduleItems([{
       title: milestone.title,
       subject: goal.subject || goal.title,
-      startTime: defaultTime,
-      endTime: calculateEndTime(defaultTime, 60),
-      duration: 60,
       priority: goal.priority,
       color: goal.color,
-      day: day,
-      type: 'task',
       goalId: goal.id,
-      milestoneId: milestone.id,
-      status: 'PENDING'
+      milestoneId: milestone.id
+    }])
+    if (added.length > 0) {
+      const t = added[0]
+      toast.success(`Scheduled "${milestone.title}" for ${formatDayLabel(t.day)} at ${formatTimeDisplay(t.startTime)}`)
     }
-
-    setTasks([...tasks, task])
-    toast.success(`Scheduled "${milestone.title}" for ${day.charAt(0) + day.slice(1).toLowerCase()} at ${formatTimeDisplay(defaultTime)}`)
   }
 
   const getDaysUntilDeadline = (targetDate: Date) => {
@@ -2237,19 +2772,129 @@ export default function TimetableBuilderPage() {
     }
   }
 
-  // Safely formats a day constant ("MONDAY" -> "Monday"). Previously the JSX
-  // did `taskCreationContext?.day.charAt(0) + taskCreationContext?.day.slice(1)`,
-  // which is `string | undefined` on both sides of `+` and fails typechecking.
-  const formatDayLabel = (day?: string): string => {
-    if (!day) return ''
-    return day.charAt(0) + day.slice(1).toLowerCase()
-  }
-
-  const cn = (...classes: (string | boolean | undefined)[]) => {
-    return classes.filter(Boolean).join(' ')
-  }
-
   const sleepStats = getSleepStats()
+
+  // Live validation messages shown inside the dialogs (so the user sees the
+  // problem immediately, instead of after pressing the button).
+  const taskDialogError: string | undefined = taskCreationContext
+    ? analyzePlacement(taskCreationContext.day, taskCreationContext.time, newTask.duration).error
+    : undefined
+  const editTaskError: string | undefined = showAddTaskModal
+    ? analyzePlacement(newTask.day, newTask.startTime, newTask.duration).error
+    : undefined
+
+  // Fields shared by the "Add" and "Edit" fixed commitment dialogs.
+  const renderFixedTimeFields = (
+    value: { title: string; description?: string; startTime: string; endTime: string; type: FixedTime['type']; days: string[] },
+    onChange: (patch: { title?: string; description?: string; startTime?: string; endTime?: string; type?: FixedTime['type']; color?: string; days?: string[] }) => void
+  ) => (
+    <>
+      <div>
+        <label className="text-sm font-medium mb-2 block dark:text-gray-300">Title *</label>
+        <Input
+          placeholder="e.g., College Hours, Office Time, Gym Session"
+          value={value.title}
+          onChange={(e) => onChange({ title: e.target.value })}
+          className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+        />
+      </div>
+      
+      <div>
+        <label className="text-sm font-medium mb-2 block dark:text-gray-300">Description (Optional)</label>
+        <Textarea
+          placeholder="Brief description of this commitment"
+          value={value.description || ''}
+          onChange={(e) => onChange({ description: e.target.value })}
+          className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+          rows={2}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="text-sm font-medium mb-2 block dark:text-gray-300">Start Time *</label>
+          <Input
+            type="time"
+            value={value.startTime}
+            onChange={(e) => onChange({ startTime: e.target.value })}
+            className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+          />
+        </div>
+        
+        <div>
+          <label className="text-sm font-medium mb-2 block dark:text-gray-300">End Time *</label>
+          <Input
+            type="time"
+            value={value.endTime}
+            onChange={(e) => onChange({ endTime: e.target.value })}
+            className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium mb-2 block dark:text-gray-300">Type *</label>
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-2 max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+          {FIXED_TIME_TYPES.filter(t => t.id !== 'SLEEP').map((type) => {
+            const Icon = type.icon
+            const isSelected = value.type === type.id
+            return (
+              <button
+                key={type.id}
+                type="button"
+                onClick={() => onChange({ type: type.id as FixedTime['type'], color: type.color })}
+                className={cn(
+                  "flex flex-col items-center justify-center p-3 rounded-lg border transition-all",
+                  isSelected 
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-500" 
+                    : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                )}
+              >
+                <div 
+                  className="p-2 rounded-lg mb-2"
+                  style={{ backgroundColor: `${type.color}20` }}
+                >
+                  <Icon className="w-5 h-5" style={{ color: type.color }} />
+                </div>
+                <span className={cn(
+                  "text-xs text-center",
+                  isSelected ? "text-blue-700 dark:text-blue-300" : "text-gray-600 dark:text-gray-400"
+                )}>
+                  {type.label}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium mb-2 block dark:text-gray-300">Days *</label>
+        <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+          {ALL_DAYS.map(day => (
+            <button
+              key={day}
+              type="button"
+              onClick={() => {
+                const newDays = value.days.includes(day)
+                  ? value.days.filter(d => d !== day)
+                  : [...value.days, day]
+                onChange({ days: newDays })
+              }}
+              className={cn(
+                "px-3 py-1.5 rounded-full text-sm font-medium transition-all",
+                value.days.includes(day)
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              )}
+            >
+              {formatDayLabel(day)}
+            </button>
+          ))}
+        </div>
+      </div>
+    </>
+  )
 
   // Render functions for different views
   const renderTimetableGrid = () => {
@@ -2281,10 +2926,7 @@ export default function TimetableBuilderPage() {
               <Clock className="w-4 h-4 mr-2" />
               Add Fixed Commitment
             </Button>
-            <Button variant="outline" onClick={() => {
-              setShowTaskCreationDialog(true)
-              setTaskCreationContext({ day: days[0], time: timeSlots[0] })
-            }}>
+            <Button variant="outline" onClick={() => openTaskDialog(days[0], timeSlots[0])}>
               <Plus className="w-4 h-4 mr-2" />
               Add Task
             </Button>
@@ -2304,7 +2946,7 @@ export default function TimetableBuilderPage() {
               >
                 <div className="font-bold text-gray-900 dark:text-gray-100">Time</div>
               </div>
-              {days.map((day, index) => (
+              {days.map((day) => (
                 <div
                   key={day}
                   className={cn(
@@ -2318,7 +2960,7 @@ export default function TimetableBuilderPage() {
                       "font-bold text-sm",
                       ['SATURDAY', 'SUNDAY'].includes(day) && "text-blue-700 dark:text-blue-300"
                     )}>
-                      {day.charAt(0) + day.slice(1).toLowerCase()}
+                      {formatDayLabel(day)}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       {['SATURDAY', 'SUNDAY'].includes(day) ? "Weekend" : "Weekday"}
@@ -2333,7 +2975,7 @@ export default function TimetableBuilderPage() {
                 className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 border-r-2 border-gray-300 dark:border-gray-700"
                 style={{ width: cellWidth }}
               >
-                {timeSlots.map((time, index) => (
+                {timeSlots.map((time) => (
                   <div
                     key={time}
                     className={cn(
@@ -2382,7 +3024,7 @@ export default function TimetableBuilderPage() {
                     className="flex-shrink-0 flex flex-col relative"
                     style={{ width: cellWidth }}
                   >
-                    {timeSlots.map((time, index) => (
+                    {timeSlots.map((time) => (
                       <TimeCell key={`${day}-${time}`} day={day} time={time} cellWidth={cellWidth} />
                     ))}
                   </div>
@@ -2441,7 +3083,7 @@ export default function TimetableBuilderPage() {
             </div>
 
             <div className="flex flex-col">
-              {days.map((day, dayIndex) => (
+              {days.map((day) => (
                 <div key={day} className="flex border-b border-gray-200 dark:border-gray-700 last:border-b-0">
                   <div 
                     className="flex-shrink-0 border-r-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center justify-center p-4"
@@ -2452,7 +3094,7 @@ export default function TimetableBuilderPage() {
                         "font-bold text-sm",
                         ['SATURDAY', 'SUNDAY'].includes(day) && "text-blue-700 dark:text-blue-300"
                       )}>
-                        {day.charAt(0) + day.slice(1).toLowerCase()}
+                        {formatDayLabel(day)}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">
                         {['SATURDAY', 'SUNDAY'].includes(day) ? "Weekend" : "Weekday"}
@@ -2461,7 +3103,7 @@ export default function TimetableBuilderPage() {
                   </div>
 
                   <div className="flex">
-                    {timeSlots.map((time, timeIndex) => (
+                    {timeSlots.map((time) => (
                       <TimeCell key={`${day}-${time}`} day={day} time={time} cellWidth={cellWidth} />
                     ))}
                   </div>
@@ -2478,13 +3120,16 @@ export default function TimetableBuilderPage() {
     const fixedTime = isTimeInFixedSlot(day, time)
     const freePeriodInfo = isTimeInFreePeriod(day, time)
     const tasksInCell = getTasksForCell(day, time)
-    const primaryTask = tasksInCell.find(task => 
-      convertTimeToMinutes(task.startTime) === convertTimeToMinutes(time)
-    ) || tasksInCell[0]
-    
-    const isFreePeriod = !!freePeriodInfo
-    const isSleepTime = tasksInCell.some(t => t.isSleepTime)
+
+    // FIXED: sleep blocks and real tasks are tracked separately. Before, a sleep
+    // block could be picked as the "primary task" of a cell, which hid real
+    // tasks that were placed inside sleep time.
+    const regularTasks = tasksInCell.filter(t => !t.isSleepTime)
+    const startingTasks = regularTasks.filter(t => convertTimeToMinutes(t.startTime) === convertTimeToMinutes(time))
+    const hasRegular = regularTasks.length > 0
     const sleepTask = tasksInCell.find(t => t.isSleepTime)
+    const isSleepTime = !!sleepTask
+    const isFreePeriod = !!freePeriodInfo
     
     return (
       <div
@@ -2504,7 +3149,7 @@ export default function TimetableBuilderPage() {
         }}
         onClick={() => handleCellClick(day, time)}
       >
-        {isExtendedTime(time) && !fixedTime && !primaryTask && !isSleepTime && (
+        {isExtendedTime(time) && !fixedTime && !hasRegular && !isSleepTime && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-[10px] text-yellow-600 dark:text-yellow-400 opacity-30">
               Extended
@@ -2512,7 +3157,7 @@ export default function TimetableBuilderPage() {
           </div>
         )}
 
-        {(time === '00:00' || time === '24:00') && !fixedTime && !primaryTask && !isSleepTime && (
+        {(time === '00:00' || time === '24:00') && !fixedTime && !hasRegular && !isSleepTime && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="text-[10px] text-purple-600 dark:text-purple-400 opacity-30">
               {time === '00:00' ? 'Start of Day' : 'End of Day'}
@@ -2520,8 +3165,8 @@ export default function TimetableBuilderPage() {
           </div>
         )}
 
-        {fixedTime && !isFreePeriod && !primaryTask && !isSleepTime && (
-          <div className="absolute inset-0 flex items-center justify-center p-0.5 cursor-pointer" onClick={() => handleFixedTimeClick(fixedTime)}>
+        {fixedTime && !isFreePeriod && !hasRegular && !isSleepTime && (
+          <div className="absolute inset-0 flex items-center justify-center p-0.5 cursor-pointer">
             <div className="text-[10px] font-medium text-center truncate px-0.5 text-gray-700 dark:text-gray-300">
               <div className="flex items-center justify-center gap-0.5">
                 {getIconByType(fixedTime.type)}
@@ -2534,8 +3179,8 @@ export default function TimetableBuilderPage() {
           </div>
         )}
 
-        {isFreePeriod && !primaryTask && !isSleepTime && (
-          <div className="absolute inset-0 flex items-center justify-center p-0.5 cursor-pointer" onClick={() => handleCellClick(day, time)}>
+        {isFreePeriod && !hasRegular && !isSleepTime && (
+          <div className="absolute inset-0 flex items-center justify-center p-0.5 cursor-pointer">
             <div className="text-[10px] font-medium text-center truncate px-0.5 text-green-700 dark:text-green-400">
               <div className="flex items-center justify-center gap-0.5">
                 <Coffee className="w-2.5 h-2.5" />
@@ -2548,33 +3193,21 @@ export default function TimetableBuilderPage() {
           </div>
         )}
 
-        {isSleepTime && !primaryTask && sleepTask && (
-          <div className="absolute inset-0 flex items-center justify-center p-0.5">
+        {isSleepTime && !hasRegular && sleepTask && (
+          <div className="absolute inset-0 flex items-center justify-center p-0.5 pointer-events-none">
             <div className="text-[10px] font-medium text-center truncate px-0.5 text-gray-700 dark:text-gray-300">
               <div className="flex items-center justify-center gap-0.5">
                 <Moon className="w-2.5 h-2.5" />
                 <span>Sleep</span>
               </div>
               <div className="text-[8px] text-gray-500 dark:text-gray-400 mt-0.5">
-                {Math.round(sleepTask.duration / 60)}h
+                Click to add a task
               </div>
             </div>
           </div>
         )}
 
-        {primaryTask && shouldShowTaskInCell(primaryTask, day, time) && !primaryTask.isSleepTime && (
-          <TaskComponent 
-            task={primaryTask} 
-            day={day}
-            time={time}
-            cellWidth={cellWidth}
-            onEdit={handleEditTask}
-            onDelete={handleDeleteTask}
-            onDuplicate={handleDuplicateTask}
-          />
-        )}
-
-        {sleepTask && shouldShowTaskInCell(sleepTask, day, time) && sleepTask.isSleepTime && (
+        {sleepTask && shouldShowTaskInCell(sleepTask, day, time) && (
           <SleepTaskComponent 
             task={sleepTask}
             sleepSchedule={sleepSchedules.find(s => s.id === sleepTask.sleepScheduleId)}
@@ -2589,22 +3222,34 @@ export default function TimetableBuilderPage() {
           />
         )}
 
-        {tasksInCell.length > 1 && !primaryTask && !isSleepTime && (
-          <div className="absolute bottom-0.5 right-0.5">
-            <Badge variant="outline" className="text-[8px] px-1 py-0 dark:border-gray-600 dark:text-gray-400">
-              +{tasksInCell.length - 1}
+        {startingTasks.map(task => (
+          <TaskComponent 
+            key={task.id}
+            task={task} 
+            day={day}
+            time={time}
+            cellWidth={cellWidth}
+            onEdit={handleEditTask}
+            onDelete={handleDeleteTask}
+            onDuplicate={handleDuplicateTask}
+          />
+        ))}
+
+        {startingTasks.length > 1 && (
+          <div className="absolute bottom-0.5 right-0.5 z-50">
+            <Badge variant="outline" className="text-[8px] px-1 py-0 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400">
+              {startingTasks.length} tasks
             </Badge>
           </div>
         )}
 
-        {!isLocked && !fixedTime && !primaryTask && !isSleepTime && (
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center bg-gray-50/80 dark:bg-gray-800/80">
+        {!isLocked && !fixedTime && !hasRegular && (
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center bg-gray-50/80 dark:bg-gray-800/80 pointer-events-none">
             <button
-              className="p-1 rounded-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow"
+              className="pointer-events-auto p-1 rounded-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow"
               onClick={(e) => {
                 e.stopPropagation()
-                setTaskCreationContext({ day, time })
-                setShowTaskCreationDialog(true)
+                handleCellClick(day, time)
               }}
               title="Add Task"
             >
@@ -2616,6 +3261,9 @@ export default function TimetableBuilderPage() {
     )
   }
 
+  // Sleep block. It is only a visual band (pointer-events-none) so you can
+  // still click through it to add tasks during sleep time; only the small
+  // gear button opens the Sleep Schedule editor.
   const SleepTaskComponent = ({ 
     task, 
     sleepSchedule,
@@ -2636,18 +3284,12 @@ export default function TimetableBuilderPage() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className={cn(
-          "absolute top-0.5 left-0.5 rounded border shadow-sm z-30 overflow-hidden cursor-pointer",
-          "hover:shadow-md hover:border-blue-300 dark:hover:border-blue-500 transition-all",
+          "absolute top-0.5 left-0.5 rounded border shadow-sm z-30 overflow-hidden pointer-events-none opacity-90",
           sleepType.bgColor
         )}
         style={{ 
-          height: `${timeSettings.cellHeight - 4}px`,
-          width: `calc(${taskSpan} * ${cellWidth}px - 8px)`,
+          ...getBlockSize(taskSpan, cellWidth),
           borderLeft: `3px solid ${task.color}`,
-        }}
-        onClick={(e) => {
-          e.stopPropagation()
-          onEdit()
         }}
       >
         <div className="p-1 h-full flex flex-col">
@@ -2658,18 +3300,24 @@ export default function TimetableBuilderPage() {
                 {sleepSchedule?.type === 'POWER_NAP' ? 'Nap' : 'Sleep'}
               </h4>
             </div>
+            <button
+              type="button"
+              className="pointer-events-auto p-0.5 rounded hover:bg-black/10 dark:hover:bg-white/10"
+              title="Edit sleep schedule"
+              onClick={(e) => {
+                e.stopPropagation()
+                onEdit()
+              }}
+            >
+              <Settings className="w-2.5 h-2.5 text-gray-600 dark:text-gray-400" />
+            </button>
           </div>
           
           <div className="mt-auto">
             <div className="flex items-center justify-between">
               <span className="text-[8px] text-gray-500 dark:text-gray-400">
-                {Math.round(task.duration / 60)}h {task.duration % 60}m
+                {Math.floor(task.duration / 60)}h {task.duration % 60}m
               </span>
-              {taskSpan > 1 && (
-                <span className="text-[8px] text-gray-500 dark:text-gray-400">
-                  {taskSpan}
-                </span>
-              )}
             </div>
           </div>
         </div>
@@ -2703,14 +3351,13 @@ export default function TimetableBuilderPage() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className={cn(
-          "absolute top-0.5 left-0.5 rounded border shadow-sm z-30 overflow-hidden cursor-pointer",
+          "absolute top-0.5 left-0.5 rounded border shadow-sm z-40 overflow-hidden cursor-pointer bg-white dark:bg-gray-800",
           "hover:shadow-md hover:border-blue-300 dark:hover:border-blue-500 transition-all",
           task.fixedCommitmentId && "border-green-300 dark:border-green-700",
           milestone ? "border-purple-300 dark:border-purple-700" : undefined
         )}
         style={{ 
-          height: `${timeSettings.cellHeight - 4}px`,
-          width: `calc(${taskSpan} * ${cellWidth}px - 8px)`,
+          ...getBlockSize(taskSpan, cellWidth),
           borderLeft: `3px solid ${task.color}`,
           backgroundColor: task.fixedCommitmentId 
             ? `${task.color}15` 
@@ -2744,7 +3391,7 @@ export default function TimetableBuilderPage() {
             {!isLocked && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                  <button className="opacity-0 group-hover:opacity-100 transition-opacity p-0 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                  <button className="opacity-60 hover:opacity-100 transition-opacity p-0 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
                     <MoreVertical className="w-2.5 h-2.5 text-gray-600 dark:text-gray-400" />
                   </button>
                 </DropdownMenuTrigger>
@@ -2799,7 +3446,7 @@ export default function TimetableBuilderPage() {
         {/* Header */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 mb-8">
           <div>
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-2 flex-wrap">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Timetable Builder</h1>
               <Badge variant="outline" className="capitalize dark:border-gray-700 dark:text-gray-300">
                 {userType}
@@ -3001,7 +3648,39 @@ export default function TimetableBuilderPage() {
           </div>
         </div>
 
-        {/* ==================== MODIFIED: Lock Confirmation Dialog with improved width and scrollable height ==================== */}
+        {/* NEW: "Fix these before locking" dialog — shown BEFORE any API call */}
+        <Dialog open={showLockIssues} onOpenChange={setShowLockIssues}>
+          <DialogContent className="sm:max-w-lg md:max-w-xl bg-white dark:bg-gray-800 max-h-[90vh] flex flex-col">
+            <DialogHeader className="flex-shrink-0">
+              <DialogTitle className="dark:text-gray-100 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-red-500" />
+                Fix these before locking
+              </DialogTitle>
+              <DialogDescription className="dark:text-gray-400">
+                Your timetable has {lockIssues.length} problem{lockIssues.length > 1 ? 's' : ''}. Nothing was sent to the server.
+              </DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="flex-1 py-2 pr-4 max-h-[50vh]">
+              <ul className="space-y-2">
+                {lockIssues.map((issue, i) => (
+                  <li
+                    key={i}
+                    className="p-3 text-sm rounded-lg border border-red-200 dark:border-red-800/40 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300"
+                  >
+                    {issue}
+                  </li>
+                ))}
+              </ul>
+            </ScrollArea>
+            <DialogFooter className="flex-shrink-0 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <Button onClick={() => setShowLockIssues(false)}>
+                Got it, I'll fix them
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Lock Confirmation Dialog */}
         <Dialog open={showLockConfirm} onOpenChange={setShowLockConfirm}>
           <DialogContent className="sm:max-w-lg md:max-w-xl bg-white dark:bg-gray-800 max-h-[90vh] flex flex-col">
             <DialogHeader className="flex-shrink-0">
@@ -3414,7 +4093,7 @@ export default function TimetableBuilderPage() {
                           <div className="flex items-center gap-2 mb-1">
                             <div className="w-2 h-2 rounded-full bg-gray-500 dark:bg-gray-400" />
                             <span className="font-medium text-gray-800 dark:text-gray-300">
-                              {schedule.day.charAt(0) + schedule.day.slice(1).toLowerCase()}
+                              {formatDayLabel(schedule.day)}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-sm">
@@ -3424,7 +4103,7 @@ export default function TimetableBuilderPage() {
                             </span>
                           </div>
                           <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {Math.round(schedule.duration / 60)}h {schedule.duration % 60}m • {sleepType.label}
+                            {Math.floor(schedule.duration / 60)}h {schedule.duration % 60}m • {sleepType.label}
                           </div>
                         </div>
                       )
@@ -3601,7 +4280,7 @@ export default function TimetableBuilderPage() {
                             <div className="flex-1">
                               <div className="font-medium dark:text-gray-200 mb-1">{ft.title}</div>
                               <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                {ft.days.map(d => d.charAt(0) + d.slice(1).toLowerCase()).join(', ')} • {formatTimeDisplay(ft.startTime)} - {formatTimeDisplay(ft.endTime)}
+                                {ft.days.map(d => formatDayLabel(d)).join(', ')} • {formatTimeDisplay(ft.startTime)} - {formatTimeDisplay(ft.endTime)}
                               </div>
                               {ft.description && (
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{ft.description}</p>
@@ -3613,7 +4292,7 @@ export default function TimetableBuilderPage() {
                                     {ft.freePeriods.length} free period{ft.freePeriods.length > 1 ? 's' : ''}
                                   </Badge>
                                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                    Days: {[...new Set(ft.freePeriods.map(fp => fp.day.charAt(0) + fp.day.slice(1).toLowerCase()))].join(', ')}
+                                    Days: {Array.from(new Set(ft.freePeriods.map(fp => formatDayLabel(fp.day)))).join(', ')}
                                   </div>
                                 </div>
                               )}
@@ -3621,7 +4300,7 @@ export default function TimetableBuilderPage() {
                           </div>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                              <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded" onClick={(e) => e.stopPropagation()}>
                                 <MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                               </button>
                             </DropdownMenuTrigger>
@@ -3709,10 +4388,7 @@ export default function TimetableBuilderPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Button 
-                      onClick={() => {
-                        setShowTaskCreationDialog(true)
-                        setTaskCreationContext({ day: 'MONDAY', time: '09:00' })
-                      }}
+                      onClick={() => openTaskDialog('MONDAY', '09:00')}
                       className="gap-2"
                     >
                       <Plus className="w-4 h-4" />
@@ -3939,149 +4615,157 @@ export default function TimetableBuilderPage() {
         )}
       </motion.div>
 
-      {/* Sleep Schedule Dialog */}
-      <Dialog open={showSleepScheduleModal} onOpenChange={setShowSleepScheduleModal}>
+      {/* ==================== Sleep Schedule Dialog (draft + Save) ==================== */}
+      {/* Closes via the Close button, the X, Esc, or by clicking outside. Changes are
+          applied ONLY when you press "Save Sleep Schedule". */}
+      <Dialog open={showSleepScheduleModal} onOpenChange={handleSleepModalOpenChange}>
         <DialogContent className="sm:max-w-lg bg-white dark:bg-gray-800 max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader className="flex-shrink-0">
-            <DialogTitle className="dark:text-gray-100">Sleep Schedule</DialogTitle>
+            <DialogTitle className="dark:text-gray-100 flex items-center gap-2">
+              <Bed className="w-5 h-5" />
+              Sleep Schedule
+            </DialogTitle>
             <DialogDescription className="dark:text-gray-400">
-              Manage your sleep schedule for each day
+              Turn on the days you want, set the times, then click Save. You can set many days in one go.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4 py-4 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-            <div className="flex items-center justify-between mb-2">
-              <Label htmlFor="auto-lock-sleep" className="text-sm font-medium dark:text-gray-300">
-                Auto-lock sleep hours
-              </Label>
-              <Switch
-                id="auto-lock-sleep"
-                checked={timeSettings.autoLockSleep}
-                onCheckedChange={(checked) => setTimeSettings({...timeSettings, autoLockSleep: checked})}
-              />
+          <div className="space-y-3 py-4 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+            <div className="p-3 text-xs rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 text-blue-700 dark:text-blue-300">
+              Sleep stays on the day you select (e.g. Monday 11 PM → 7 AM shows on Monday: 12 AM – 7 AM and 11 PM – 12 AM).
+              If a task is already scheduled inside that window you must move or delete it first.
             </div>
-            
-            <div className="space-y-3">
-              {days.map(day => {
-                // Explicitly typed as SleepSchedule: otherwise TS infers a
-                // union between the found schedule and this literal (which has
-                // no `notes`), making `schedule.notes` a type error below.
-                const schedule: SleepSchedule = sleepSchedules.find(s => s.day === day) || {
-                  id: `temp-${day}`,
-                  day,
-                  bedtime: '23:00',
-                  wakeTime: '07:00',
-                  duration: 480,
-                  isActive: true,
-                  color: '#4B5563',
-                  type: 'REGULAR'
-                }
-                
-                return (
-                  <div key={day} className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium dark:text-gray-200">{day.charAt(0) + day.slice(1).toLowerCase()}</span>
-                      <Switch
-                        checked={schedule.isActive}
-                        onCheckedChange={(checked) => {
-                          const updatedSchedule = { ...schedule, isActive: checked }
-                          handleSaveSleepSchedule(updatedSchedule)
-                        }}
-                      />
-                    </div>
-                    
-                    {schedule.isActive && (
-                      <>
-                        <div className="grid grid-cols-2 gap-2 mb-2">
-                          <div>
-                            <Label className="text-xs dark:text-gray-400">Bedtime</Label>
-                            <Input
-                              type="time"
-                              value={schedule.bedtime}
-                              onChange={(e) => {
-                                const updatedSchedule = { 
-                                  ...schedule, 
-                                  bedtime: e.target.value,
-                                  duration: calculateDuration(e.target.value, schedule.wakeTime)
-                                }
-                                handleSaveSleepSchedule(updatedSchedule)
-                              }}
-                              className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-xs dark:text-gray-400">Wake Time</Label>
-                            <Input
-                              type="time"
-                              value={schedule.wakeTime}
-                              onChange={(e) => {
-                                const updatedSchedule = { 
-                                  ...schedule, 
-                                  wakeTime: e.target.value,
-                                  duration: calculateDuration(schedule.bedtime, e.target.value)
-                                }
-                                handleSaveSleepSchedule(updatedSchedule)
-                              }}
-                              className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className="mb-2">
-                          <Label className="text-xs dark:text-gray-400">Type</Label>
-                          <Select
-                            value={schedule.type}
-                            onValueChange={(value: any) => {
-                              const updatedSchedule = { ...schedule, type: value }
-                              handleSaveSleepSchedule(updatedSchedule)
-                            }}
-                          >
-                            <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                              {SLEEP_TYPES.map(type => (
-                                <SelectItem key={type.id} value={type.id} className="dark:text-gray-300 dark:hover:bg-gray-700">
-                                  {type.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
+
+            {ALL_DAYS.map(day => {
+              const draft = sleepDraft[day]
+              if (!draft) return null
+              const duration = calculateDuration(draft.bedtime, draft.wakeTime)
+              const sameTime = draft.bedtime === draft.wakeTime
+              const conflicts = draft.isActive && !sameTime
+                ? findTasksInSleepWindow(day, draft.bedtime, draft.wakeTime)
+                : []
+              
+              return (
+                <div
+                  key={day}
+                  className={cn(
+                    "p-3 border rounded-lg",
+                    conflicts.length > 0 || (draft.isActive && sameTime)
+                      ? "border-red-300 dark:border-red-800/60"
+                      : "border-gray-200 dark:border-gray-700"
+                  )}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium dark:text-gray-200">{formatDayLabel(day)}</span>
+                    <Switch
+                      checked={draft.isActive}
+                      onCheckedChange={(checked) => updateSleepDraft(day, { isActive: checked })}
+                    />
+                  </div>
+                  
+                  {draft.isActive && (
+                    <>
+                      <div className="grid grid-cols-2 gap-2 mb-2">
                         <div>
-                          <Label className="text-xs dark:text-gray-400">Notes (Optional)</Label>
+                          <Label className="text-xs dark:text-gray-400">Bedtime</Label>
                           <Input
-                            value={schedule.notes || ''}
-                            onChange={(e) => {
-                              const updatedSchedule = { ...schedule, notes: e.target.value }
-                              handleSaveSleepSchedule(updatedSchedule)
-                            }}
-                            placeholder="Add notes..."
+                            type="time"
+                            value={draft.bedtime}
+                            onChange={(e) => updateSleepDraft(day, { bedtime: e.target.value })}
                             className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                           />
                         </div>
-                        
-                        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                          Duration: {Math.floor(schedule.duration / 60)}h {schedule.duration % 60}m
+                        <div>
+                          <Label className="text-xs dark:text-gray-400">Wake Time</Label>
+                          <Input
+                            type="time"
+                            value={draft.wakeTime}
+                            onChange={(e) => updateSleepDraft(day, { wakeTime: e.target.value })}
+                            className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                          />
                         </div>
-                      </>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
+                      </div>
+                      
+                      <div className="mb-2">
+                        <Label className="text-xs dark:text-gray-400">Type</Label>
+                        <Select
+                          value={draft.type}
+                          onValueChange={(value: any) => updateSleepDraft(day, { type: value })}
+                        >
+                          <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
+                            {SLEEP_TYPES.map(type => (
+                              <SelectItem key={type.id} value={type.id} className="dark:text-gray-300 dark:hover:bg-gray-700">
+                                {type.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <Label className="text-xs dark:text-gray-400">Notes (Optional)</Label>
+                        <Input
+                          value={draft.notes}
+                          onChange={(e) => updateSleepDraft(day, { notes: e.target.value })}
+                          placeholder="Add notes..."
+                          className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                        />
+                      </div>
+                      
+                      <div className="mt-2 flex items-center justify-between">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          {sameTime ? 'Bedtime and wake time cannot be the same' : `Duration: ${Math.floor(duration / 60)}h ${duration % 60}m`}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => applySleepToAllDays(day)}
+                          className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                        >
+                          Apply to all days
+                        </button>
+                      </div>
+
+                      {conflicts.length > 0 && (
+                        <div className="mt-2 p-2 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 text-xs text-red-700 dark:text-red-300">
+                          <div className="font-medium mb-1 flex items-center gap-1">
+                            <AlertTriangle className="w-3 h-3" />
+                            Cannot save — a task is already in this sleep time:
+                          </div>
+                          <ul className="space-y-0.5">
+                            {conflicts.map(c => (
+                              <li key={c.id}>• "{c.title}" ({formatTimeDisplay(c.startTime)} – {formatTimeDisplay(c.endTime)})</li>
+                            ))}
+                          </ul>
+                          <div className="mt-1">Delete or move it from the timetable first, or change the sleep time.</div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )
+            })}
           </div>
           
-          <DialogFooter className="flex-shrink-0 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <Button onClick={() => setShowSleepScheduleModal(false)}>
+          <DialogFooter className="flex-shrink-0 pt-4 border-t border-gray-200 dark:border-gray-700 gap-2">
+            <Button
+              variant="outline"
+              onClick={() => handleSleepModalOpenChange(false)}
+              className="dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
               Close
+            </Button>
+            <Button onClick={handleSaveSleepDraft} className="gap-2">
+              <Save className="w-4 h-4" />
+              Save Sleep Schedule
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Task Creation Dialog with Options */}
+      {/* Task Creation Dialog */}
       <Dialog open={showTaskCreationDialog} onOpenChange={(open) => {
         setShowTaskCreationDialog(open)
         if (!open) {
@@ -4089,262 +4773,179 @@ export default function TimetableBuilderPage() {
           resetTaskForm()
         }
       }}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="dark:text-gray-100">
               Add Task to {formatDayLabel(taskCreationContext?.day)} at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
             </DialogTitle>
             <DialogDescription className="dark:text-gray-400">
-              Choose how you want to add this task
+              {taskCreationFlow === 'simple'
+                ? 'Choose how you want to add this task'
+                : 'Link this task to a goal or milestone to track progress'}
             </DialogDescription>
           </DialogHeader>
-          
-          {taskCreationFlow === 'simple' ? (
-            <div className="space-y-4 py-4">
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg mb-4">
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Time Slot:</span> {formatDayLabel(taskCreationContext?.day)} at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                  Task will be scheduled starting at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
-                </p>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Task Title *</label>
-                <Input
-                  placeholder="e.g., Study React, Complete Assignment"
-                  value={newTask.title}
-                  onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block dark:text-gray-300">Subject</label>
-                  <Input
-                    placeholder="e.g., DSA, Web Dev"
-                    value={newTask.subject}
-                    onChange={(e) => setNewTask({...newTask, subject: e.target.value})}
-                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                  />
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block dark:text-gray-300">Duration</label>
-                  <Select
-                    value={newTask.duration.toString()}
-                    onValueChange={(value) => setNewTask({...newTask, duration: parseInt(value)})}
-                  >
-                    <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
-                      <SelectValue placeholder="Select duration" />
-                    </SelectTrigger>
-                    <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                      <SelectItem value={timeSettings.interval.toString()} className="dark:text-gray-300 dark:hover:bg-gray-700">{timeSettings.interval} minutes</SelectItem>
-                      <SelectItem value={(timeSettings.interval * 2).toString()} className="dark:text-gray-300 dark:hover:bg-gray-700">{timeSettings.interval * 2} minutes</SelectItem>
-                      <SelectItem value={(timeSettings.interval * 3).toString()} className="dark:text-gray-300 dark:hover:bg-gray-700">{timeSettings.interval * 3} minutes</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Priority</label>
-                <Select
-                  value={newTask.priority}
-                  onValueChange={(value: any) => setNewTask({...newTask, priority: value})}
-                >
-                  <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                    <SelectItem value="LOW" className="dark:text-gray-300 dark:hover:bg-gray-700">Low</SelectItem>
-                    <SelectItem value="MEDIUM" className="dark:text-gray-300 dark:hover:bg-gray-700">Medium</SelectItem>
-                    <SelectItem value="HIGH" className="dark:text-gray-300 dark:hover:bg-gray-700">High</SelectItem>
-                    <SelectItem value="CRITICAL" className="dark:text-gray-300 dark:hover:bg-gray-700">Critical</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Notes (Optional)</label>
-                <Textarea
-                  placeholder="Add any notes..."
-                  value={newTask.note}
-                  onChange={(e) => setNewTask({...newTask, note: e.target.value})}
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                  rows={2}
-                />
-              </div>
-              
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setTaskCreationFlow('withGoal')
-                    if (taskCreationContext) {
-                      setNewTask({
-                        ...newTask,
-                        day: taskCreationContext.day,
-                        startTime: taskCreationContext.time,
-                        duration: timeSettings.interval
-                      })
-                    }
-                  }}
-                  className="flex-1 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
-                >
-                  <Target className="w-4 h-4 mr-2" />
-                  Link to Goal
-                </Button>
-                <Button
-                  onClick={() => handleAddTaskToCell('simple')}
-                  className="flex-1"
-                  disabled={!newTask.title.trim()}
-                >
-                  Add Task
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4 py-4">
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg mb-4">
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Time Slot:</span> {formatDayLabel(taskCreationContext?.day)} at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
-                </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                  Link this task to a goal or milestone to track progress
-                </p>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Task Title *</label>
-                <Input
-                  placeholder="e.g., Study React, Complete Assignment"
-                  value={newTask.title}
-                  onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block dark:text-gray-300">Subject</label>
-                  <Input
-                    placeholder="e.g., DSA, Web Dev"
-                    value={newTask.subject}
-                    onChange={(e) => setNewTask({...newTask, subject: e.target.value})}
-                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                  />
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block dark:text-gray-300">Duration</label>
-                  <Select
-                    value={newTask.duration.toString()}
-                    onValueChange={(value) => setNewTask({...newTask, duration: parseInt(value)})}
-                  >
-                    <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
-                      <SelectValue placeholder="Select duration" />
-                    </SelectTrigger>
-                    <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                      <SelectItem value={timeSettings.interval.toString()} className="dark:text-gray-300 dark:hover:bg-gray-700">{timeSettings.interval} minutes</SelectItem>
-                      <SelectItem value={(timeSettings.interval * 2).toString()} className="dark:text-gray-300 dark:hover:bg-gray-700">{timeSettings.interval * 2} minutes</SelectItem>
-                      <SelectItem value={(timeSettings.interval * 3).toString()} className="dark:text-gray-300 dark:hover:bg-gray-700">{timeSettings.interval * 3} minutes</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Priority</label>
-                <Select
-                  value={newTask.priority}
-                  onValueChange={(value: any) => setNewTask({...newTask, priority: value})}
-                >
-                  <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                    <SelectItem value="LOW" className="dark:text-gray-300 dark:hover:bg-gray-700">Low</SelectItem>
-                    <SelectItem value="MEDIUM" className="dark:text-gray-300 dark:hover:bg-gray-700">Medium</SelectItem>
-                    <SelectItem value="HIGH" className="dark:text-gray-300 dark:hover:bg-gray-700">High</SelectItem>
-                    <SelectItem value="CRITICAL" className="dark:text-gray-300 dark:hover:bg-gray-700">Critical</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
 
+          <div className="space-y-4 py-4">
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="font-medium">Time Slot:</span> {formatDayLabel(taskCreationContext?.day)} at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                Task will be scheduled starting at {taskCreationContext && formatTimeDisplay(taskCreationContext.time)}
+              </p>
+            </div>
+
+            {taskDialogError && (
+              <div className="p-3 rounded-lg border border-red-200 dark:border-red-800/40 bg-red-50 dark:bg-red-900/20 text-sm text-red-700 dark:text-red-300 flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <span>{taskDialogError}</span>
+              </div>
+            )}
+            
+            <div>
+              <label className="text-sm font-medium mb-2 block dark:text-gray-300">Task Title *</label>
+              <Input
+                placeholder="e.g., Study React, Complete Assignment"
+                value={newTask.title}
+                onChange={(e) => setNewTask({...newTask, title: e.target.value})}
+                className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Link to Goal (Optional)</label>
+                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Subject</label>
+                <Input
+                  placeholder="e.g., DSA, Web Dev"
+                  value={newTask.subject}
+                  onChange={(e) => setNewTask({...newTask, subject: e.target.value})}
+                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Duration</label>
                 <Select
-                  value={newTask.goalId}
-                  onValueChange={(value) => {
-                    setNewTask({
-                      ...newTask,
-                      goalId: value,
-                      milestoneId: ''
-                    })
-                  }}
+                  value={newTask.duration.toString()}
+                  onValueChange={(value) => setNewTask({...newTask, duration: parseInt(value)})}
                 >
                   <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
-                    <SelectValue placeholder="Select a goal" />
+                    <SelectValue placeholder="Select duration" />
                   </SelectTrigger>
                   <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                    <SelectItem value="no-goal" className="dark:text-gray-300 dark:hover:bg-gray-700">No Goal (Independent Task)</SelectItem>
-                    {goals.map(goal => (
-                      <SelectItem key={goal.id} value={goal.id} className="dark:text-gray-300 dark:hover:bg-gray-700">
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: goal.color }}
-                          />
-                          {goal.title}
-                        </div>
+                    {getDurationOptions(taskCreationContext?.time || '00:00').map(d => (
+                      <SelectItem key={d} value={d.toString()} className="dark:text-gray-300 dark:hover:bg-gray-700">
+                        {d} minutes
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            
+            <div>
+              <label className="text-sm font-medium mb-2 block dark:text-gray-300">Priority</label>
+              <Select
+                value={newTask.priority}
+                onValueChange={(value: any) => setNewTask({...newTask, priority: value})}
+              >
+                <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
+                  <SelectItem value="LOW" className="dark:text-gray-300 dark:hover:bg-gray-700">Low</SelectItem>
+                  <SelectItem value="MEDIUM" className="dark:text-gray-300 dark:hover:bg-gray-700">Medium</SelectItem>
+                  <SelectItem value="HIGH" className="dark:text-gray-300 dark:hover:bg-gray-700">High</SelectItem>
+                  <SelectItem value="CRITICAL" className="dark:text-gray-300 dark:hover:bg-gray-700">Critical</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-              {newTask.goalId && newTask.goalId !== 'no-goal' && (
+            {taskCreationFlow === 'withGoal' && (
+              <>
                 <div>
-                  <label className="text-sm font-medium mb-2 block dark:text-gray-300">Link to Milestone (Optional)</label>
+                  <label className="text-sm font-medium mb-2 block dark:text-gray-300">Link to Goal (Optional)</label>
                   <Select
-                    value={newTask.milestoneId}
-                    onValueChange={(value) => setNewTask({...newTask, milestoneId: value})}
+                    value={newTask.goalId}
+                    onValueChange={(value) => {
+                      setNewTask({
+                        ...newTask,
+                        goalId: value,
+                        milestoneId: ''
+                      })
+                    }}
                   >
                     <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
-                      <SelectValue placeholder="Select a milestone" />
+                      <SelectValue placeholder="Select a goal" />
                     </SelectTrigger>
                     <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                      <SelectItem value="no-milestone" className="dark:text-gray-300 dark:hover:bg-gray-700">No Milestone (General Goal Task)</SelectItem>
-                      {goals
-                        .find(g => g.id === newTask.goalId)
-                        ?.milestones.map(milestone => (
-                          <SelectItem key={milestone.id} value={milestone.id} className="dark:text-gray-300 dark:hover:bg-gray-700">
-                            <div className="flex items-center gap-2">
-                              <div className={`w-2 h-2 rounded-full ${milestone.completed ? 'bg-green-500' : 'bg-gray-300'}`} />
-                              {milestone.title}
-                            </div>
-                          </SelectItem>
-                        ))}
+                      <SelectItem value="no-goal" className="dark:text-gray-300 dark:hover:bg-gray-700">No Goal (Independent Task)</SelectItem>
+                      {goals.map(goal => (
+                        <SelectItem key={goal.id} value={goal.id} className="dark:text-gray-300 dark:hover:bg-gray-700">
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className="w-2 h-2 rounded-full"
+                              style={{ backgroundColor: goal.color }}
+                            />
+                            {goal.title}
+                          </div>
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
-              )}
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Notes (Optional)</label>
-                <Textarea
-                  placeholder="Add any notes..."
-                  value={newTask.note}
-                  onChange={(e) => setNewTask({...newTask, note: e.target.value})}
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                  rows={2}
-                />
-              </div>
-              
-              <div className="flex gap-2">
+
+                {newTask.goalId && newTask.goalId !== 'no-goal' && (
+                  <div>
+                    <label className="text-sm font-medium mb-2 block dark:text-gray-300">Link to Milestone (Optional)</label>
+                    <Select
+                      value={newTask.milestoneId}
+                      onValueChange={(value) => setNewTask({...newTask, milestoneId: value})}
+                    >
+                      <SelectTrigger className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
+                        <SelectValue placeholder="Select a milestone" />
+                      </SelectTrigger>
+                      <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
+                        <SelectItem value="no-milestone" className="dark:text-gray-300 dark:hover:bg-gray-700">No Milestone (General Goal Task)</SelectItem>
+                        {goals
+                          .find(g => g.id === newTask.goalId)
+                          ?.milestones.map(milestone => (
+                            <SelectItem key={milestone.id} value={milestone.id} className="dark:text-gray-300 dark:hover:bg-gray-700">
+                              <div className="flex items-center gap-2">
+                                <div className={`w-2 h-2 rounded-full ${milestone.completed ? 'bg-green-500' : 'bg-gray-300'}`} />
+                                {milestone.title}
+                              </div>
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </>
+            )}
+            
+            <div>
+              <label className="text-sm font-medium mb-2 block dark:text-gray-300">Notes (Optional)</label>
+              <Textarea
+                placeholder="Add any notes..."
+                value={newTask.note}
+                onChange={(e) => setNewTask({...newTask, note: e.target.value})}
+                className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                rows={2}
+              />
+            </div>
+            
+            <div className="flex gap-2">
+              {taskCreationFlow === 'simple' ? (
+                <Button
+                  variant="outline"
+                  onClick={() => setTaskCreationFlow('withGoal')}
+                  className="flex-1 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  <Target className="w-4 h-4 mr-2" />
+                  Link to Goal
+                </Button>
+              ) : (
                 <Button
                   variant="outline"
                   onClick={() => setTaskCreationFlow('simple')}
@@ -4353,16 +4954,16 @@ export default function TimetableBuilderPage() {
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Simple Task
                 </Button>
-                <Button
-                  onClick={() => handleAddTaskToCell('withGoal')}
-                  className="flex-1"
-                  disabled={!newTask.title.trim()}
-                >
-                  {newTask.goalId && newTask.goalId !== 'no-goal' ? 'Add Task with Goal' : 'Add Task'}
-                </Button>
-              </div>
+              )}
+              <Button
+                onClick={handleAddTaskToCell}
+                className="flex-1"
+                disabled={!newTask.title.trim() || !!taskDialogError}
+              >
+                {taskCreationFlow === 'withGoal' && cleanId(newTask.goalId) ? 'Add Task with Goal' : 'Add Task'}
+              </Button>
             </div>
-          )}
+          </div>
           
           <DialogFooter>
             <Button
@@ -4386,7 +4987,7 @@ export default function TimetableBuilderPage() {
           <DialogHeader className="flex-shrink-0">
             <DialogTitle className="dark:text-gray-100">Schedule Goals & Milestones</DialogTitle>
             <DialogDescription className="dark:text-gray-400">
-              Schedule tasks from your goals directly into your timetable
+              Items are placed in the first free 1-hour slot that doesn't clash with fixed commitments, other tasks or sleep
             </DialogDescription>
           </DialogHeader>
           
@@ -4505,22 +5106,16 @@ export default function TimetableBuilderPage() {
                       variant="outline"
                       className="dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
                       onClick={() => {
-                        const task: TimeSlot = {
-                          id: `task-${Date.now()}`,
+                        const added = scheduleItems([{
                           title: goal.title,
                           subject: goal.subject || goal.title,
-                          startTime: '10:00',
-                          endTime: '11:00',
-                          duration: 60,
                           priority: goal.priority,
                           color: goal.color,
-                          day: 'MONDAY',
-                          type: 'task',
-                          goalId: goal.id,
-                          status: 'PENDING'
+                          goalId: goal.id
+                        }])
+                        if (added.length > 0) {
+                          toast.success(`Scheduled "${goal.title}" for ${formatDayLabel(added[0].day)} at ${formatTimeDisplay(added[0].startTime)}`)
                         }
-                        setTasks([...tasks, task])
-                        toast.success(`Scheduled "${goal.title}" for Monday at 10:00 AM`)
                       }}
                     >
                       <Plus className="w-4 h-4 mr-2" />
@@ -4541,35 +5136,29 @@ export default function TimetableBuilderPage() {
               Close
             </Button>
             <Button onClick={() => {
-              const newTasks: TimeSlot[] = []
+              const pending: Array<{ title: string; subject: string; priority: Goal['priority']; color: string; goalId: string; milestoneId?: string }> = []
               goals.forEach(goal => {
                 goal.milestones.forEach(milestone => {
                   if (!milestone.completed && !tasks.some(t => t.milestoneId === milestone.id)) {
-                    const task: TimeSlot = {
-                      id: `task-${Date.now()}`,
+                    pending.push({
                       title: milestone.title,
                       subject: goal.subject || goal.title,
-                      startTime: '10:00',
-                      endTime: '11:00',
-                      duration: 60,
                       priority: goal.priority,
                       color: goal.color,
-                      day: 'MONDAY',
-                      type: 'task',
                       goalId: goal.id,
-                      milestoneId: milestone.id,
-                      status: 'PENDING'
-                    }
-                    newTasks.push(task)
+                      milestoneId: milestone.id
+                    })
                   }
                 })
               })
-              
-              if (newTasks.length > 0) {
-                setTasks([...tasks, ...newTasks])
-                toast.success(`Scheduled ${newTasks.length} milestones for Monday at 10:00 AM`)
-              } else {
+
+              if (pending.length === 0) {
                 toast.info('All milestones are already scheduled or completed!')
+                return
+              }
+              const added = scheduleItems(pending)
+              if (added.length > 0) {
+                toast.success(`Scheduled ${added.length} milestone${added.length > 1 ? 's' : ''} in free slots`)
               }
             }}>
               <Zap className="w-4 h-4 mr-2" />
@@ -4664,7 +5253,7 @@ export default function TimetableBuilderPage() {
               
               <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
                 <p className="text-sm text-yellow-700 dark:text-yellow-400">
-                  Click on a milestone to schedule it. It will be added to your timetable for Monday at 10:00 AM by default.
+                  Click on a milestone to schedule it. It will be placed in the first free slot of your timetable.
                 </p>
               </div>
             </div>
@@ -4809,111 +5398,7 @@ export default function TimetableBuilderPage() {
           </DialogHeader>
           
           <div className="space-y-6 py-4 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-            <div>
-              <label className="text-sm font-medium mb-2 block dark:text-gray-300">Title *</label>
-              <Input
-                placeholder="e.g., College Hours, Office Time, Gym Session"
-                value={newFixedTime.title}
-                onChange={(e) => setNewFixedTime({...newFixedTime, title: e.target.value})}
-                className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-              />
-            </div>
-            
-            <div>
-              <label className="text-sm font-medium mb-2 block dark:text-gray-300">Description (Optional)</label>
-              <Textarea
-                placeholder="Brief description of this commitment"
-                value={newFixedTime.description}
-                onChange={(e) => setNewFixedTime({...newFixedTime, description: e.target.value})}
-                className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                rows={2}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Start Time *</label>
-                <Input
-                  type="time"
-                  value={newFixedTime.startTime}
-                  onChange={(e) => setNewFixedTime({...newFixedTime, startTime: e.target.value})}
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">End Time *</label>
-                <Input
-                  type="time"
-                  value={newFixedTime.endTime}
-                  onChange={(e) => setNewFixedTime({...newFixedTime, endTime: e.target.value})}
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-2 block dark:text-gray-300">Type *</label>
-              <div className="grid grid-cols-3 md:grid-cols-4 gap-2 max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-                {FIXED_TIME_TYPES.filter(t => t.id !== 'SLEEP').map((type) => {
-                  const Icon = type.icon
-                  const isSelected = newFixedTime.type === type.id
-                  return (
-                    <button
-                      key={type.id}
-                      type="button"
-                      onClick={() => setNewFixedTime({...newFixedTime, type: type.id as FixedTime['type'], color: type.color})}
-                      className={cn(
-                        "flex flex-col items-center justify-center p-3 rounded-lg border transition-all",
-                        isSelected 
-                          ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-500" 
-                          : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
-                      )}
-                    >
-                      <div 
-                        className="p-2 rounded-lg mb-2"
-                        style={{ backgroundColor: `${type.color}20` }}
-                      >
-                        <Icon className="w-5 h-5" style={{ color: type.color }} />
-                      </div>
-                      <span className={cn(
-                        "text-xs text-center",
-                        isSelected ? "text-blue-700 dark:text-blue-300" : "text-gray-600 dark:text-gray-400"
-                      )}>
-                        {type.label}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-2 block dark:text-gray-300">Days *</label>
-              <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-                {days.map(day => (
-                  <button
-                    key={day}
-                    type="button"
-                    onClick={() => {
-                      const currentDays = newFixedTime.days
-                      const newDays = currentDays.includes(day)
-                        ? currentDays.filter(d => d !== day)
-                        : [...currentDays, day]
-                      setNewFixedTime({...newFixedTime, days: newDays})
-                    }}
-                    className={cn(
-                      "px-3 py-1.5 rounded-full text-sm font-medium transition-all",
-                      newFixedTime.days.includes(day)
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                    )}
-                  >
-                    {day.charAt(0) + day.slice(1).toLowerCase()}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {renderFixedTimeFields(newFixedTime, (patch) => setNewFixedTime(prev => ({ ...prev, ...patch })))}
 
             <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800/30">
               <div className="flex items-center gap-2 mb-2">
@@ -4935,17 +5420,7 @@ export default function TimetableBuilderPage() {
               variant="outline"
               onClick={() => {
                 setShowAddFixedTimeModal(false)
-                setNewFixedTime({
-                  title: '',
-                  description: '',
-                  days: [],
-                  startTime: '09:00',
-                  endTime: '17:00',
-                  type: 'OTHER',
-                  color: '#6B7280',
-                  isEditable: true,
-                  freePeriods: []
-                })
+                resetNewFixedTime()
               }}
               className="dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
             >
@@ -4970,117 +5445,7 @@ export default function TimetableBuilderPage() {
           
           {editingFixedTime && (
             <div className="space-y-6 py-4 overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Title *</label>
-                <Input
-                  placeholder="e.g., College Hours, Office Time, Gym Session"
-                  value={editingFixedTime.title}
-                  onChange={(e) => setEditingFixedTime({...editingFixedTime, title: e.target.value})}
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Description (Optional)</label>
-                <Textarea
-                  placeholder="Brief description of this commitment"
-                  value={editingFixedTime.description || ''}
-                  onChange={(e) => setEditingFixedTime({...editingFixedTime, description: e.target.value})}
-                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                  rows={2}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block dark:text-gray-300">Start Time *</label>
-                  <Input
-                    type="time"
-                    value={editingFixedTime.startTime}
-                    onChange={(e) => setEditingFixedTime({...editingFixedTime, startTime: e.target.value})}
-                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                  />
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium mb-2 block dark:text-gray-300">End Time *</label>
-                  <Input
-                    type="time"
-                    value={editingFixedTime.endTime}
-                    onChange={(e) => setEditingFixedTime({...editingFixedTime, endTime: e.target.value})}
-                    className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Type *</label>
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-2 max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-                  {FIXED_TIME_TYPES.filter(t => t.id !== 'SLEEP').map((type) => {
-                    const Icon = type.icon
-                    const isSelected = editingFixedTime.type === type.id
-                    return (
-                      <button
-                        key={type.id}
-                        type="button"
-                        onClick={() => {
-                          setEditingFixedTime({
-                            ...editingFixedTime,
-                            type: type.id as FixedTime['type'],
-                            color: type.color
-                          })
-                        }}
-                        className={cn(
-                          "flex flex-col items-center justify-center p-3 rounded-lg border transition-all",
-                          isSelected 
-                            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-500" 
-                            : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
-                        )}
-                      >
-                        <div 
-                          className="p-2 rounded-lg mb-2"
-                          style={{ backgroundColor: `${type.color}20` }}
-                        >
-                          <Icon className="w-5 h-5" style={{ color: type.color }} />
-                        </div>
-                        <span className={cn(
-                          "text-xs text-center",
-                          isSelected ? "text-blue-700 dark:text-blue-300" : "text-gray-600 dark:text-gray-400"
-                        )}>
-                          {type.label}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block dark:text-gray-300">Days *</label>
-                <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-                  {days.map(day => (
-                    <button
-                      key={day}
-                      type="button"
-                      onClick={() => {
-                        const currentDays = editingFixedTime.days
-                        const newDays = currentDays.includes(day)
-                          ? currentDays.filter(d => d !== day)
-                          : [...currentDays, day]
-                        setEditingFixedTime({...editingFixedTime, days: newDays})
-                      }}
-                      className={cn(
-                        "px-3 py-1.5 rounded-full text-sm font-medium transition-all",
-                        editingFixedTime.days.includes(day)
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                      )}
-                    >
-                      {day.charAt(0) + day.slice(1).toLowerCase()}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {renderFixedTimeFields(editingFixedTime, (patch) => setEditingFixedTime(prev => (prev ? { ...prev, ...patch } : prev)))}
 
               <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800/30">
                 <div className="flex items-center gap-2 mb-2">
@@ -5090,6 +5455,7 @@ export default function TimetableBuilderPage() {
                 <p className="text-sm text-yellow-600 dark:text-yellow-400">
                   You can edit fixed commitment details here. To add/remove free periods, 
                   use the "Add Free Period" button in the commitment details view.
+                  Changes that would clash with existing tasks are blocked until you move those tasks.
                 </p>
               </div>
             </div>
@@ -5157,7 +5523,7 @@ export default function TimetableBuilderPage() {
                 <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
                   {selectedFixedTimeForFreePeriod?.days.map(day => (
                     <SelectItem key={day} value={day} className="dark:text-gray-300 dark:hover:bg-gray-700">
-                      {day.charAt(0) + day.slice(1).toLowerCase()}
+                      {formatDayLabel(day)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -5195,8 +5561,8 @@ export default function TimetableBuilderPage() {
                 <span className="font-medium text-green-700 dark:text-green-400">Free Period Information</span>
               </div>
               <p className="text-sm text-green-600 dark:text-green-400">
-                This free period will only apply to {newFreePeriod.day.charAt(0) + newFreePeriod.day.slice(1).toLowerCase()}. 
-                You can add different free periods for different days within the same fixed commitment.
+                This free period will only apply to {formatDayLabel(newFreePeriod.day)}. 
+                It must be inside the fixed commitment's time. You can add different free periods for different days.
               </p>
             </div>
           </div>
@@ -5213,13 +5579,13 @@ export default function TimetableBuilderPage() {
               Cancel
             </Button>
             <Button onClick={handleAddFreePeriod}>
-              Add Free Period for {newFreePeriod.day.charAt(0) + newFreePeriod.day.slice(1).toLowerCase()}
+              Add Free Period for {formatDayLabel(newFreePeriod.day)}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Quick Add Free Period Modal - opens directly when clicking a Fixed Commitment cell,
+      {/* Quick Add Free Period Modal - opens when clicking a Fixed Commitment cell,
           pre-filled with the exact day + time slot that was clicked */}
       <Dialog open={showQuickFreePeriodModal} onOpenChange={(open) => {
         setShowQuickFreePeriodModal(open)
@@ -5242,7 +5608,7 @@ export default function TimetableBuilderPage() {
             <div className="space-y-4 py-4">
               <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Day:</span> {quickFreePeriodContext.day.charAt(0) + quickFreePeriodContext.day.slice(1).toLowerCase()}
+                  <span className="font-medium">Day:</span> {formatDayLabel(quickFreePeriodContext.day)}
                 </p>
                 <p className="text-sm text-gray-700 dark:text-gray-300">
                   <span className="font-medium">Clicked Time:</span> {formatTimeDisplay(quickFreePeriodContext.time)}
@@ -5284,7 +5650,7 @@ export default function TimetableBuilderPage() {
               </div>
 
               <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800/30 text-sm text-green-700 dark:text-green-400">
-                After adding, you'll be able to immediately add a task into this free period — for {quickFreePeriodContext.day.charAt(0) + quickFreePeriodContext.day.slice(1).toLowerCase()}.
+                After adding, you'll be able to immediately add a task into this free period — for {formatDayLabel(quickFreePeriodContext.day)}.
               </div>
             </div>
           )}
@@ -5293,7 +5659,6 @@ export default function TimetableBuilderPage() {
             <Button
               variant="outline"
               onClick={() => {
-                // Fall back to the full details view if the user wants more control
                 if (quickFreePeriodContext) {
                   setSelectedFixedTime(quickFreePeriodContext.fixedTime)
                 }
@@ -5442,7 +5807,7 @@ export default function TimetableBuilderPage() {
                   <div>
                     <div className="font-medium dark:text-gray-300">Show Sleep Blocks</div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                      Display sleep schedule in timetable
+                      Display sleep schedule in timetable (tasks can still be added during sleep)
                     </div>
                   </div>
                   <Switch
@@ -5450,22 +5815,6 @@ export default function TimetableBuilderPage() {
                     onCheckedChange={(checked) => setTimeSettings({
                       ...timeSettings,
                       showSleepBlocks: checked
-                    })}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium dark:text-gray-300">Auto-Lock Sleep Hours</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      Prevent scheduling tasks during sleep time
-                    </div>
-                  </div>
-                  <Switch
-                    checked={timeSettings.autoLockSleep}
-                    onCheckedChange={(checked) => setTimeSettings({
-                      ...timeSettings,
-                      autoLockSleep: checked
                     })}
                   />
                 </div>
@@ -5530,8 +5879,14 @@ export default function TimetableBuilderPage() {
       </Dialog>
 
       {/* Add/Edit Task Modal */}
-      <Dialog open={showAddTaskModal} onOpenChange={setShowAddTaskModal}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800">
+      <Dialog open={showAddTaskModal} onOpenChange={(open) => {
+        setShowAddTaskModal(open)
+        if (!open) {
+          setEditingTask(null)
+          resetTaskForm()
+        }
+      }}>
+        <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="dark:text-gray-100">
               {editingTask ? 'Edit Task' : 'Add New Task'}
@@ -5542,6 +5897,13 @@ export default function TimetableBuilderPage() {
           </DialogHeader>
           
           <div className="space-y-4 py-4">
+            {editTaskError && (
+              <div className="p-3 rounded-lg border border-red-200 dark:border-red-800/40 bg-red-50 dark:bg-red-900/20 text-sm text-red-700 dark:text-red-300 flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <span>{editTaskError}</span>
+              </div>
+            )}
+
             <div>
               <label className="text-sm font-medium mb-2 block dark:text-gray-300">Task Title *</label>
               <Input
@@ -5573,9 +5935,9 @@ export default function TimetableBuilderPage() {
                     <SelectValue placeholder="Select day" />
                   </SelectTrigger>
                   <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
-                    {days.map(day => (
+                    {ALL_DAYS.map(day => (
                       <SelectItem key={day} value={day} className="dark:text-gray-300 dark:hover:bg-gray-700">
-                        {day.charAt(0) + day.slice(1).toLowerCase()}
+                        {formatDayLabel(day)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -5609,6 +5971,11 @@ export default function TimetableBuilderPage() {
                     <SelectItem value="90" className="dark:text-gray-300 dark:hover:bg-gray-700">1.5 hours</SelectItem>
                     <SelectItem value="120" className="dark:text-gray-300 dark:hover:bg-gray-700">2 hours</SelectItem>
                     <SelectItem value="180" className="dark:text-gray-300 dark:hover:bg-gray-700">3 hours</SelectItem>
+                    {![30, 60, 90, 120, 180].includes(newTask.duration) && (
+                      <SelectItem value={newTask.duration.toString()} className="dark:text-gray-300 dark:hover:bg-gray-700">
+                        {newTask.duration} minutes
+                      </SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -5656,36 +6023,10 @@ export default function TimetableBuilderPage() {
             >
               Cancel
             </Button>
-            <Button onClick={() => {
-              if (editingTask) {
-                // Copy fields explicitly instead of spreading `newTask`:
-                // newTask.type is the UPPERCASE API form ('STUDY') while
-                // TimeSlot.type is lowercase ('study'), so spreading it made
-                // the result not assignable to TimeSlot. The task's own type
-                // and category are preserved here.
-                const updatedTask: TimeSlot = {
-                  ...editingTask,
-                  title: newTask.title,
-                  subject: newTask.subject,
-                  note: newTask.note,
-                  duration: newTask.duration,
-                  priority: newTask.priority,
-                  color: newTask.color,
-                  day: newTask.day,
-                  startTime: newTask.startTime,
-                  goalId: newTask.goalId || undefined,
-                  milestoneId: newTask.milestoneId || undefined,
-                  endTime: calculateEndTime(newTask.startTime, newTask.duration)
-                }
-                setTasks(tasks.map(t => t.id === editingTask.id ? updatedTask : t))
-                setEditingTask(null)
-                setShowAddTaskModal(false)
-                resetTaskForm()
-                toast.success('Task updated')
-              } else {
-                handleAddTask()
-              }
-            }}>
+            <Button
+              onClick={editingTask ? handleUpdateTask : handleAddTask}
+              disabled={!!editTaskError}
+            >
               {editingTask ? 'Update Task' : 'Add Task'}
             </Button>
           </DialogFooter>
@@ -5695,7 +6036,7 @@ export default function TimetableBuilderPage() {
       {/* Fixed Commitment Details Modal */}
       {selectedFixedTime && (
         <Dialog open={!!selectedFixedTime} onOpenChange={() => setSelectedFixedTime(null)}>
-          <DialogContent className="sm:max-w-lg bg-white dark:bg-gray-800">
+          <DialogContent className="sm:max-w-lg bg-white dark:bg-gray-800 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="dark:text-gray-100">Fixed Commitment Details</DialogTitle>
               <DialogDescription className="dark:text-gray-400">
@@ -5714,7 +6055,7 @@ export default function TimetableBuilderPage() {
                 <div className="flex-1">
                   <h3 className="font-medium text-lg dark:text-gray-200">{selectedFixedTime.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {selectedFixedTime.days.map(d => d.charAt(0) + d.slice(1).toLowerCase()).join(', ')} • {formatTimeDisplay(selectedFixedTime.startTime)} - {formatTimeDisplay(selectedFixedTime.endTime)}
+                    {selectedFixedTime.days.map(d => formatDayLabel(d)).join(', ')} • {formatTimeDisplay(selectedFixedTime.startTime)} - {formatTimeDisplay(selectedFixedTime.endTime)}
                   </p>
                   <Badge 
                     className="mt-2"
@@ -5770,13 +6111,13 @@ export default function TimetableBuilderPage() {
                         <div key={day} className="space-y-2">
                           <div className="flex items-center justify-between">
                             <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                              {day.charAt(0) + day.slice(1).toLowerCase()}
+                              {formatDayLabel(day)}
                             </h5>
                             <Badge variant="outline" className="text-xs dark:border-gray-600 dark:text-gray-400">
                               {dayFreePeriods.length} period{dayFreePeriods.length > 1 ? 's' : ''}
                             </Badge>
                           </div>
-                          {dayFreePeriods.map((fp, index) => (
+                          {dayFreePeriods.map((fp) => (
                             <div key={fp.id} className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800/30">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
@@ -5792,6 +6133,7 @@ export default function TimetableBuilderPage() {
                                     })
                                   }}
                                   className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
+                                  title="Remove free period"
                                 >
                                   <X className="w-3 h-3 text-red-500 dark:text-red-400" />
                                 </button>
@@ -5826,7 +6168,7 @@ export default function TimetableBuilderPage() {
                             <div>
                               <div className="font-medium text-sm dark:text-gray-200">{task.title}</div>
                               <div className="text-xs text-gray-600 dark:text-gray-400">
-                                {task.day.charAt(0) + task.day.slice(1).toLowerCase()} • {formatTimeDisplay(task.startTime)} - {formatTimeDisplay(task.endTime)}
+                                {formatDayLabel(task.day)} • {formatTimeDisplay(task.startTime)} - {formatTimeDisplay(task.endTime)}
                               </div>
                             </div>
                             <Badge 

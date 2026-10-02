@@ -9,6 +9,7 @@ import { HeatmapSection } from '@/components/shared/heatmap.section'
 import { Testimonials } from '@/components/shared/testimonial'
 import { CTASection } from '@/components/shared/cta.section'
 import { useEffect } from 'react'
+import { DsaToolSection } from '@/components/shared/dsa-tool.section'
 
 export default function Home() {
     useEffect(() => {
@@ -30,6 +31,7 @@ export default function Home() {
       {/* <Header /> */}
       <HeroSection />
       <FeaturesSection />
+      <DsaToolSection />
       <HowItWorks />
       <HeatmapSection />
       <Testimonials />

@@ -14,6 +14,8 @@ import {
   LayoutDashboard,
   ChevronDown,
   Loader2,
+  ExternalLink,        // 🔥 NEW
+  Sparkles,            // 🔥 NEW
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,6 +29,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { AuthService, type User } from '@/hooks/useAuth'
+
+/* ============================================================================
+   CONSTANTS
+   ============================================================================ */
+
+const DSA_TOOL_URL = 'https://dsa-revision.in/'   // 🔥 NEW
 
 /* ============================================================================
    HELPERS
@@ -74,10 +82,6 @@ export function Header() {
       try {
         const token = AuthService.getAccessToken()
 
-        // 🔥 No token → user is definitely logged out.
-        //    Don't fall back to cached user (which could be stale).
-        //    Don't redirect either — Header is rendered on public
-        //    pages too.
         if (!token) {
           if (!cancelled) setUser(null)
           return
@@ -154,7 +158,7 @@ export function Header() {
           </Link>
 
           {/* ============================== NAVIGATION ============================== */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -164,6 +168,21 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+
+            {/* 🔥 NEW: DSA Tool external link */}
+            <a
+              href={DSA_TOOL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10 hover:from-primary/20 hover:to-accent/20 border border-primary/20 hover:border-primary/40 text-foreground transition-all"
+              title="Free DSA Revision Tool"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-accent" />
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                DSA Tool
+              </span>
+              <ExternalLink className="w-3 h-3 text-muted-foreground group-hover:text-primary transition-colors" />
+            </a>
           </nav>
 
           {/* ============================== RIGHT SIDE ============================== */}
@@ -172,9 +191,6 @@ export function Header() {
             {userLoading ? (
               <div className="w-20 h-9 rounded-lg bg-muted animate-pulse" />
             ) : user ? (
-              // ==============================
-              // LOGGED IN → Profile Dropdown
-              // ==============================
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
@@ -204,11 +220,7 @@ export function Header() {
                   </button>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent
-                  align="end"
-                  className="w-64 p-2"
-                  sideOffset={8}
-                >
+                <DropdownMenuContent align="end" className="w-64 p-2" sideOffset={8}>
                   {/* ---- User info header ---- */}
                   <div className="flex items-center gap-3 px-3 py-3 mb-1 rounded-lg bg-muted/50">
                     <Avatar className="h-10 w-10 border-2 border-primary/20 flex-shrink-0">
@@ -271,6 +283,22 @@ export function Header() {
 
                   <DropdownMenuSeparator />
 
+                  {/* 🔥 NEW: DSA Tool link in dropdown (mobile users ke liye) */}
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <a
+                      href={DSA_TOOL_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 py-2.5"
+                    >
+                      <Sparkles className="w-4 h-4 text-accent" />
+                      <span className="flex-1">DSA Revision Tool</span>
+                      <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                    </a>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator />
+
                   {/* ---- Logout ---- */}
                   <DropdownMenuItem
                     onClick={(e) => {
@@ -295,9 +323,6 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              // ==============================
-              // LOGGED OUT → Sign In button
-              // ==============================
               <Link href="/auth/login">
                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-4 sm:px-6 py-2">
                   Sign In
@@ -325,4 +350,3 @@ export function Header() {
     </header>
   )
 }
-

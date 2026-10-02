@@ -61,6 +61,19 @@ import {
   Copy,
   Check,
   MessageCircle,
+  Eye,
+  EyeOff,
+  Lock,
+  Crown,
+  Clock,
+  Filter,
+  ChevronRight,
+  Search,
+  UserPlus,
+  UserCheck,
+  UserX,
+  Send,
+  MoreHorizontal,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -200,6 +213,44 @@ interface Achievement {
   rarity: AchievementRarity
 }
 
+/* 🔥 Profile Viewer types */
+interface ProfileViewer {
+  id: string
+  name: string
+  userName: string
+  headline: string
+  company?: string
+  location?: string
+  avatarUrl?: string
+  viewedAt: string // ISO string
+  viewCount: number
+  isConnection: boolean
+  isVerified: boolean
+}
+
+type ViewerFilter = 'ALL' | 'TODAY' | 'WEEK' | 'MONTH'
+
+/* 🔥 NEW: Connection types */
+type ConnectionStatus = 'CONNECTED' | 'PENDING_INCOMING' | 'PENDING_OUTGOING'
+
+interface ConnectionUser {
+  id: string
+  name: string
+  userName: string
+  headline: string
+  company?: string
+  location?: string
+  avatarUrl?: string
+  isVerified: boolean
+  mutualConnections: number
+  connectedAt: string // ISO — for CONNECTED
+  requestedAt: string // ISO — for PENDING_*
+  status: ConnectionStatus
+  message?: string // Optional note with request
+}
+
+type ConnectionsTab = 'CONNECTED' | 'REQUESTS' | 'SENT'
+
 /* ============================================================================
    CONSTANTS
    ============================================================================ */
@@ -229,10 +280,116 @@ const INITIAL_ACHIEVEMENTS: Achievement[] = [
   { id: 8, title: 'Century Club', description: 'Logged 100+ hours of study', icon: Medal, unlocked: true, category: 'productivity', rarity: 'epic' },
 ]
 
-const CONNECTIONS_COUNT = 248
-const PENDING_REQUESTS = 5
 const CONNECTION_PREVIEWS = ['Riya Sharma', 'Karan Mehta', 'Ananya Gupta', 'Dev Patel']
 const CONSISTENCY_SCORE = 87
+
+/* 🔥 Profile views constants */
+const TOTAL_PROFILE_VIEWS = 1284
+const WEEKLY_PROFILE_VIEWS = 96
+const VIEWS_GROWTH_PERCENT = 23
+const FREE_VIEWER_LIMIT = 5
+
+const VIEWER_NAMES = [
+  'Aarav Kapoor', 'Ishita Nair', 'Rohan Deshmukh', 'Sanya Verma', 'Vikram Reddy',
+  'Priya Iyer', 'Arjun Singh', 'Meera Joshi', 'Kabir Khanna', 'Tara Bhatt',
+  'Aditya Rao', 'Nisha Pillai', 'Siddharth Menon', 'Ananya Bose', 'Rahul Tiwari',
+  'Diya Chatterjee', 'Karan Malhotra', 'Pooja Shetty', 'Varun Gupta', 'Neha Saxena',
+]
+
+const VIEWER_HEADLINES = [
+  'Full-Stack Developer @ Razorpay',
+  'SDE Intern @ Google',
+  'Frontend Engineer @ Flipkart',
+  'MCA Student @ Amity University',
+  'Product Engineer @ Zoho',
+  'Data Analyst @ Swiggy',
+  'Backend Developer @ CRED',
+  'UI/UX Designer @ Freshworks',
+  'DevOps Engineer @ Atlassian',
+  'Final Year CSE @ IIT Delhi',
+  'Software Engineer @ Microsoft',
+  'Growth Engineer @ Notion',
+  'React Developer @ Paytm',
+  'ML Engineer @ Fractal',
+  'SDE-1 @ Amazon',
+  'Engineering Student @ BITS',
+  'Freelance Developer',
+  'Tech Lead @ Postman',
+  'Founder @ Stealth Startup',
+  'Campus Ambassador @ GitHub',
+]
+
+const VIEWER_COMPANIES = [
+  'Razorpay', 'Google', 'Flipkart', 'Amity University', 'Zoho',
+  'Swiggy', 'CRED', 'Freshworks', 'Atlassian', 'IIT Delhi',
+  'Microsoft', 'Notion', 'Paytm', 'Fractal', 'Amazon',
+  'BITS Pilani', 'Freelance', 'Postman', 'Stealth', 'GitHub',
+]
+
+const VIEWER_LOCATIONS = [
+  'Bengaluru, India', 'Hyderabad, India', 'Mumbai, India', 'Delhi, India',
+  'Pune, India', 'Chennai, India', 'Gurgaon, India', 'Noida, India',
+  'Kolkata, India', 'Remote', 'Singapore', 'San Francisco, USA',
+]
+
+/* 🔥 NEW: Connection mock data pools */
+const CONNECTION_NAMES = [
+  // Connected (accepted)
+  'Riya Sharma', 'Karan Mehta', 'Ananya Gupta', 'Dev Patel', 'Sneha Kulkarni',
+  'Rohit Bansal', 'Aisha Khan', 'Manish Chauhan', 'Divya Menon', 'Nikhil Jain',
+  'Shreya Reddy', 'Aman Verma', 'Pallavi Nair', 'Yash Thakur', 'Ritika Bose',
+  'Harsh Vardhan', 'Tanvi Desai', 'Kunal Shah', 'Ira Malhotra', 'Samar Ali',
+  'Naina Kapoor', 'Rajat Khanna', 'Prerna Joshi', 'Vivek Rana', 'Aditi Saxena',
+  'Saurabh Pillai', 'Kirti Rao', 'Dhruv Bhatt', 'Megha Iyer', 'Arnav Sinha',
+  // Incoming requests
+  'Farhan Sheikh', 'Ishani Roy', 'Kartik Nambiar', 'Lavanya Krishnan', 'Mohit Arora',
+  // Outgoing requests (pending)
+  'Nandini Chawla', 'Ojas Trivedi', 'Priti Ganguly', 'Rehan Qureshi', 'Sonal Bhatia',
+]
+
+const CONNECTION_HEADLINES = [
+  'Full-Stack Developer @ Razorpay',
+  'SDE Intern @ Google',
+  'Frontend Engineer @ Flipkart',
+  'MCA Student @ Amity University',
+  'Product Engineer @ Zoho',
+  'Data Analyst @ Swiggy',
+  'Backend Developer @ CRED',
+  'UI/UX Designer @ Freshworks',
+  'DevOps Engineer @ Atlassian',
+  'Final Year CSE @ IIT Delhi',
+  'Software Engineer @ Microsoft',
+  'Growth Engineer @ Notion',
+  'React Developer @ Paytm',
+  'ML Engineer @ Fractal',
+  'SDE-1 @ Amazon',
+  'Engineering Student @ BITS',
+  'Freelance Developer',
+  'Tech Lead @ Postman',
+  'Founder @ Stealth Startup',
+  'Campus Ambassador @ GitHub',
+]
+
+const CONNECTION_COMPANIES = [
+  'Razorpay', 'Google', 'Flipkart', 'Amity University', 'Zoho',
+  'Swiggy', 'CRED', 'Freshworks', 'Atlassian', 'IIT Delhi',
+  'Microsoft', 'Notion', 'Paytm', 'Fractal', 'Amazon',
+  'BITS Pilani', 'Freelance', 'Postman', 'Stealth', 'GitHub',
+]
+
+const CONNECTION_LOCATIONS = [
+  'Bengaluru, India', 'Hyderabad, India', 'Mumbai, India', 'Delhi, India',
+  'Pune, India', 'Chennai, India', 'Gurgaon, India', 'Noida, India',
+  'Kolkata, India', 'Remote', 'Singapore', 'San Francisco, USA',
+]
+
+const REQUEST_MESSAGES = [
+  'Hi! Would love to connect and learn from your journey.',
+  'Saw your DSA progress — inspiring! Let\'s connect.',
+  'We\'re in the same field. Would be great to stay in touch.',
+  'Hey! Loved your recent post. Let\'s connect.',
+  'Fellow developer here — would love to connect!',
+]
 
 /* ============================================================================
    STYLE / ICON MAPS
@@ -383,6 +540,127 @@ const EMPTY_EXPERIENCE_FORM = {
   companyLogo: '',
 }
 
+/* 🔥 Generate deterministic mock profile viewers */
+const generateProfileViewers = (): ProfileViewer[] => {
+  const now = Date.now()
+  const viewers: ProfileViewer[] = []
+
+  const timeOffsets = [
+    2 * 60 * 1000,
+    18 * 60 * 1000,
+    47 * 60 * 1000,
+    2 * 60 * 60 * 1000,
+    5 * 60 * 60 * 1000,
+    9 * 60 * 60 * 1000,
+    22 * 60 * 60 * 1000,
+    1.5 * 24 * 60 * 60 * 1000,
+    3 * 24 * 60 * 60 * 1000,
+    5 * 24 * 60 * 60 * 1000,
+    8 * 24 * 60 * 60 * 1000,
+    12 * 24 * 60 * 60 * 1000,
+    18 * 24 * 60 * 60 * 1000,
+    24 * 24 * 60 * 60 * 1000,
+    35 * 24 * 60 * 60 * 1000,
+    48 * 24 * 60 * 60 * 1000,
+    62 * 24 * 60 * 60 * 1000,
+    80 * 24 * 60 * 60 * 1000,
+    95 * 24 * 60 * 60 * 1000,
+    110 * 24 * 60 * 60 * 1000,
+  ]
+
+  for (let i = 0; i < VIEWER_NAMES.length; i++) {
+    const name = VIEWER_NAMES[i]
+    const userName = name.toLowerCase().replace(/\s+/g, '_')
+    viewers.push({
+      id: `viewer-${i + 1}`,
+      name,
+      userName,
+      headline: VIEWER_HEADLINES[i % VIEWER_HEADLINES.length],
+      company: VIEWER_COMPANIES[i % VIEWER_COMPANIES.length],
+      location: VIEWER_LOCATIONS[i % VIEWER_LOCATIONS.length],
+      avatarUrl: undefined,
+      viewedAt: new Date(now - timeOffsets[i]).toISOString(),
+      viewCount: 1 + ((i * 3) % 5),
+      isConnection: i % 3 === 0,
+      isVerified: i % 4 === 0,
+    })
+  }
+
+  return viewers.sort(
+    (a, b) => new Date(b.viewedAt).getTime() - new Date(a.viewedAt).getTime()
+  )
+}
+
+/* 🔥 NEW: Generate deterministic mock connections */
+const generateConnections = (): ConnectionUser[] => {
+  const now = Date.now()
+  const DAY = 24 * 60 * 60 * 1000
+  const connections: ConnectionUser[] = []
+
+  // First 30 = CONNECTED
+  for (let i = 0; i < 30; i++) {
+    const name = CONNECTION_NAMES[i]
+    const userName = name.toLowerCase().replace(/\s+/g, '_')
+    connections.push({
+      id: `conn-${i + 1}`,
+      name,
+      userName,
+      headline: CONNECTION_HEADLINES[i % CONNECTION_HEADLINES.length],
+      company: CONNECTION_COMPANIES[i % CONNECTION_COMPANIES.length],
+      location: CONNECTION_LOCATIONS[i % CONNECTION_LOCATIONS.length],
+      avatarUrl: undefined,
+      isVerified: i % 4 === 0,
+      mutualConnections: 3 + ((i * 7) % 42),
+      connectedAt: new Date(now - (5 + i * 3) * DAY).toISOString(),
+      requestedAt: new Date(now - (5 + i * 3) * DAY).toISOString(),
+      status: 'CONNECTED',
+    })
+  }
+
+  // Next 5 = INCOMING REQUESTS
+  for (let i = 30; i < 35; i++) {
+    const name = CONNECTION_NAMES[i]
+    const userName = name.toLowerCase().replace(/\s+/g, '_')
+    connections.push({
+      id: `conn-${i + 1}`,
+      name,
+      userName,
+      headline: CONNECTION_HEADLINES[i % CONNECTION_HEADLINES.length],
+      company: CONNECTION_COMPANIES[i % CONNECTION_COMPANIES.length],
+      location: CONNECTION_LOCATIONS[i % CONNECTION_LOCATIONS.length],
+      avatarUrl: undefined,
+      isVerified: i % 4 === 0,
+      mutualConnections: 2 + ((i * 5) % 18),
+      connectedAt: new Date(now - (i - 29) * DAY * 0.3).toISOString(),
+      requestedAt: new Date(now - (i - 29) * DAY * 0.5).toISOString(),
+      status: 'PENDING_INCOMING',
+      message: REQUEST_MESSAGES[i % REQUEST_MESSAGES.length],
+    })
+  }
+
+  // Last 5 = OUTGOING REQUESTS
+  for (let i = 35; i < 40; i++) {
+    const name = CONNECTION_NAMES[i]
+    const userName = name.toLowerCase().replace(/\s+/g, '_')
+    connections.push({
+      id: `conn-${i + 1}`,
+      name,
+      userName,
+      headline: CONNECTION_HEADLINES[i % CONNECTION_HEADLINES.length],
+      company: CONNECTION_COMPANIES[i % CONNECTION_COMPANIES.length],
+      location: CONNECTION_LOCATIONS[i % CONNECTION_LOCATIONS.length],
+      avatarUrl: undefined,
+      isVerified: i % 4 === 0,
+      mutualConnections: 1 + ((i * 3) % 12),
+      connectedAt: new Date(now - (i - 34) * DAY).toISOString(),
+      requestedAt: new Date(now - (i - 34) * DAY).toISOString(),
+      status: 'PENDING_OUTGOING',
+    })
+  }
+
+  return connections
+}
+
 /* ============================================================================
    COMPONENT
    ============================================================================ */
@@ -435,6 +713,18 @@ export default function ProfileClient() {
   // 🔥 Share state
   const [copiedProfileLink, setCopiedProfileLink] = useState(false)
 
+  /* 🔥 Profile Views state */
+  const [profileViewers] = useState<ProfileViewer[]>(() => generateProfileViewers())
+  const [showViewersModal, setShowViewersModal] = useState(false)
+  const [viewerFilter, setViewerFilter] = useState<ViewerFilter>('ALL')
+  const [viewersPrivateMode, setViewersPrivateMode] = useState(false)
+
+  /* 🔥 NEW: Connections state */
+  const [connections, setConnections] = useState<ConnectionUser[]>(() => generateConnections())
+  const [showConnectionsModal, setShowConnectionsModal] = useState(false)
+  const [connectionsTab, setConnectionsTab] = useState<ConnectionsTab>('CONNECTED')
+  const [connectionsSearch, setConnectionsSearch] = useState('')
+
   /* ================================================================
      🔥 VERIFICATION HOOK
   */
@@ -458,9 +748,93 @@ export default function ProfileClient() {
     [subjectStreaks]
   )
 
+  /* 🔥 Filtered viewers based on selected filter */
+  const filteredViewers = useMemo(() => {
+    const now = Date.now()
+    const DAY = 24 * 60 * 60 * 1000
+
+    return profileViewers.filter((v) => {
+      const age = now - new Date(v.viewedAt).getTime()
+      switch (viewerFilter) {
+        case 'TODAY':
+          return age <= DAY
+        case 'WEEK':
+          return age <= 7 * DAY
+        case 'MONTH':
+          return age <= 30 * DAY
+        case 'ALL':
+        default:
+          return true
+      }
+    })
+  }, [profileViewers, viewerFilter])
+
+  const visibleViewers = useMemo(() => {
+    if (viewersPrivateMode) return filteredViewers.slice(0, FREE_VIEWER_LIMIT)
+    return filteredViewers
+  }, [filteredViewers, viewersPrivateMode])
+
+  const viewerStats = useMemo(() => {
+    const now = Date.now()
+    const DAY = 24 * 60 * 60 * 1000
+    const today = profileViewers.filter(
+      (v) => now - new Date(v.viewedAt).getTime() <= DAY
+    ).length
+    const week = profileViewers.filter(
+      (v) => now - new Date(v.viewedAt).getTime() <= 7 * DAY
+    ).length
+    const month = profileViewers.filter(
+      (v) => now - new Date(v.viewedAt).getTime() <= 30 * DAY
+    ).length
+    return { today, week, month, total: profileViewers.length }
+  }, [profileViewers])
+
+  /* 🔥 NEW: Connection derived data */
+  const connectedUsers = useMemo(
+    () => connections.filter((c) => c.status === 'CONNECTED'),
+    [connections]
+  )
+  const incomingRequests = useMemo(
+    () => connections.filter((c) => c.status === 'PENDING_INCOMING'),
+    [connections]
+  )
+  const outgoingRequests = useMemo(
+    () => connections.filter((c) => c.status === 'PENDING_OUTGOING'),
+    [connections]
+  )
+
+  const connectionStats = useMemo(
+    () => ({
+      connected: connectedUsers.length,
+      incoming: incomingRequests.length,
+      outgoing: outgoingRequests.length,
+    }),
+    [connectedUsers, incomingRequests, outgoingRequests]
+  )
+
+  const filteredConnectionList = useMemo(() => {
+    const source =
+      connectionsTab === 'CONNECTED'
+        ? connectedUsers
+        : connectionsTab === 'REQUESTS'
+          ? incomingRequests
+          : outgoingRequests
+
+    const q = connectionsSearch.trim().toLowerCase()
+    if (!q) return source
+
+    return source.filter((c) => {
+      return (
+        c.name.toLowerCase().includes(q) ||
+        c.headline.toLowerCase().includes(q) ||
+        (c.company ?? '').toLowerCase().includes(q) ||
+        (c.location ?? '').toLowerCase().includes(q)
+      )
+    })
+  }, [connectionsTab, connectedUsers, incomingRequests, outgoingRequests, connectionsSearch])
+
   /* ================================================================
      🔥 PUBLIC PROFILE URL
-     Computed once from username; only valid when username is set.
   */
   const publicProfileUrl = useMemo(() => {
     if (!profile?.userName) return ''
@@ -1313,6 +1687,108 @@ export default function ProfileClient() {
     }
   }
 
+  /* 🔥 Profile viewers helpers */
+  const handleOpenViewersModal = (filter: ViewerFilter = 'ALL') => {
+    setViewerFilter(filter)
+    setShowViewersModal(true)
+  }
+
+  const handleToggleViewersPrivacy = () => {
+    const next = !viewersPrivateMode
+    setViewersPrivateMode(next)
+    toast.success(
+      next
+        ? 'Private view mode enabled'
+        : 'Full viewer list visible',
+      {
+        description: next
+          ? `Only showing the most recent ${FREE_VIEWER_LIMIT} viewers.`
+          : 'Showing all profile viewers.',
+      }
+    )
+  }
+
+  /* 🔥 NEW: Connections helpers */
+  const handleOpenConnectionsModal = (tab: ConnectionsTab = 'CONNECTED') => {
+    setConnectionsTab(tab)
+    setConnectionsSearch('')
+    setShowConnectionsModal(true)
+  }
+
+  const handleAcceptConnection = (id: string) => {
+    let acceptedName = ''
+    setConnections((prev) =>
+      prev.map((c) => {
+        if (c.id !== id) return c
+        acceptedName = c.name
+        return {
+          ...c,
+          status: 'CONNECTED',
+          connectedAt: new Date().toISOString(),
+        }
+      })
+    )
+    if (acceptedName) {
+      toast.success(`You're now connected with ${acceptedName}`, {
+        description: 'You can now message each other.',
+      })
+    }
+  }
+
+  const handleDeclineConnection = (id: string) => {
+    let declinedName = ''
+    setConnections((prev) =>
+      prev.filter((c) => {
+        if (c.id === id) {
+          declinedName = c.name
+          return false
+        }
+        return true
+      })
+    )
+    if (declinedName) {
+      toast.info(`Request from ${declinedName} declined`)
+    }
+  }
+
+  const handleWithdrawRequest = (id: string) => {
+    let withdrawnName = ''
+    setConnections((prev) =>
+      prev.filter((c) => {
+        if (c.id === id) {
+          withdrawnName = c.name
+          return false
+        }
+        return true
+      })
+    )
+    if (withdrawnName) {
+      toast.success(`Request to ${withdrawnName} withdrawn`)
+    }
+  }
+
+  const handleRemoveConnection = (id: string) => {
+    let removedName = ''
+    setConnections((prev) =>
+      prev.filter((c) => {
+        if (c.id === id) {
+          removedName = c.name
+          return false
+        }
+        return true
+      })
+    )
+    if (removedName) {
+      toast.info(`Removed connection with ${removedName}`)
+    }
+  }
+
+  const handleMessageConnection = (name: string) => {
+    toast.success(`Opening chat with ${name}`, {
+      description: 'Messaging will be available in the full release.',
+    })
+  }
+
   /* ============================================================
      RENDER
      ============================================================ */
@@ -1577,7 +2053,6 @@ export default function ProfileClient() {
                             align="end"
                             className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 w-52"
                           >
-                            {/* 🔥 Settings — proper App Router Link */}
                             <DropdownMenuItem asChild>
                               <Link
                                 href="/dashboard/settings"
@@ -1588,7 +2063,6 @@ export default function ProfileClient() {
                               </Link>
                             </DropdownMenuItem>
 
-                            {/* 🔥 View public profile */}
                             {profile.userName && (
                               <DropdownMenuItem asChild>
                                 <Link
@@ -1665,15 +2139,21 @@ export default function ProfileClient() {
                 </div>
               </div>
 
-              {/* Stats row */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+              {/* Stats row — 🔥 Updated: Profile Views + Connections clickable */}
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
                 {[
-                  { label: 'Connections', value: String(CONNECTIONS_COUNT), href: '#connections', icon: Users },
+                  {
+                    label: 'Connections',
+                    value: String(connectionStats.connected),
+                    icon: Users,
+                    onClick: () => handleOpenConnectionsModal('CONNECTED'),
+                  },
                   { label: 'Posts', value: String(posts.length), href: '#posts', icon: Sparkles },
+                  { label: 'Profile Views', value: String(TOTAL_PROFILE_VIEWS), href: '#profile-views', icon: Eye, onClick: () => handleOpenViewersModal('ALL') },
                   { label: 'Best Streak', value: `${bestCurrentStreak}d`, href: '#streaks', icon: Flame },
-                  { label: 'Consistency Score', value: `${CONSISTENCY_SCORE}/100`, href: '#activity', icon: TrendingUp },
-                ].map(stat => (
-                  <a key={stat.label} href={stat.href} className="block">
+                  { label: 'Consistency', value: `${CONSISTENCY_SCORE}/100`, href: '#activity', icon: TrendingUp },
+                ].map(stat => {
+                  const inner = (
                     <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800 hover:border-blue-300 dark:hover:border-blue-700 transition-colors h-full">
                       <CardContent className="p-4 flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
@@ -1689,14 +2169,129 @@ export default function ProfileClient() {
                         </div>
                       </CardContent>
                     </Card>
-                  </a>
-                ))}
+                  )
+
+                  if (stat.onClick) {
+                    return (
+                      <button
+                        key={stat.label}
+                        type="button"
+                        onClick={stat.onClick}
+                        className="block text-left w-full"
+                      >
+                        {inner}
+                      </button>
+                    )
+                  }
+
+                  return (
+                    <a key={stat.label} href={stat.href} className="block">
+                      {inner}
+                    </a>
+                  )
+                })}
               </div>
 
               {/* Main grid */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left sidebar */}
                 <div className="space-y-6">
+                  {/* 🔥 Profile Views Card */}
+                  <Card
+                    id="profile-views"
+                    className="border-gray-200 dark:border-gray-700 dark:bg-gray-800 scroll-mt-4 overflow-hidden"
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-base dark:text-gray-200 flex items-center gap-2">
+                          <Eye className="w-4 h-4 text-blue-500" /> Profile Views
+                        </CardTitle>
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] gap-1 border-green-300 text-green-700 dark:border-green-800 dark:text-green-400 bg-green-50 dark:bg-green-900/20"
+                        >
+                          <TrendingUp className="w-3 h-3" />
+                          +{VIEWS_GROWTH_PERCENT}%
+                        </Badge>
+                      </div>
+                      <CardDescription className="dark:text-gray-400">
+                        {TOTAL_PROFILE_VIEWS.toLocaleString()} total views ·{' '}
+                        {WEEKLY_PROFILE_VIEWS} this week
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex -space-x-2">
+                          {profileViewers.slice(0, 5).map((viewer) => (
+                            <div
+                              key={viewer.id}
+                              className="relative w-9 h-9 rounded-full ring-2 ring-white dark:ring-gray-800 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-semibold"
+                              title={viewer.name}
+                            >
+                              {viewer.avatarUrl ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={viewer.avatarUrl}
+                                  alt={viewer.name}
+                                  className="absolute inset-0 w-full h-full object-cover"
+                                />
+                              ) : (
+                                getInitials(viewer.name)
+                              )}
+                            </div>
+                          ))}
+                          {profileViewers.length > 5 && (
+                            <div className="w-9 h-9 rounded-full ring-2 ring-white dark:ring-gray-800 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-[10px] font-semibold text-gray-600 dark:text-gray-300">
+                              +{profileViewers.length - 5}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {profileViewers[0] && (
+                        <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                          <span className="font-medium text-gray-900 dark:text-gray-100">
+                            {profileViewers[0].name}
+                          </span>
+                          <span>viewed your profile</span>
+                          <span className="text-gray-400 dark:text-gray-500">
+                            · {timeAgo(profileViewers[0].viewedAt)}
+                          </span>
+                        </div>
+                      )}
+
+                      <div className="pt-2">
+                        <div className="flex items-end gap-1 h-10">
+                          {[38, 52, 44, 68, 96, 74, 60].map((v, i) => {
+                            const pct = (v / 100) * 100
+                            return (
+                              <div
+                                key={i}
+                                className="flex-1 bg-gradient-to-t from-blue-500 to-blue-400 dark:from-blue-600 dark:to-blue-500 rounded-sm transition-all hover:opacity-80"
+                                style={{ height: `${pct}%` }}
+                                title={`${v} views`}
+                              />
+                            )
+                          })}
+                        </div>
+                        <div className="flex items-center justify-between text-[10px] text-gray-400 dark:text-gray-500 mt-1">
+                          <span>Mon</span>
+                          <span>Sun</span>
+                        </div>
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleOpenViewersModal('ALL')}
+                        className="w-full gap-1.5 mt-1"
+                      >
+                        See who viewed
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </Button>
+                    </CardContent>
+                  </Card>
+
                   <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-base dark:text-gray-200">About</CardTitle>
@@ -1963,33 +2558,80 @@ export default function ProfileClient() {
                     </CardContent>
                   </Card>
 
+                  {/* 🔥 NEW: Connections Card (dynamic) */}
                   <Card
                     id="connections"
                     className="border-gray-200 dark:border-gray-700 dark:bg-gray-800 scroll-mt-4"
                   >
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base dark:text-gray-200">Connections</CardTitle>
+                    <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
+                      <CardTitle className="text-base dark:text-gray-200 flex items-center gap-2">
+                        <Users className="w-4 h-4 text-blue-500" /> Connections
+                      </CardTitle>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleOpenConnectionsModal('CONNECTED')}
+                        className="h-7 text-xs gap-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                      >
+                        View all
+                        <ChevronRight className="w-3 h-3" />
+                      </Button>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex -space-x-2 mb-3">
-                        {CONNECTION_PREVIEWS.map(name => (
-                          <Avatar
-                            key={name}
-                            className="h-8 w-8 border-2 border-white dark:border-gray-800"
-                          >
-                            <AvatarFallback className="text-xs bg-gradient-to-br from-gray-400 to-gray-500 text-white">
-                              {getInitials(name)}
-                            </AvatarFallback>
-                          </Avatar>
-                        ))}
-                      </div>
-                      <p className="text-sm text-gray-900 dark:text-gray-100 font-medium">
-                        {CONNECTIONS_COUNT} connections
-                      </p>
-                      {PENDING_REQUESTS > 0 && (
-                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                          {PENDING_REQUESTS} pending requests
-                        </p>
+                      {connectedUsers.length > 0 ? (
+                        <div className="flex -space-x-2 mb-3">
+                          {connectedUsers.slice(0, 4).map((c) => (
+                            <Avatar
+                              key={c.id}
+                              className="h-8 w-8 border-2 border-white dark:border-gray-800"
+                            >
+                              <AvatarFallback className="text-xs bg-gradient-to-br from-gray-400 to-gray-500 text-white">
+                                {getInitials(c.name)}
+                              </AvatarFallback>
+                            </Avatar>
+                          ))}
+                          {connectedUsers.length > 4 && (
+                            <div className="h-8 w-8 rounded-full border-2 border-white dark:border-gray-800 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-[10px] font-semibold text-gray-600 dark:text-gray-300">
+                              +{connectedUsers.length - 4}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 mb-3 text-sm text-gray-500 dark:text-gray-400">
+                          <Users className="w-4 h-4" /> No connections yet
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleOpenConnectionsModal('CONNECTED')}
+                        className="text-sm text-gray-900 dark:text-gray-100 font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left"
+                      >
+                        {connectionStats.connected} connections
+                      </button>
+
+                      {connectionStats.incoming > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenConnectionsModal('REQUESTS')}
+                          className="mt-1.5 flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline"
+                        >
+                          <UserPlus className="w-3 h-3" />
+                          {connectionStats.incoming} pending request
+                          {connectionStats.incoming === 1 ? '' : 's'}
+                        </button>
+                      )}
+
+                      {connectionStats.outgoing > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleOpenConnectionsModal('SENT')}
+                          className="mt-1 flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:underline"
+                        >
+                          <Send className="w-3 h-3" />
+                          {connectionStats.outgoing} sent request
+                          {connectionStats.outgoing === 1 ? '' : 's'} pending
+                        </button>
                       )}
                     </CardContent>
                   </Card>
@@ -3327,6 +3969,526 @@ export default function ProfileClient() {
         </DialogContent>
       </Dialog>
 
+      {/* ==================== 🔥 NEW: Connections Dialog ==================== */}
+      <Dialog
+        open={showConnectionsModal}
+        onOpenChange={(open) => {
+          if (!open) setShowConnectionsModal(false)
+        }}
+      >
+        <DialogContent className="sm:max-w-2xl bg-white dark:bg-gray-800 max-h-[90vh] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 dark:text-gray-200">
+              <Users className="w-5 h-5 text-blue-500" />
+              Connections
+            </DialogTitle>
+            <DialogDescription className="dark:text-gray-400">
+              Manage your network — connections, incoming requests, and pending invites
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Stats strip */}
+          <div className="grid grid-cols-3 gap-2 py-3 border-y border-gray-100 dark:border-gray-700">
+            {[
+              { label: 'Connections', value: connectionStats.connected, icon: UserCheck, color: 'text-green-600 dark:text-green-400' },
+              { label: 'Requests', value: connectionStats.incoming, icon: UserPlus, color: 'text-blue-600 dark:text-blue-400' },
+              { label: 'Sent', value: connectionStats.outgoing, icon: Send, color: 'text-amber-600 dark:text-amber-400' },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="flex flex-col items-center justify-center py-2 rounded-lg bg-gray-50 dark:bg-gray-900/40"
+              >
+                <s.icon className={`w-4 h-4 mb-1 ${s.color}`} />
+                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  {s.value}
+                </span>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                  {s.label}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Tabs */}
+          <div className="flex items-center gap-1 p-1 rounded-lg bg-gray-100 dark:bg-gray-900/60 flex-shrink-0">
+            {([
+              { key: 'CONNECTED' as ConnectionsTab, label: 'My Connections', icon: UserCheck, count: connectionStats.connected },
+              { key: 'REQUESTS' as ConnectionsTab, label: 'Requests', icon: UserPlus, count: connectionStats.incoming },
+              { key: 'SENT' as ConnectionsTab, label: 'Sent', icon: Send, count: connectionStats.outgoing },
+            ]).map((t) => (
+              <button
+                key={t.key}
+                type="button"
+                onClick={() => setConnectionsTab(t.key)}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                  connectionsTab === t.key
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                }`}
+              >
+                <t.icon className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{t.label}</span>
+                <span className="sm:hidden">{t.label.split(' ')[0]}</span>
+                {t.count > 0 && (
+                  <Badge
+                    variant="outline"
+                    className={`text-[9px] px-1 py-0 ${
+                      connectionsTab === t.key
+                        ? 'border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-400'
+                        : ''
+                    }`}
+                  >
+                    {t.count}
+                  </Badge>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Search */}
+          <div className="relative flex-shrink-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            <Input
+              value={connectionsSearch}
+              onChange={(e) => setConnectionsSearch(e.target.value)}
+              placeholder="Search by name, role, company..."
+              className="pl-9 h-9 text-sm dark:bg-gray-700 dark:border-gray-600"
+            />
+            {connectionsSearch && (
+              <button
+                type="button"
+                onClick={() => setConnectionsSearch('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                aria-label="Clear search"
+              >
+                <X className="w-3 h-3 text-gray-400" />
+              </button>
+            )}
+          </div>
+
+          {/* List */}
+          <div className="flex-1 overflow-y-auto -mx-1 px-1 space-y-2">
+            {filteredConnectionList.length === 0 && (
+              <div className="py-12 flex flex-col items-center text-center">
+                {connectionsTab === 'CONNECTED' && (
+                  <>
+                    <Users className="w-10 h-10 text-gray-300 dark:text-gray-600 mb-3" />
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                      {connectionsSearch ? 'No connections match your search' : 'No connections yet'}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                      {connectionsSearch
+                        ? 'Try a different search term.'
+                        : 'Start connecting with people to grow your network.'}
+                    </p>
+                  </>
+                )}
+                {connectionsTab === 'REQUESTS' && (
+                  <>
+                    <UserPlus className="w-10 h-10 text-gray-300 dark:text-gray-600 mb-3" />
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                      {connectionsSearch ? 'No requests match your search' : 'No pending requests'}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                      {connectionsSearch
+                        ? 'Try a different search term.'
+                        : 'When someone sends you a request, it will appear here.'}
+                    </p>
+                  </>
+                )}
+                {connectionsTab === 'SENT' && (
+                  <>
+                    <Send className="w-10 h-10 text-gray-300 dark:text-gray-600 mb-3" />
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                      {connectionsSearch ? 'No sent requests match your search' : 'No pending sent requests'}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                      {connectionsSearch
+                        ? 'Try a different search term.'
+                        : 'Requests you send will appear here until accepted.'}
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
+
+            {filteredConnectionList.map((c) => (
+              <div
+                key={c.id}
+                className="flex items-start gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50/30 dark:hover:bg-blue-950/10 transition-colors"
+              >
+                <div className="relative w-11 h-11 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">
+                  {c.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={c.avatarUrl}
+                      alt={c.name}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    getInitials(c.name)
+                  )}
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      {c.name}
+                    </p>
+                    {c.isVerified && (
+                      <CheckCircle2
+                        className="w-3.5 h-3.5 text-blue-500 flex-shrink-0"
+                        aria-label="Verified"
+                      />
+                    )}
+                    {connectionsTab === 'SENT' && (
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] px-1.5 py-0 border-amber-300 text-amber-700 dark:border-amber-800 dark:text-amber-400"
+                      >
+                        <Clock className="w-2.5 h-2.5 mr-0.5" />
+                        Pending
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 truncate">
+                    {c.headline}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1 text-[11px] text-gray-500 dark:text-gray-500 flex-wrap">
+                    {c.location && (
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-2.5 h-2.5" />
+                        {c.location}
+                      </span>
+                    )}
+                    {c.mutualConnections > 0 && (
+                      <span className="flex items-center gap-1">
+                        <Users className="w-2.5 h-2.5" />
+                        {c.mutualConnections} mutual
+                      </span>
+                    )}
+                  </div>
+
+                  {connectionsTab === 'REQUESTS' && c.message && (
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1.5 italic line-clamp-2 bg-gray-50 dark:bg-gray-900/40 rounded px-2 py-1">
+                      &ldquo;{c.message}&rdquo;
+                    </p>
+                  )}
+
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-2 mt-2">
+                    {connectionsTab === 'CONNECTED' && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleMessageConnection(c.name)}
+                          className="h-7 text-xs gap-1"
+                        >
+                          <MessageCircle className="w-3 h-3" />
+                          Message
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 w-7 p-0"
+                              aria-label="More options"
+                            >
+                              <MoreHorizontal className="w-3.5 h-3.5" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="end"
+                            className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                          >
+                            <DropdownMenuItem asChild>
+                              <Link
+                                href={`/u/${c.userName}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 cursor-pointer"
+                              >
+                                <UserCircle2 className="w-3.5 h-3.5" />
+                                View Profile
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleRemoveConnection(c.id)}
+                              className="text-red-600 focus:text-red-600"
+                            >
+                              <UserX className="w-3.5 h-3.5 mr-2" />
+                              Remove Connection
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </>
+                    )}
+
+                    {connectionsTab === 'REQUESTS' && (
+                      <>
+                        <Button
+                          size="sm"
+                          onClick={() => handleAcceptConnection(c.id)}
+                          className="h-7 text-xs gap-1 bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          <UserCheck className="w-3 h-3" />
+                          Accept
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDeclineConnection(c.id)}
+                          className="h-7 text-xs gap-1"
+                        >
+                          <UserX className="w-3 h-3" />
+                          Decline
+                        </Button>
+                      </>
+                    )}
+
+                    {connectionsTab === 'SENT' && (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleWithdrawRequest(c.id)}
+                          className="h-7 text-xs gap-1 text-red-600 hover:text-red-700 dark:text-red-400"
+                        >
+                          <X className="w-3 h-3" />
+                          Withdraw
+                        </Button>
+                        <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                          Sent {timeAgo(c.requestedAt)}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <DialogFooter className="flex-shrink-0 pt-3 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400">
+              <Lock className="w-3 h-3" />
+              Your connection activity is private
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setShowConnectionsModal(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ==================== Who Viewed Your Profile Dialog ==================== */}
+      <Dialog
+        open={showViewersModal}
+        onOpenChange={(open) => {
+          if (!open) setShowViewersModal(false)
+        }}
+      >
+        <DialogContent className="sm:max-w-2xl bg-white dark:bg-gray-800 max-h-[90vh] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle className="flex items-center gap-2 dark:text-gray-200">
+              <Eye className="w-5 h-5 text-blue-500" />
+              Who Viewed Your Profile
+            </DialogTitle>
+            <DialogDescription className="dark:text-gray-400">
+              {TOTAL_PROFILE_VIEWS.toLocaleString()} total views · {WEEKLY_PROFILE_VIEWS} this week ·{' '}
+              <span className="text-green-600 dark:text-green-400 font-medium">
+                +{VIEWS_GROWTH_PERCENT}% vs last week
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid grid-cols-3 gap-2 py-3 border-y border-gray-100 dark:border-gray-700">
+            {[
+              { label: 'Today', value: viewerStats.today, icon: Clock },
+              { label: 'This Week', value: viewerStats.week, icon: CalendarDays },
+              { label: 'This Month', value: viewerStats.month, icon: TrendingUp },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="flex flex-col items-center justify-center py-2 rounded-lg bg-gray-50 dark:bg-gray-900/40"
+              >
+                <s.icon className="w-4 h-4 text-gray-400 mb-1" />
+                <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  {s.value}
+                </span>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                  {s.label}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between gap-2 py-2 flex-shrink-0">
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-gray-100 dark:bg-gray-900/60">
+              {(['ALL', 'TODAY', 'WEEK', 'MONTH'] as ViewerFilter[]).map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setViewerFilter(f)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    viewerFilter === f
+                      ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                  }`}
+                >
+                  {f === 'ALL' ? 'All' : f === 'TODAY' ? 'Today' : f === 'WEEK' ? 'Week' : 'Month'}
+                </button>
+              ))}
+            </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleToggleViewersPrivacy}
+              className="gap-1.5 text-xs"
+              title={viewersPrivateMode ? 'Show all viewers' : 'Enable private view mode'}
+            >
+              {viewersPrivateMode ? (
+                <>
+                  <EyeOff className="w-3.5 h-3.5" /> Private
+                </>
+              ) : (
+                <>
+                  <Eye className="w-3.5 h-3.5" /> All
+                </>
+              )}
+            </Button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto -mx-1 px-1 space-y-2">
+            {visibleViewers.length === 0 && (
+              <div className="py-12 flex flex-col items-center text-center">
+                <EyeOff className="w-10 h-10 text-gray-300 dark:text-gray-600 mb-3" />
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                  No viewers in this range
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                  Check back later or try a different filter.
+                </p>
+              </div>
+            )}
+
+            {visibleViewers.map((viewer) => (
+              <div
+                key={viewer.id}
+                className="flex items-start gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50/30 dark:hover:bg-blue-950/10 transition-colors"
+              >
+                <div className="relative w-11 h-11 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">
+                  {viewer.avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={viewer.avatarUrl}
+                      alt={viewer.name}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    getInitials(viewer.name)
+                  )}
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      {viewer.name}
+                    </p>
+                    {viewer.isVerified && (
+                      <CheckCircle2
+                        className="w-3.5 h-3.5 text-blue-500 flex-shrink-0"
+                        aria-label="Verified"
+                      />
+                    )}
+                    {viewer.isConnection && (
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] px-1.5 py-0 border-green-300 text-green-700 dark:border-green-800 dark:text-green-400"
+                      >
+                        <Users className="w-2.5 h-2.5 mr-0.5" />
+                        1st
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 truncate">
+                    {viewer.headline}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1 text-[11px] text-gray-500 dark:text-gray-500">
+                    {viewer.location && (
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-2.5 h-2.5" />
+                        {viewer.location}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                  <span className="text-[10px] text-gray-400 dark:text-gray-500 whitespace-nowrap">
+                    {timeAgo(viewer.viewedAt)}
+                  </span>
+                  {viewer.viewCount > 1 && (
+                    <Badge
+                      variant="outline"
+                      className="text-[9px] px-1.5 py-0 text-gray-500 dark:text-gray-400"
+                    >
+                      Viewed {viewer.viewCount}×
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {viewersPrivateMode && filteredViewers.length > FREE_VIEWER_LIMIT && (
+            <div className="flex-shrink-0 pt-3 border-t border-gray-100 dark:border-gray-700">
+              <div className="rounded-lg border border-amber-200 dark:border-amber-800/60 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 p-3 flex items-start gap-3">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                  <Crown className="w-4.5 h-4.5 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+                    See all {filteredViewers.length} viewers
+                  </p>
+                  <p className="text-xs text-amber-800/80 dark:text-amber-200/80 mt-0.5">
+                    You&apos;re viewing the latest {FREE_VIEWER_LIMIT}. Toggle to{' '}
+                    <button
+                      type="button"
+                      onClick={handleToggleViewersPrivacy}
+                      className="underline font-medium hover:no-underline"
+                    >
+                      All
+                    </button>{' '}
+                    to see everyone.
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={handleToggleViewersPrivacy}
+                  className="bg-amber-600 hover:bg-amber-700 text-white flex-shrink-0 h-8 text-xs"
+                >
+                  Unlock
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="flex-shrink-0 pt-3 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400">
+              <Lock className="w-3 h-3" />
+              Your viewers are only visible to you
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setShowViewersModal(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* ==================== Achievement Details Dialog ==================== */}
       <Dialog
         open={!!showAchievementDetails}
@@ -3397,7 +4559,6 @@ export default function ProfileClient() {
           </DialogHeader>
 
           <div className="space-y-3 py-2">
-            {/* Link preview + copy */}
             <div className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
               <LinkIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />
               <span className="text-xs text-gray-700 dark:text-gray-300 truncate flex-1 font-mono">
@@ -3422,7 +4583,6 @@ export default function ProfileClient() {
               </Button>
             </div>
 
-            {/* Native share (mobile) */}
             {typeof navigator !== 'undefined' && 'share' in navigator && (
               <Button
                 variant="outline"
@@ -3434,7 +4594,6 @@ export default function ProfileClient() {
               </Button>
             )}
 
-            {/* Social share buttons */}
             <div className="grid grid-cols-3 gap-2">
               <Button
                 variant="outline"
@@ -3465,7 +4624,6 @@ export default function ProfileClient() {
               </Button>
             </div>
 
-            {/* Preview link */}
             {publicProfileUrl && (
               <Button
                 variant="ghost"
@@ -3537,8 +4695,8 @@ function ProfileSkeleton() {
           <div className="h-4 w-64 bg-gray-200 dark:bg-gray-700 rounded" />
         </div>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8">
-        {[0, 1, 2, 3].map(i => (
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-8">
+        {[0, 1, 2, 3, 4].map(i => (
           <div key={i} className="h-16 rounded-xl bg-gray-200 dark:bg-gray-700" />
         ))}
       </div>

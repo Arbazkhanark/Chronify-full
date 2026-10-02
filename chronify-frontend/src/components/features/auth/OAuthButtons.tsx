@@ -14,6 +14,11 @@ interface OAuthButtonsProps {
   actionText?: string
 }
 
+const oauthBtnClass =
+  'w-full h-12 rounded-xl flex items-center justify-center gap-2.5 border-border bg-background/60 text-foreground ' +
+  'hover:bg-muted/60 hover:text-foreground hover:border-primary/40 hover:shadow-md ' +
+  'active:scale-[0.98] transition-all duration-200'
+
 export function OAuthButtons({
   disabled = false,
   actionText = 'Continue',
@@ -39,7 +44,8 @@ export function OAuthButtons({
           variant="outline"
           onClick={handleGoogle}
           disabled={disabled}
-          className="w-full h-11 flex items-center justify-center gap-2 border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          className={oauthBtnClass}
+          aria-label={`${actionText} with Google`}
         >
           <svg
             className="w-5 h-5 shrink-0"
@@ -79,7 +85,8 @@ export function OAuthButtons({
           variant="outline"
           onClick={handleGitHub}
           disabled={disabled}
-          className="w-full h-11 flex items-center justify-center gap-2 border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          className={oauthBtnClass}
+          aria-label={`${actionText} with GitHub`}
         >
           <svg
             className="w-5 h-5 shrink-0"
