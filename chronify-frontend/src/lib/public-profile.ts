@@ -4,7 +4,7 @@ const API_BASE_URL =
   'http://localhost:8181/v0/api'
 
 /* ============================================================================
-   TYPES — Public profile (subset of full profile, no sensitive data)
+   TYPES
    ============================================================================ */
 
 export interface PublicSocialLink {
@@ -43,6 +43,16 @@ export interface PublicExperience {
   companyLogo: string | null
 }
 
+export interface PublicProfileStats {
+  totalGoals: number
+  completedGoals: number
+  currentStreak: number
+  longestStreak: number
+  totalHours: number
+  completedTasks: number
+  consistencyScore: number
+}
+
 export interface PublicProfile {
   id: string
   name: string
@@ -66,18 +76,8 @@ export interface PublicProfile {
   education: PublicEducation[]
   experience: PublicExperience[]
 
-  /* -------- Stats (only if `showStatsPublicly` is true) -------- */
-  stats?: {
-    totalGoals: number
-    completedGoals: number
-    currentStreak: number
-    longestStreak: number
-    totalHours: number
-    completedTasks: number
-    consistencyScore: number
-  } | null
+  stats?: PublicProfileStats | null
 
-  /* -------- Viewer context (if logged in) -------- */
   isOwnProfile: boolean
   isConnected: boolean
   isPending: boolean
@@ -104,38 +104,52 @@ const getAccessToken = (): string | null => {
 
 /* ============================================================================
    GET PUBLIC PROFILE
+   ---------------------------------------------------------------------------
+   - Uses correct URL: /users/get-profile-by-username?username=xxx
+   - Sends the token if present (optional — works without login too)
+   - Never caches — always fetches fresh data
    ============================================================================ */
 
 export async function getPublicProfile(
   username: string,
   signal?: AbortSignal
 ): Promise<PublicProfile> {
+  const trimmed = String(username ?? '').trim()
+
+  if (!trimmed) {
+    throw {
+      success: false,
+      message: 'Username is required',
+      reason: 'NOT_FOUND',
+    } satisfies PublicProfileApiError
+  }
+
   const token = getAccessToken()
 
   const headers: Record<string, string> = {
     Accept: '*/*',
   }
 
-  // Token is OPTIONAL — public profiles should work without login
+  // Token is OPTIONAL
   if (token) {
     headers.Authorization = `Bearer ${token}`
   }
 
+  // ✅ CORRECT URL — the key "username" is REQUIRED
+  const url = `${API_BASE_URL}/users/get-profile-by-username?username=${encodeURIComponent(trimmed)}`
+
   let response: Response
   try {
-    response = await fetch(
-      `${API_BASE_URL}/users/get-profile-by-username?${encodeURIComponent(username)}`,
-      {
-        method: 'GET',
-        headers,
-        signal,
-      }
-    )
+    response = await fetch(url, {
+      method: 'GET',
+      headers,
+      signal,
+      cache: 'no-store', // always fresh
+    })
   } catch (err) {
     throw {
       success: false,
-      message:
-        err instanceof Error ? err.message : 'Network error occurred',
+      message: err instanceof Error ? err.message : 'Network error occurred',
       reason: 'NETWORK',
     } satisfies PublicProfileApiError
   }
@@ -159,10 +173,11 @@ export async function getPublicProfile(
       reason = 'NOT_FOUND'
       message = message || 'Profile not found'
     } else if (response.status === 403) {
-      if (message.toLowerCase().includes('private')) {
+      const lower = message.toLowerCase()
+      if (lower.includes('private')) {
         reason = 'PRIVATE'
         message = message || 'This profile is private'
-      } else if (message.toLowerCase().includes('connections')) {
+      } else if (lower.includes('connections')) {
         reason = 'FRIENDS_ONLY'
         message = message || 'This profile is visible to connections only'
       }
@@ -183,5 +198,44 @@ export async function getPublicProfile(
     } satisfies PublicProfileApiError
   }
 
-  return data.data as unknown as PublicProfile
+  const raw = data.data as Record<string, unknown>
+
+  // 🔥 Normalize — make sure every field is safe (never undefined)
+  return {
+    id: String(raw.id ?? ''),
+    name: String(raw.name ?? ''),
+    userName: String(raw.userName ?? ''),
+    accountType: (raw.accountType as 'STUDENT' | 'MENTOR') ?? 'STUDENT',
+    verified: raw.verified === true,
+    avatarUrl: (raw.avatarUrl as string | null) ?? null,
+    coverPhoto: (raw.coverPhoto as string | null) ?? null,
+    bio: (raw.bio as string | null) ?? null,
+    profession: (raw.profession as string | null) ?? null,
+    hobbies: Array.isArray(raw.hobbies) ? (raw.hobbies as string[]) : [],
+    city: (raw.city as string | null) ?? null,
+    state: (raw.state as string | null) ?? null,
+    country: (raw.country as string | null) ?? null,
+    fields: Array.isArray(raw.fields) ? (raw.fields as string[]) : [],
+    subFields: Array.isArray(raw.subFields) ? (raw.subFields as string[]) : [],
+    profileVisibility:
+      (raw.profileVisibility as 'PUBLIC' | 'FRIENDS_ONLY' | 'PRIVATE') ??
+      'PUBLIC',
+    memberSince: String(raw.memberSince ?? ''),
+    socialLinks: Array.isArray(raw.socialLinks)
+      ? (raw.socialLinks as PublicSocialLink[])
+      : [],
+    education: Array.isArray(raw.education)
+      ? (raw.education as PublicEducation[])
+      : [],
+    experience: Array.isArray(raw.experience)
+      ? (raw.experience as PublicExperience[])
+      : [],
+    stats:
+      raw.stats && typeof raw.stats === 'object'
+        ? (raw.stats as PublicProfileStats)
+        : null,
+    isOwnProfile: raw.isOwnProfile === true,
+    isConnected: raw.isConnected === true,
+    isPending: raw.isPending === true,
+  }
 }

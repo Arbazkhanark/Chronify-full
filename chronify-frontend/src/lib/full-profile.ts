@@ -183,8 +183,10 @@ export interface ExperiencePayload {
 }
 
 export interface ProfileUpdatePayload {
+  fullName?: string
   userName?: string
   bio?: string
+  accountType?: AccountType
   profession?: string
   dob?: string | null
   city?: string
@@ -553,6 +555,9 @@ export function buildDefaultProfilePayload(
 ): ProfileUpdatePayload {
   return {
     userName: deriveUserName(api.email ?? '', api.name),
+    fullName: api.name ?? '',
+    accountType: api.accountType ?? 'STUDENT',
+    fields: Array.isArray(api.fields) ? api.fields : [],
     bio: '',
     profession: '',
     dob: null,
@@ -562,7 +567,6 @@ export function buildDefaultProfilePayload(
     hobbies: [],
     avatarUrl: '',
     coverPhoto: '',
-    fields: Array.isArray(api.fields) ? api.fields : [],
     subFields: Array.isArray(api.subFields) ? api.subFields : [],
     profileVisibility: api.profileVisibility ?? 'PUBLIC',
     socialLinks: [],

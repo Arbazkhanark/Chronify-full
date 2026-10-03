@@ -128,7 +128,7 @@ model User {
   id       String @id @default(uuid())
   name     String
   email    String @unique
-  password String
+  password String?
 
   timezone    String      @default("Asia/Kolkata")
   accountType AccountType @default(STUDENT)
@@ -734,6 +734,7 @@ model Post {
   id      String   @id @default(uuid())
   userId  String
   content String
+  image   String[]
   type    PostType
 
   createdAt DateTime @default(now())

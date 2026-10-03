@@ -97,6 +97,9 @@ const socialLinkSchema = z.object({
 
 export const updateProfileSchema = z.object({
   userName: z.string().min(2).max(50).optional(),
+  fullName: z.string().min(2).max(100).optional(),
+  accountType: z.enum(["STUDENT", "PROFESSIONAL"]).optional(),
+  profileVisibility: z.enum(["PUBLIC", "PRIVATE", "FRIENDS_ONLY"]).optional(),
   avatarUrl: z.string().url().optional().nullable().or(z.literal("")),
   coverPhoto: z.string().url().optional().nullable().or(z.literal("")),
   bio: z.string().max(500).optional().nullable(),

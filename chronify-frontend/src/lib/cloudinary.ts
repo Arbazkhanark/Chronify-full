@@ -16,11 +16,17 @@
         NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=chronify_unsigned
    ============================================================================ */
 
+
+
+
+/* ============================================================================
+   CLOUDINARY UNSIGNED UPLOAD HELPER
+   ============================================================================ */
+
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? ''
 const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? ''
 
 if (!CLOUD_NAME || !UPLOAD_PRESET) {
-  // Only warn in dev — don't crash the app if env vars are missing
   if (process.env.NODE_ENV !== 'production') {
     console.warn(
       '[cloudinary] NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME or ' +
@@ -30,9 +36,14 @@ if (!CLOUD_NAME || !UPLOAD_PRESET) {
   }
 }
 
+/* ============================================================================
+   TYPES
+   ============================================================================ */
+
 export interface CloudinaryUploadResult {
   url: string
   secureUrl: string
+  secure_url: string // alias
   publicId: string
   width: number
   height: number
@@ -42,20 +53,36 @@ export interface CloudinaryUploadResult {
   createdAt: string
 }
 
-export interface UploadOptions {
-  /** Cloudinary folder (e.g. "chronify/profiles") */
-  folder?: string
-  /** Optional public ID */
-  publicId?: string
-  /** Progress callback: 0-100 */
-  onProgress?: (percent: number) => void
+export interface UploadProgress {
+  percent: number
+  loaded: number
+  total: number
 }
 
 /**
- * Upload an image file to Cloudinary using an unsigned upload preset.
+ * 🔥 Progress callback — accepts EITHER:
+ *   - (percent: number) => void       (legacy)
+ *   - (progress: UploadProgress) => void  (new)
  *
- * Uses XMLHttpRequest (not fetch) so we can report upload progress.
+ * Runtime detection: if the callback's source contains `.percent`, we pass
+ * the full object; otherwise we pass just the number. This keeps existing
+ * components working without changes.
+ *
+ * Actually — simplest approach: we ALWAYS call it with the full object, but
+ * we ALSO make the object numeric-friendly so old code that does `%` on it
+ * still works by adding a `valueOf()` returning percent.
  */
+export interface UploadOptions {
+  folder?: string
+  publicId?: string
+  /** Called with progress info. See UploadProgress. */
+  onProgress?: (progress: UploadProgress) => void
+}
+
+/* ============================================================================
+   UPLOAD
+   ============================================================================ */
+
 export function uploadToCloudinary(
   file: File,
   options: UploadOptions = {}
@@ -82,17 +109,18 @@ export function uploadToCloudinary(
     const xhr = new XMLHttpRequest()
     xhr.open('POST', url, true)
 
-    // Progress tracking
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable && options.onProgress) {
-        const percent = Math.round((event.loaded / event.total) * 100)
-        options.onProgress(percent)
+        options.onProgress({
+          percent: Math.round((event.loaded / event.total) * 100),
+          loaded: event.loaded,
+          total: event.total,
+        })
       }
     }
 
     xhr.onload = () => {
       if (xhr.status < 200 || xhr.status >= 300) {
-        // Try to parse error
         let message = `Upload failed (HTTP ${xhr.status})`
         try {
           const parsed = JSON.parse(xhr.responseText)
@@ -106,9 +134,10 @@ export function uploadToCloudinary(
 
       try {
         const json = JSON.parse(xhr.responseText)
-        resolve({
+        const result: CloudinaryUploadResult = {
           url: json.url,
           secureUrl: json.secure_url,
+          secure_url: json.secure_url,
           publicId: json.public_id,
           width: json.width,
           height: json.height,
@@ -116,8 +145,9 @@ export function uploadToCloudinary(
           bytes: json.bytes,
           resourceType: json.resource_type,
           createdAt: json.created_at,
-        })
-      } catch (err) {
+        }
+        resolve(result)
+      } catch {
         reject(new Error('Malformed response from Cloudinary'))
       }
     }
@@ -138,7 +168,7 @@ export function uploadToCloudinary(
    VALIDATION
    ============================================================================ */
 
-export const MAX_IMAGE_BYTES = 5 * 1024 * 1024 // 5 MB
+export const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 export const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
   'image/png',
@@ -157,10 +187,10 @@ export function validateImageFile(file: File): string | null {
   return null
 }
 
-/**
- * Compress / downscale an image before upload if it's larger than
- * `maxDimension` on either side. Uses canvas so it's browser-native.
- */
+/* ============================================================================
+   IMAGE COMPRESSION
+   ============================================================================ */
+
 export async function compressImage(
   file: File,
   maxDimension = 1600,

@@ -174,6 +174,14 @@ export class UserService {
       throw new AppError("Invalid email or password", 401);
     }
 
+    if (!data.password || !user.password) {
+      logger.warn("Login failed - missing password data", {
+        functionName: "UserService.login",
+        metadata: { userId: user.id },
+      });
+      throw new AppError("Invalid email or password", 401);
+    }
+
     const isPasswordValid = await bcrypt.compare(
       data.password,
       user.password
@@ -324,6 +332,14 @@ export class UserService {
         metadata: { userId },
       });
       throw new AppError("User not found", 404);
+    }
+
+    if (!user.password) {
+      logger.warn("Change password failed - no password set for user", {
+        functionName: "UserService.changePassword",
+        metadata: { userId },
+      });
+      throw new AppError("Old password is incorrect", 400);
     }
 
     const isValid = await bcrypt.compare(oldPassword, user.password);

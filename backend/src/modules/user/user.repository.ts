@@ -1,5 +1,6 @@
 // src/modules/user/user.repository.ts
 import { prisma } from "../../config/prisma";
+import { AppError } from "../../utils/AppError";
 import { CreateUserDTO } from "./user.types";
 import { UpdateProfileDTO } from "./user.validation";
 
@@ -156,7 +157,7 @@ export class UserRepository {
     });
   }
 
-  static async updateProfile(
+  static async updateProfile1(
     userId: string,
     data: UpdateProfileDTO
   ) {
@@ -183,10 +184,19 @@ export class UserRepository {
     console.log("Updating profile for fields:", fields);
     console.log("Updating profile for subFields:", subFields);
 
-    // ============================================================
-    // 🔥 STEP 1: Update User table (fields + subFields)
-    //     These columns live on User, not Profile.
-    // ============================================================
+    /* ============================================================
+       STEP 0: USERNAME COLLISION CHECK
+       ------------------------------------------------------------
+       Rules:
+         a) userName undefined           → no change
+         b) userName = current, unchanged → skip write (no self-collision)
+         c) userName taken by ANOTHER    → throw 409
+         d) userName free                → allow write
+       Case-insensitive comparison.
+       ============================================================ */
+       let userNameToWrite: string | undefined = undefined;
+
+
     if (fields !== undefined || subFields !== undefined) {
       await prisma.user.update({
         where: { id: userId },
@@ -376,6 +386,271 @@ export class UserRepository {
     });
   }
 
+
+    /* ==========================================================================
+     🔥 UPDATE PROFILE (FIXED)
+     --------------------------------------------------------------------------
+     Fixes:
+       1. Pre-check username ownership before writing (avoid self-collision)
+       2. Case-insensitive comparison
+       3. Skip write if username unchanged
+       4. Throw friendly 409 if taken by ANOTHER user
+     ========================================================================== */
+  static async updateProfile(userId: string, data: UpdateProfileDTO) {
+    const {
+      userName,
+      fullName,
+      accountType,
+      profileVisibility,
+      avatarUrl,
+      coverPhoto,
+      bio,
+      dob,
+      profession,
+      hobbies,
+      socialLinks,
+      city,
+      state,
+      country,
+      fields,
+      subFields,
+      education,
+      experience,
+    } = data;
+
+    console.log("Updating profile for Social Links:", data.socialLinks);
+    console.log("Updating profile for Education:", data);
+    console.log("Updating profile for fields:", fields);
+    console.log("Updating profile for subFields:", subFields);
+
+    /* ============================================================
+       STEP 0: USERNAME COLLISION CHECK
+       ------------------------------------------------------------
+       Rules:
+         a) userName undefined           → no change
+         b) userName = current, unchanged → skip write (no self-collision)
+         c) userName taken by ANOTHER    → throw 409
+         d) userName free                → allow write
+       Case-insensitive comparison.
+       ============================================================ */
+    let userNameToWrite: string | undefined = undefined;
+
+    if (userName !== undefined) {
+      const trimmed = String(userName).trim();
+
+      if (trimmed.length > 0) {
+        const currentProfile = await prisma.profile.findUnique({
+          where: { userId },
+          select: { userName: true },
+        });
+
+        const currentUserName = currentProfile?.userName ?? null;
+
+        const unchanged =
+          currentUserName !== null &&
+          currentUserName.toLowerCase() === trimmed.toLowerCase();
+
+        if (!unchanged) {
+          // Check if taken by ANOTHER user (case-insensitive)
+          const existing = await prisma.profile.findFirst({
+            where: {
+              userName: {
+                equals: trimmed,
+                mode: "insensitive",
+              },
+              NOT: { userId }, // exclude self
+            },
+            select: { userId: true },
+          });
+
+          if (existing) {
+            throw new AppError(
+              `Username "${trimmed}" is already taken. Please choose a different one.`,
+              409
+            );
+          }
+
+          userNameToWrite = trimmed;
+        }
+        // else: unchanged → skip write
+      }
+      // else: empty string → skip
+    }
+
+    /* ============================================================
+       STEP 1: Update User table (fields + subFields)
+       ============================================================ */
+    const hasUserTableUpdates =
+      fullName !== undefined ||
+      accountType !== undefined ||
+      profileVisibility !== undefined ||
+      fields !== undefined ||
+      subFields !== undefined;
+
+    if (hasUserTableUpdates) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          ...(fullName !== undefined && { name: fullName }),
+          ...(accountType !== undefined && {
+            accountType: accountType as any,
+          }),
+          ...(profileVisibility !== undefined && {
+            profileVisibility: profileVisibility as any,
+          }),
+          ...(fields !== undefined && { fields }),
+          ...(subFields !== undefined && { subFields }),
+        },
+      });
+    }
+
+    /* ============================================================
+       STEP 2: Upsert Profile
+       ============================================================ */
+    return prisma.profile.upsert({
+      where: { userId },
+
+      update: {
+        // 🔥 Only write userName if it actually changed
+        ...(userNameToWrite !== undefined && { userName: userNameToWrite }),
+
+        ...(avatarUrl !== undefined && { avatarUrl }),
+        ...(coverPhoto !== undefined && { coverPhoto }),
+        ...(bio !== undefined && { bio }),
+        ...(dob !== undefined && { dob }),
+        ...(profession !== undefined && { profession }),
+        ...(hobbies !== undefined && { hobbies }),
+        ...(city !== undefined && { city }),
+        ...(state !== undefined && { state }),
+        ...(country !== undefined && { country }),
+
+        // SOCIAL LINKS
+        ...(socialLinks !== undefined && {
+          socialLinks: {
+            deleteMany: {},
+            create: socialLinks.map((link) => ({
+              platform: link.platform,
+              url: link.url,
+            })),
+          },
+        }),
+
+        // EDUCATION
+        ...(education !== undefined && {
+          education: {
+            deleteMany: {},
+            create: education.map((edu, idx) => ({
+              institution: edu.institution,
+              degree: edu.degree,
+              field: edu.field ?? null,
+              grade: edu.grade ?? null,
+              startYear: edu.startYear ?? null,
+              endYear: edu.endYear ?? null,
+              description: edu.description ?? null,
+              location: edu.location ?? null,
+              activities: edu.activities ?? null,
+              isCurrent: edu.isCurrent ?? false,
+              order: edu.order ?? idx,
+            })),
+          },
+        }),
+
+        // EXPERIENCE
+        ...(experience !== undefined && {
+          experience: {
+            deleteMany: {},
+            create: experience.map((exp, idx) => ({
+              role: exp.role,
+              organization: exp.organization,
+              employmentType: exp.employmentType ?? "FULL_TIME",
+              locationType: exp.locationType ?? "ON_SITE",
+              startDate: exp.startDate ?? null,
+              endDate: exp.endDate ?? null,
+              isCurrent: exp.isCurrent ?? false,
+              location: exp.location ?? null,
+              description: exp.description ?? null,
+              skills: exp.skills ?? [],
+              companyUrl: exp.companyUrl || null,
+              companyLogo: exp.companyLogo || null,
+              order: exp.order ?? idx,
+            })),
+          },
+        }),
+      },
+
+      create: {
+        userId,
+        userName: userNameToWrite ?? `user_${userId.slice(0, 8)}`,
+        avatarUrl: avatarUrl ?? null,
+        coverPhoto: coverPhoto ?? null,
+        bio: bio ?? null,
+        dob: dob ?? null,
+        profession: profession ?? null,
+        hobbies: hobbies ?? [],
+        city: city ?? null,
+        state: state ?? null,
+        country: country ?? null,
+
+        ...(socialLinks !== undefined && {
+          socialLinks: {
+            create: socialLinks.map((link) => ({
+              platform: link.platform,
+              url: link.url,
+            })),
+          },
+        }),
+
+        ...(education !== undefined && {
+          education: {
+            create: education.map((edu, idx) => ({
+              institution: edu.institution,
+              degree: edu.degree,
+              field: edu.field ?? null,
+              grade: edu.grade ?? null,
+              startYear: edu.startYear ?? null,
+              endYear: edu.endYear ?? null,
+              description: edu.description ?? null,
+              location: edu.location ?? null,
+              activities: edu.activities ?? null,
+              isCurrent: edu.isCurrent ?? false,
+              order: edu.order ?? idx,
+            })),
+          },
+        }),
+
+        ...(experience !== undefined && {
+          experience: {
+            create: experience.map((exp, idx) => ({
+              role: exp.role,
+              organization: exp.organization,
+              employmentType: exp.employmentType ?? "FULL_TIME",
+              locationType: exp.locationType ?? "ON_SITE",
+              startDate: exp.startDate ?? null,
+              endDate: exp.endDate ?? null,
+              isCurrent: exp.isCurrent ?? false,
+              location: exp.location ?? null,
+              description: exp.description ?? null,
+              skills: exp.skills ?? [],
+              companyUrl: exp.companyUrl || null,
+              companyLogo: exp.companyLogo || null,
+              order: exp.order ?? idx,
+            })),
+          },
+        }),
+      },
+
+      include: {
+        socialLinks: true,
+        education: {
+          orderBy: { order: "asc" },
+        },
+        experience: {
+          orderBy: { order: "asc" },
+        },
+      },
+    });
+  }
+
   static updateUser(id: string, data: any) {
     return prisma.user.update({
       where: { id },
@@ -402,7 +677,10 @@ static findByUsername(username: string) {
   return prisma.user.findFirst({
     where: {
       profile: {
-        userName: username,
+          userName: {
+            equals: username,
+            mode: 'insensitive', // 🔥 case-insensitive
+          },
       },
     },
     select: {

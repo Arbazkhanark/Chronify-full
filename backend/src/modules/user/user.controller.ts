@@ -29,6 +29,23 @@ function handleZodError(err: unknown, res: Response): boolean {
   return false; // not a Zod error
 }
 
+
+/**
+ * 🔥 Safely extract a route/query param that Express types as
+ * `string | string[] | ParsedQs | ParsedQs[] | undefined`.
+ * - Returns first value if it's an array
+ * - Returns '' if the value is missing / not a string
+ */
+export function pickString(value: unknown): string {
+  if (Array.isArray(value)) {
+    const first = value[0]
+    return typeof first === 'string' ? first : ''
+  }
+  if (typeof value === 'string') return value
+  if (typeof value === 'number') return String(value)
+  return ''
+}
+
 export class UserController {
   static async signup(req: Request, res: Response) {
     try {
@@ -389,11 +406,20 @@ export class UserController {
 
   static async getPublicProfile(req: Request, res: Response) {
     try {
-      const usernameParam = req.params.username;
-      const username = Array.isArray(usernameParam)
-        ? usernameParam[0]
-        : usernameParam;
-      const viewerId = (req).user?.id; // optional
+      const fromQuery = pickString(req.query.username).trim()
+      const fromParams = pickString((req.params as any).username).trim()
+      const username = fromQuery || fromParams
+
+      // Viewer context (optional — set by optionalAuthMiddleware)
+      const viewerId = (req as any).user?.id as string | undefined
+
+      console.log('=== getPublicProfile ===')
+      console.log('  raw req.query.username :', req.query.username)
+      console.log('  raw req.params.username:', (req.params as any).username)
+      console.log('  resolved username      :', username)
+      console.log('  viewerId               :', viewerId)
+
+      console.log("Fetching public profile for username:", username, "Viewer ID:", viewerId);
 
       logger.info("Get public profile API called", {
         functionName: "UserController.getPublicProfile",

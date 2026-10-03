@@ -4,13 +4,11 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
 import { toast, Toaster } from 'sonner'
 import {
   ArrowLeft,
   CheckCircle2,
   MapPin,
-  Mail,
   Calendar,
   Building2,
   GraduationCap,
@@ -22,9 +20,7 @@ import {
   Linkedin,
   Twitter,
   Globe,
-  ShieldAlert,
   Lock,
-  Users,
   Flame,
   TrendingUp,
   Target,
@@ -41,19 +37,17 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Progress } from '@/components/ui/progress'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
 
 import { usePublicProfile } from '@/hooks/usePublicProfile'
 import { cn } from '@/lib/utils'
+import { ConnectionService } from '@/lib/connection-service'
 
 /* ============================================================================
    CONSTANTS
@@ -131,6 +125,7 @@ export default function PublicProfileClient({
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null)
   const [showShareModal, setShowShareModal] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [sendingRequest, setSendingRequest] = useState(false)
 
   const publicUrl = useMemo(() => {
     if (typeof window === 'undefined') {
@@ -164,6 +159,30 @@ export default function PublicProfileClient({
       })
     } catch {
       /* user cancelled */
+    }
+  }
+
+  /* ---------------- Connect ---------------- */
+  const handleConnect = async () => {
+    if (!profile) return
+    if (profile.isConnected) {
+      toast.info('Already connected')
+      return
+    }
+    if (profile.isPending) {
+      toast.info('Request already pending')
+      return
+    }
+
+    setSendingRequest(true)
+    try {
+      await ConnectionService.sendRequest(profile.id)
+      toast.success('Connection request sent!')
+      await refetch()
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to send request')
+    } finally {
+      setSendingRequest(false)
     }
   }
 
@@ -262,7 +281,7 @@ export default function PublicProfileClient({
           {profile.coverPhoto ? (
             <button
               type="button"
-              onClick={() => setLightboxUrl(profile.coverPhoto)}
+              onClick={() => setLightboxUrl(profile.coverPhoto!)}
               className="absolute inset-0 w-full h-full cursor-zoom-in group"
               aria-label="View cover photo"
             >
@@ -375,23 +394,23 @@ export default function PublicProfileClient({
                         <Button
                           size="sm"
                           variant={profile.isConnected ? 'outline' : 'default'}
-                          onClick={() => {
-                            toast.info(
-                              profile.isConnected
-                                ? 'Already connected'
-                                : 'Connection request sent'
-                            )
-                          }}
+                          onClick={handleConnect}
+                          disabled={sendingRequest}
                           className="gap-2"
                         >
-                          {profile.isConnected ? (
+                          {sendingRequest ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Sending…
+                            </>
+                          ) : profile.isConnected ? (
                             <>
                               <Check className="w-4 h-4" />
                               Connected
                             </>
                           ) : profile.isPending ? (
                             <>
-                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <Loader2 className="w-4 h-4" />
                               Pending
                             </>
                           ) : (
@@ -472,23 +491,24 @@ export default function PublicProfileClient({
                   icon: CheckCircle2,
                 },
               ].map((stat) => (
-                <a key={stat.label} className="block">
-                  <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800 h-full">
-                    <CardContent className="p-4 flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
-                        <stat.icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <Card
+                  key={stat.label}
+                  className="border-gray-200 dark:border-gray-700 dark:bg-gray-800 h-full"
+                >
+                  <CardContent className="p-4 flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
+                      <stat.icon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate">
+                        {stat.value}
                       </div>
-                      <div className="min-w-0">
-                        <div className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate">
-                          {stat.value}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                          {stat.label}
-                        </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {stat.label}
                       </div>
-                    </CardContent>
-                  </Card>
-                </a>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}
@@ -619,8 +639,7 @@ export default function PublicProfileClient({
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base dark:text-gray-200 flex items-center gap-2">
-                    <GraduationCap className="w-4 h-4 text-gray-400" />{' '}
-                    Education
+                    <GraduationCap className="w-4 h-4 text-gray-400" /> Education
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -890,3 +909,7 @@ export default function PublicProfileClient({
     </>
   )
 }
+
+
+
+

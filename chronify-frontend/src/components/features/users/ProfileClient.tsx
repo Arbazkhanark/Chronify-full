@@ -692,6 +692,11 @@ export default function ProfileClient() {
   const [editEducation, setEditEducation] = useState<EducationEntry[]>([])
   const [editExperience, setEditExperience] = useState<ExperienceEntry[]>([])
 
+  // 🔥 NEW: username edit toggle
+  const [isUserNameEditable, setIsUserNameEditable] = useState(false)
+  // Store original username to detect changes / revert on cancel
+  const originalUserNameRef = useRef<string>('')
+
   const [pendingAvatar, setPendingAvatar] = useState<PendingUpload | null>(null)
   const [pendingCover, setPendingCover] = useState<PendingUpload | null>(null)
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
@@ -1141,7 +1146,8 @@ export default function ProfileClient() {
         const result = await uploadToCloudinary(compressed, {
           folder: 'chronify/posts',
           onProgress: (percent) => {
-            const overall = Math.round(((i + percent / 100) / files.length) * 100)
+            const progress = Number(percent) || 0
+            const overall = Math.round(((i + progress / 100) / files.length) * 100)
             setPostUploadProgress(overall)
           },
         })
@@ -1196,6 +1202,11 @@ export default function ProfileClient() {
     setEditSocialLinks(Array.isArray(profile.socialLinks) ? profile.socialLinks : [])
     setEditEducation(Array.isArray(profile.education) ? [...profile.education] : [])
     setEditExperience(Array.isArray(profile.experience) ? [...profile.experience] : [])
+
+    // 🔥 Reset username edit toggle & store original
+    setIsUserNameEditable(false)
+    originalUserNameRef.current = profile.userName ?? ''
+
     setShowEditProfile(true)
   }
 
@@ -1205,6 +1216,7 @@ export default function ProfileClient() {
     setPendingAvatar(null)
     setPendingCover(null)
     setShowEditProfile(false)
+    setIsUserNameEditable(false)
   }
 
   /* ---------------- Social links ---------------- */
@@ -1527,8 +1539,18 @@ export default function ProfileClient() {
       const localFields = splitCsv(editForm.fields)
       const localSubFields = splitCsv(editForm.subFields)
 
+      // 🔥 Only send userName if it has been changed & user enabled editing
+      const userNameChanged =
+        isUserNameEditable && editForm.userName.trim() !== originalUserNameRef.current
+      const payloadUserName = userNameChanged ? editForm.userName.trim() : undefined
+
+      // 🔥 FIX: Always send fullName so the name gets updated on the backend
+      const payloadFullName = editForm.name.trim()
+
       const updated = await createOrUpdateProfile({
-        userName: editForm.userName,
+        // 🔥 FIX: fullName is now included in the payload
+        fullName: payloadFullName,
+        ...(payloadUserName !== undefined ? { userName: payloadUserName } : {}),
         bio: editForm.bio,
         profession: editForm.profession,
         dob: editForm.dob || null,
@@ -1579,6 +1601,7 @@ export default function ProfileClient() {
           if (!prev) return prev
           const updatedProfile: ProfileData = {
             ...prev,
+            // 🔥 FIX: also update name locally from editForm
             name: editForm.name,
             userName: updated.userName ?? editForm.userName,
             bio: updated.bio ?? editForm.bio,
@@ -1609,6 +1632,7 @@ export default function ProfileClient() {
           if (cached) {
             const syntheticApi: ApiFullProfile = {
               ...cached.apiProfile,
+              // 🔥 FIX: also update name in synthetic API cache
               name: editForm.name,
               fields: localFields,
               subFields: localSubFields,
@@ -1628,6 +1652,7 @@ export default function ProfileClient() {
       setPendingCover(null)
 
       setShowEditProfile(false)
+      setIsUserNameEditable(false)
       toast.success('Profile updated', {
         description: 'Your changes have been saved.',
       })
@@ -3188,18 +3213,58 @@ export default function ProfileClient() {
                     </div>
                     <div className="space-y-1.5">
                       <Label htmlFor="userName">Username</Label>
-                      <Input
-                        id="userName"
-                        value={editForm.userName}
-                        onChange={e => setEditForm({ ...editForm, userName: e.target.value })}
-                        className="dark:bg-gray-700 dark:border-gray-600"
-                      />
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Your profile will be at{' '}
-                        <span className="font-mono">
-                          /u/{editForm.userName || 'username'}
-                        </span>
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id="userName"
+                          value={editForm.userName}
+                          readOnly={!isUserNameEditable}
+                          onChange={e => setEditForm({ ...editForm, userName: e.target.value })}
+                          className={`dark:bg-gray-700 dark:border-gray-600 ${!isUserNameEditable ? 'bg-gray-50 dark:bg-gray-800 text-gray-500 cursor-not-allowed' : ''}`}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if (isUserNameEditable) {
+                              // revert on cancel
+                              setEditForm(prev => prev ? { ...prev, userName: originalUserNameRef.current } : prev)
+                            }
+                            setIsUserNameEditable(prev => !prev)
+                          }}
+                          className="flex-shrink-0 h-9 px-3 text-xs gap-1.5"
+                        >
+                          {isUserNameEditable ? (
+                            <>
+                              <X className="w-3.5 h-3.5" />
+                              Cancel
+                            </>
+                          ) : (
+                            <>
+                              <Edit className="w-3.5 h-3.5" />
+                              Change
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      {!isUserNameEditable && (
+                        <p className="text-xs text-gray-400 dark:text-gray-500">
+                          Click <strong>Change</strong> to edit your username
+                        </p>
+                      )}
+                      {isUserNameEditable && (
+                        <p className="text-xs text-amber-600 dark:text-amber-400">
+                          ⚠️ Changing your username will update your public profile URL
+                        </p>
+                      )}
+                      {editForm.userName && (
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Your profile will be at{' '}
+                          <span className="font-mono">
+                            /u/{editForm.userName}
+                          </span>
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="space-y-1.5">

@@ -8,14 +8,6 @@ import {
   type PublicProfileApiError,
 } from '@/lib/public-profile'
 
-interface CacheEntry {
-  data: PublicProfile
-  fetchedAt: number
-}
-
-const CACHE_TTL_MS = 1000 * 60 * 5 // 5 min
-const memoryCache = new Map<string, CacheEntry>()
-
 export interface UsePublicProfileResult {
   profile: PublicProfile | null
   isLoading: boolean
@@ -23,24 +15,16 @@ export interface UsePublicProfileResult {
   refetch: () => Promise<void>
 }
 
+/**
+ * Always fetches fresh data from the API whenever `username` changes.
+ * No client-side caching — profiles reflect real-time data.
+ */
 export function usePublicProfile(
-  username: string | null | undefined
+  username: string | null | undefined,
+  loading: boolean = true
 ): UsePublicProfileResult {
-  const [profile, setProfile] = useState<PublicProfile | null>(() => {
-    if (!username) return null
-    const cached = memoryCache.get(username)
-    if (cached && Date.now() - cached.fetchedAt < CACHE_TTL_MS) {
-      return cached.data
-    }
-    return null
-  })
-
-  const [isLoading, setIsLoading] = useState(() => {
-    if (!username) return false
-    const cached = memoryCache.get(username)
-    return !(cached && Date.now() - cached.fetchedAt < CACHE_TTL_MS)
-  })
-
+  const [profile, setProfile] = useState<PublicProfile | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(!!username)
   const [error, setError] = useState<PublicProfileApiError | null>(null)
   const mountedRef = useRef(true)
 
@@ -60,15 +44,6 @@ export function usePublicProfile(
         return
       }
 
-      // Cache hit?
-      const cached = memoryCache.get(username)
-      if (cached && Date.now() - cached.fetchedAt < CACHE_TTL_MS) {
-        setProfile(cached.data)
-        setIsLoading(false)
-        setError(null)
-        return
-      }
-
       setIsLoading(true)
       setError(null)
 
@@ -76,12 +51,12 @@ export function usePublicProfile(
         const data = await getPublicProfile(username, signal)
         if (!mountedRef.current) return
 
-        memoryCache.set(username, { data, fetchedAt: Date.now() })
         setProfile(data)
         setError(null)
       } catch (err) {
         if (!mountedRef.current) return
 
+        // Ignore aborts
         if (err instanceof Error && err.name === 'AbortError') return
 
         const apiError = err as PublicProfileApiError
@@ -102,9 +77,111 @@ export function usePublicProfile(
 
   const refetch = useCallback(async () => {
     if (!username) return
-    memoryCache.delete(username)
     await load()
   }, [username, load])
 
   return { profile, isLoading, error, refetch }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // // src/hooks/usePublicProfile.ts
+// // 'use client'
+
+// // import { useCallback, useEffect, useState } from 'react'
+// // import { apiClient } from '@/lib/api-client'
+
+// // export interface PublicEducation {
+// //   id: string
+// //   institution: string
+// //   degree: string
+// //   field?: string | null
+// //   grade?: string | null
+// //   startYear?: string | null
+// //   endYear?: string | null
+// //   isCurrent?: boolean
+// // }
+
+// // export interface PublicExperience {
+// //   id: string
+// //   role: string
+// //   organization: string
+// //   employmentType?: string
+// //   startDate?: string | null
+// //   endDate?: string | null
+// //   isCurrent?: boolean
+// // }
+
+// // export interface PublicProfile {
+// //   id: string
+// //   name: string
+// //   userName: string
+// //   avatarUrl?: string | null
+// //   coverPhoto?: string | null
+// //   bio?: string | null
+// //   profession?: string | null
+// //   city?: string | null
+// //   state?: string | null
+// //   country?: string | null
+// //   accountType?: 'STUDENT' | 'MENTOR'
+// //   verified: boolean
+// //   fields?: string[]
+// //   subFields?: string[]
+// //   education?: PublicEducation[]
+// //   experience?: PublicExperience[]
+// // }
+
+// // /**
+// //  * Fetch a user's public profile by username.
+// //  * Caches result in memory for the session (per username).
+// //  */
+// // const memoryCache = new Map<string, PublicProfile>()
+
+// // export function usePublicProfile(username: string | null | undefined) {
+// //   const [profile, setProfile] = useState<PublicProfile | null>(null)
+// //   const [loading, setLoading] = useState(false)
+// //   const [error, setError] = useState<string | null>(null)
+
+// //   const load = useCallback(async () => {
+// //     if (!username) return
+
+// //     if (memoryCache.has(username)) {
+// //       setProfile(memoryCache.get(username)!)
+// //       return
+// //     }
+
+// //     setLoading(true)
+// //     setError(null)
+// //     try {
+// //       const res = await apiClient.get<PublicProfile>(
+// //         `/users/get-profile-by-username?username=${encodeURIComponent(username)}`,
+// //       )
+// //       if (res.data) {
+// //         memoryCache.set(username, res.data)
+// //         setProfile(res.data)
+// //       }
+// //     } catch (err) {
+// //       const message = err instanceof Error ? err.message : 'Failed to load'
+// //       setError(message)
+// //     } finally {
+// //       setLoading(false)
+// //     }
+// //   }, [username])
+
+// //   useEffect(() => {
+// //     void load()
+// //   }, [load])
+
+// //   return { profile, loading, error, reload: load }
+// // }
