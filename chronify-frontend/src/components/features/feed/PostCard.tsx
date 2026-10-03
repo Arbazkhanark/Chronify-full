@@ -4,7 +4,8 @@
 import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { formatDistanceToNow } from 'date-fns'
+// import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow'
 import { toast } from 'sonner'
 import {
   MessageCircle,
