@@ -7,7 +7,7 @@ import { optionalAuthMiddleware } from '../../middlewares/optional-auth.middlewa
 const router = Router();
 
 // Public feed (can also be protected — your choice)
-router.get('/feed', authMiddleware, PostController.getFeed);
+router.get('/feed', optionalAuthMiddleware, PostController.getFeed);
 router.get('/me', authMiddleware, PostController.getMyPosts);
 router.get('/:id', optionalAuthMiddleware, PostController.getOne);
 

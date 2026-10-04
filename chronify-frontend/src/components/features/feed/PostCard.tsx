@@ -1,7 +1,7 @@
 // src/components/features/feed/PostCard.tsx
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 // import { formatDistanceToNow } from 'date-fns'
@@ -28,6 +28,7 @@ import {
   Pencil,
   UploadCloud,
   Save,
+  MessageSquare,
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -99,6 +100,8 @@ const TYPE_BADGE: Record<
 
 const MAX_IMAGES = 10
 
+const TRUNCATE_LENGTH = 280
+
 /* ============================================================================
    HELPERS
    ============================================================================ */
@@ -135,20 +138,85 @@ function sanitizeImageUrls(urls: (string | null | undefined)[]): string[] {
   return out
 }
 
+/**
+ * 🔥 SAFE encodeURIComponent
+ *
+ * Wraps encodeURIComponent in try/catch so a malformed string
+ * (unpaired surrogate, invalid unicode) never crashes the app.
+ *
+ * Falls back to a manual percent-encoding of only the essential
+ * characters if the native encoder throws.
+ */
+function safeEncodeURIComponent(value: string): string {
+  try {
+    return encodeURIComponent(value)
+  } catch {
+    // Fallback: escape only the characters that would break a URL.
+    // This preserves most of the string and never throws.
+    return value
+      .replace(/%/g, '%25')
+      .replace(/&/g, '%26')
+      .replace(/#/g, '%23')
+      .replace(/\?/g, '%3F')
+      .replace(/ /g, '%20')
+  }
+}
+
+/**
+ * 🔥 SAFE content slice for share text.
+ *
+ * Slices to `maxLen` characters, then removes any trailing
+ * unpaired surrogate (half emoji) so `encodeURIComponent`
+ * doesn't throw.
+ */
+function safeSliceForShare(content: string, maxLen: number): string {
+  if (!content) return ''
+
+  let slice = content.slice(0, maxLen)
+
+  // Remove trailing lone surrogate (half emoji at the cut point).
+  // A high surrogate is 0xD800-0xDBFF; a low is 0xDC00-0xDFFF.
+  // If the last char is a high surrogate, drop it.
+  const lastCode = slice.charCodeAt(slice.length - 1)
+  if (lastCode >= 0xd800 && lastCode <= 0xdbff) {
+    slice = slice.slice(0, -1)
+  }
+
+  return slice
+}
+
+function truncateContent(content: string): {
+  text: string
+  isTrunc: boolean
+} {
+  if (!content) {
+    return { text: '', isTrunc: false }
+  }
+
+  if (content.length <= TRUNCATE_LENGTH) {
+    return { text: content, isTrunc: false }
+  }
+
+  const slice = content.slice(0, TRUNCATE_LENGTH)
+  const lastSpace = slice.lastIndexOf(' ')
+
+  const cutAt = lastSpace > TRUNCATE_LENGTH * 0.6 ? lastSpace : TRUNCATE_LENGTH
+
+  return {
+    text: content.slice(0, cutAt).trimEnd(),
+    isTrunc: true,
+  }
+}
+
 /* ============================================================================
    PROPS
-   ---------------------------------------------------------------------------
-   🔥 Accepts BOTH `onDelete` (imperative) AND `onDeleted` (past-tense).
-   Whichever the parent passes, `confirmDelete` will invoke only one.
    ============================================================================ */
 
 export interface PostCardProps {
   post: Post
   currentUserId?: string
   onUpdated?: (post: Post) => void
-  /** Called after a successful delete — imperative naming */
   onDelete?: (id: string) => void | Promise<void>
-  /** Called after a successful delete — past-tense naming (alias) */
   onDeleted?: (id: string) => void | Promise<void>
   onEdited?: (post: Post) => void
   compact?: boolean
@@ -176,6 +244,9 @@ export default function PostCard({
   const [copied, setCopied] = useState(false)
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
+  /* ============ READ MORE STATE ============ */
+  const [isExpanded, setIsExpanded] = useState(false)
 
   /* ============ EDIT STATE ============ */
   const [showEdit, setShowEdit] = useState(false)
@@ -490,7 +561,6 @@ export default function PostCard({
     setShowDeleteConfirm(true)
   }
 
-  // 🔥 Invokes ONLY ONE callback — prefers `onDeleted`, falls back to `onDelete`
   const invokeDeleteCallback = async (id: string) => {
     const cb = onDeleted ?? onDelete
     if (!cb) return
@@ -553,7 +623,7 @@ export default function PostCard({
     const shareTitle = safeUser?.name
       ? `${safeUser.name} on Chronify`
       : 'Chronify Post'
-    const shareText = (safePost.content ?? '').slice(0, 100)
+    const shareText = safeSliceForShare(safePost.content ?? '', 100)
 
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
@@ -621,6 +691,59 @@ export default function PostCard({
 
   const canSave =
     editHasChanges && editContent.trim().length > 0 && !uploading && !saving
+
+  /* ------------------------------------------------------------------ */
+  /*  🔥 READ MORE DERIVED                                              */
+  /* ------------------------------------------------------------------ */
+
+  const fullContent = safePost.content ?? ''
+
+  const { text: truncatedText, isTrunc: contentIsLong } =
+    truncateContent(fullContent)
+
+  const displayedContent =
+    contentIsLong && !isExpanded ? truncatedText : fullContent
+
+  /* ------------------------------------------------------------------ */
+  /*  🔥 SHARE URLS — SAFE COMPUTATION                                  */
+  /*                                                                    */
+  /*  Wrapped in useMemo + try/catch + safeEncodeURIComponent so a      */
+  /*  malformed postUrl or half-emoji content NEVER crashes the card.   */
+  /*  If anything fails, we fall back to the raw (unencoded) URL —      */
+  /*  worse UX but no crash.                                            */
+  /* ------------------------------------------------------------------ */
+
+  const { twitterShareUrl, linkedinShareUrl, whatsappShareUrl } = useMemo(() => {
+    try {
+      const urlForEncoding = postUrl || ''
+      const contentForEncoding = safeSliceForShare(
+        safePost.content ?? '',
+        100,
+      )
+
+      const encodedUrl = safeEncodeURIComponent(urlForEncoding)
+      const encodedContent = safeEncodeURIComponent(contentForEncoding)
+      const encodedMessage = safeEncodeURIComponent(
+        `Check out this post: ${urlForEncoding}`,
+      )
+
+      return {
+        twitterShareUrl:
+          `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedContent}`,
+        linkedinShareUrl:
+          `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+        whatsappShareUrl:
+          `https://wa.me/?text=${encodedMessage}`,
+      }
+    } catch {
+      // Absolute last-resort fallback — never crash the component.
+      return {
+        twitterShareUrl: 'https://twitter.com/intent/tweet',
+        linkedinShareUrl: 'https://www.linkedin.com/',
+        whatsappShareUrl: 'https://wa.me/',
+      }
+    }
+  }, [postUrl, safePost.content])
 
   /* ------------------------------------------------------------------ */
   /*  RENDER                                                             */
@@ -773,7 +896,17 @@ export default function PostCard({
 
         {/* ============ CONTENT ============ */}
         <div className="px-4 pb-3">
-          <PostContent content={safePost.content ?? ''} />
+          <PostContent content={displayedContent} />
+
+          {contentIsLong && (
+            <button
+              type="button"
+              onClick={() => setIsExpanded((v) => !v)}
+              className="mt-1 text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:underline"
+            >
+              {isExpanded ? 'see less' : '…see more'}
+            </button>
+          )}
 
           {safePost.image && safePost.image.length > 0 && (
             <div
@@ -1156,9 +1289,17 @@ export default function PostCard({
         </DialogContent>
       </Dialog>
 
-      {/* ==================== SHARE DIALOG ==================== */}
+      {/* ==================== SHARE DIALOG (RESPONSIVE) ==================== */}
       <Dialog open={showShare} onOpenChange={setShowShare}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 w-[calc(100vw-2rem)] max-w-[calc(100vw-2rem)] sm:max-w-md">
+        <DialogContent
+          className="
+            bg-white dark:bg-gray-800
+            w-[calc(100vw-1.5rem)] max-w-[calc(100vw-1.5rem)]
+            sm:w-full sm:max-w-md
+            p-4 sm:p-6
+            max-h-[90vh] overflow-y-auto
+          "
+        >
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 dark:text-gray-100">
               <Share2 className="w-5 h-5" /> Share this post
@@ -1169,13 +1310,18 @@ export default function PostCard({
           </DialogHeader>
 
           <div className="space-y-3 py-2">
-            <div className="flex flex-col gap-2 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
-              <div className="flex items-center gap-2">
+            {/* ---------- COPY LINK BLOCK ---------- */}
+            <div className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40">
+              <div className="flex items-center gap-2 min-w-0 mb-2">
                 <Globe className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                <span className="text-xs text-gray-700 dark:text-gray-300 truncate flex-1">
+                <span
+                  className="text-xs text-gray-700 dark:text-gray-300 truncate flex-1 min-w-0"
+                  title={postUrl}
+                >
                   {postUrl}
                 </span>
               </div>
+
               <Button
                 size="sm"
                 variant={copied ? 'default' : 'outline'}
@@ -1194,47 +1340,50 @@ export default function PostCard({
               </Button>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            {/*
+              ---------- SOCIAL SHARE BUTTONS ----------
+            */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <Button
                 variant="outline"
-                className="flex-col h-auto py-3 gap-1.5 text-xs"
-                onClick={() =>
-                  window.open(
-                    `https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent((safePost.content ?? '').slice(0, 100))}`,
-                    '_blank',
-                  )
-                }
+                className="
+                  flex items-center justify-start sm:justify-center
+                  gap-2 h-11 sm:h-auto sm:flex-col sm:py-3 sm:gap-1.5
+                  text-sm sm:text-xs
+                  min-w-0
+                "
+                onClick={() => window.open(twitterShareUrl, '_blank')}
               >
-                <Twitter className="w-4 h-4" />
-                <span>Twitter</span>
+                <Twitter className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">Twitter</span>
               </Button>
 
               <Button
                 variant="outline"
-                className="flex-col h-auto py-3 gap-1.5 text-xs"
-                onClick={() =>
-                  window.open(
-                    `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`,
-                    '_blank',
-                  )
-                }
+                className="
+                  flex items-center justify-start sm:justify-center
+                  gap-2 h-11 sm:h-auto sm:flex-col sm:py-3 sm:gap-1.5
+                  text-sm sm:text-xs
+                  min-w-0
+                "
+                onClick={() => window.open(linkedinShareUrl, '_blank')}
               >
-                <Linkedin className="w-4 h-4" />
-                <span>LinkedIn</span>
+                <Linkedin className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">LinkedIn</span>
               </Button>
 
               <Button
                 variant="outline"
-                className="flex-col h-auto py-3 gap-1.5 text-xs"
-                onClick={() =>
-                  window.open(
-                    `https://wa.me/?text=${encodeURIComponent(`Check out this post: ${postUrl}`)}`,
-                    '_blank',
-                  )
-                }
+                className="
+                  flex items-center justify-start sm:justify-center
+                  gap-2 h-11 sm:h-auto sm:flex-col sm:py-3 sm:gap-1.5
+                  text-sm sm:text-xs
+                  min-w-0
+                "
+                onClick={() => window.open(whatsappShareUrl, '_blank')}
               >
-                <Globe className="w-4 h-4" />
-                <span>WhatsApp</span>
+                <MessageSquare className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">WhatsApp</span>
               </Button>
             </div>
           </div>

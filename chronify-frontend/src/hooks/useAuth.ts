@@ -260,22 +260,22 @@ export class AuthServiceClass {
   forceLogout(): void {
     this.clearSession()
 
-    if (typeof window === 'undefined') {
-      return
-    }
+    // if (typeof window === 'undefined') {
+    //   return
+    // }
 
-    const currentPath = window.location.pathname
+    // const currentPath = window.location.pathname
 
-    // Don't redirect if we're already on an auth page — avoids
-    // infinite loops when login/signup itself returns 401.
-    if (!currentPath.startsWith('/auth/')) {
-      sessionStorage.setItem(
-        'redirectAfterLogin',
-        currentPath,
-      )
+    // // Don't redirect if we're already on an auth page — avoids
+    // // infinite loops when login/signup itself returns 401.
+    // if (!currentPath.startsWith('/auth/')) {
+    //   sessionStorage.setItem(
+    //     'redirectAfterLogin',
+    //     currentPath,
+    //   )
 
-      window.location.href = '/auth/login'
-    }
+    //   window.location.href = '/auth/login'
+    // }
   }
 
   // ==========================================================

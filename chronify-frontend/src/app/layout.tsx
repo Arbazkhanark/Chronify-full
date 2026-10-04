@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geist.className} antialiased bg-background text-foreground`}>
-        <TutorialTourProvider>
+        {/* <TutorialTourProvider> */}
           <ThemeProvider 
             attribute="class" 
             defaultTheme="dark" 
@@ -34,11 +34,11 @@ export default function RootLayout({
             storageKey="studyflow-theme"
           >
             <Header/>
-            <FCMProvider />
+            {/* <FCMProvider /> */}
             {children}
             <Footer/>
           </ThemeProvider>
-        </TutorialTourProvider>
+        {/* </TutorialTourProvider> */}
       </body>
     </html>
   )

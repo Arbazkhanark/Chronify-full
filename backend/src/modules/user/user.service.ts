@@ -401,12 +401,32 @@ export class UserService {
       throw new AppError("User not found", 404);
     }
 
+    const userFullProfile = await UserRepository.getFullDetailedProfileById(userId);
+    if (!userFullProfile) {
+      logger.warn("Full profile fetch failed - user not found", {
+        functionName: "UserService.getProfile",
+        metadata: { userId },
+      });
+      throw new AppError("User not found", 404);
+    }
+
+    // Merge basic and full profile data
+    const mergedProfile = {
+      ...user,
+      ...userFullProfile,
+    };
+
+    logger.info("User profile fetched successfully", {
+      functionName: "UserService.getProfile",
+      metadata: { userId },
+    });
+
     logger.info("Profile fetched successfully", {
       functionName: "UserService.getProfile",
       metadata: { userId },
     });
 
-    return user;
+    return mergedProfile;
   }
 
 

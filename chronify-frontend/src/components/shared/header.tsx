@@ -136,11 +136,10 @@ export function Header() {
      -------------------------------------------------------------------- */
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
+    { href: '/feed', label: 'Feed' },
     { href: '/dashboard/timetable', label: 'Timetable' },
     { href: '/dashboard/goal', label: 'Goals' },
     { href: '/dashboard/timetable/builder', label: 'Builder' },
-    { href: '/dashboard/insights', label: 'Insights' },
-    { href: '/dashboard/progress', label: 'Progress' },
   ]
 
   if (!mounted) return null
