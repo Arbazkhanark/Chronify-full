@@ -579,4 +579,63 @@ export class UserController {
       });
     }
   }
+
+
+
+    /* ==========================================================================
+     🔥 GET SUGGESTIONS
+     ========================================================================== */
+
+  static async getSuggestions(req: Request, res: Response) {
+    try {
+      const userId = req.user?.id
+
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized',
+        })
+      }
+
+      // Optional ?limit= query (default 20, max 50)
+      const rawLimit = pickString(req.query.limit)
+      const parsedLimit = parseInt(rawLimit, 10)
+      const limit =
+        Number.isFinite(parsedLimit) && parsedLimit > 0
+          ? Math.min(parsedLimit, 50)
+          : 20
+
+      logger.info('Get suggestions API called', {
+        functionName: 'UserController.getSuggestions',
+        metadata: { userId, limit },
+      })
+
+      const suggestions = await UserService.getSuggestions(userId, limit)
+
+      return res.status(200).json({
+        success: true,
+        message: 'Suggestions fetched successfully',
+        data: suggestions,
+      })
+    } catch (err: any) {
+      logger.error(`Get suggestions failed: ${err.message}`, {
+        functionName: 'UserController.getSuggestions',
+        error: err.message,
+      })
+
+      if (err instanceof AppError) {
+        return res.status(err.statusCode).json({
+          success: false,
+          message: err.message,
+        })
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      })
+    }
+  }
+
+
 }

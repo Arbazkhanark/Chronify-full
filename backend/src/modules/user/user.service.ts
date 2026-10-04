@@ -9,6 +9,7 @@ import { logger } from "patal-log";
 import { emailTemplates } from "../email/email.template";
 import { sendResetPasswordEmail, sendVerificationEmail } from "../email/email.helper";
 import { UpdateProfileDTO } from "./user.validation";
+import { scoreCandidate, SuggestionCandidate, SuggestionViewer } from "./user.suggestion";
 
 export class UserService {
   static async signup(data: CreateUserDTO) {
@@ -565,6 +566,154 @@ export class UserService {
     });
 
     await UserRepository.saveFcmToken(userId, token);
+  }
+
+
+
+    /* ==========================================================================
+     🔥 GET USER SUGGESTIONS
+     --------------------------------------------------------------------------
+     Returns a ranked list of users the logged-in user might want to connect
+     with, based on:
+       - Mutual connections
+       - Shared university / company
+       - Shared fields / subFields
+       - Shared location / profession
+     ========================================================================== */
+
+  static async getSuggestions(
+    viewerId: string,
+    limit: number = 20,
+  ) {
+    logger.info('Fetching user suggestions', {
+      functionName: 'UserService.getSuggestions',
+      metadata: { viewerId, limit },
+    })
+
+    /* ---------- 1. Load viewer with scoring data ---------- */
+    const viewer = await UserRepository.getViewerForSuggestions(viewerId)
+
+    if (!viewer) {
+      throw new AppError('User not found', 404)
+    }
+
+    /* ---------- 2. Figure out who to exclude ---------- */
+    const excludedSet = await UserRepository.getExcludedUserIds(viewerId)
+    const excludedIds = Array.from(excludedSet)
+
+    /* ---------- 3. Fetch candidates (cap for performance) ---------- */
+    const candidates = await UserRepository.getSuggestionCandidates(
+      excludedIds,
+      200, // fetch up to 200, score, return top N
+    )
+
+    if (candidates.length === 0) {
+      return []
+    }
+
+    /* ---------- 4. Mutual connection counts (1 DB round-trip) ---------- */
+    const candidateIds = candidates.map((c) => c.id)
+    const mutualCounts = await UserRepository.getMutualCounts(
+      viewerId,
+      candidateIds,
+    )
+
+    /* ---------- 5. Build viewer scoring shape ---------- */
+    const viewerForScoring: SuggestionViewer = {
+      id: viewer.id,
+      accountType: viewer.accountType,
+      fields: viewer.fields ?? [],
+      subFields: viewer.subFields ?? [],
+      profession: viewer.profile?.profession ?? null,
+      city: viewer.profile?.city ?? null,
+      state: viewer.profile?.state ?? null,
+      country: viewer.profile?.country ?? null,
+      educationInstitutions:
+        viewer.profile?.education?.map((e) => e.institution) ?? [],
+      experienceOrganizations:
+        viewer.profile?.experience?.map((e) => e.organization) ?? [],
+    }
+
+    /* ---------- 6. Score every candidate ---------- */
+    const scored = candidates.map((c) => {
+      const candidateForScoring: SuggestionCandidate = {
+        id: c.id,
+        name: c.name,
+        accountType: c.accountType,
+        fields: c.fields ?? [],
+        subFields: c.subFields ?? [],
+        profession: c.profile?.profession ?? null,
+        city: c.profile?.city ?? null,
+        state: c.profile?.state ?? null,
+        country: c.profile?.country ?? null,
+        avatarUrl: c.profile?.avatarUrl ?? null,
+        userName: c.profile?.userName ?? null,
+        bio: c.profile?.bio ?? null,
+        educationInstitutions:
+          c.profile?.education?.map((e) => e.institution) ?? [],
+        experienceOrganizations:
+          c.profile?.experience?.map((e) => e.organization) ?? [],
+      }
+
+      const mutualCount = mutualCounts.get(c.id) ?? 0
+      const { total, reasons } = scoreCandidate(
+        viewerForScoring,
+        candidateForScoring,
+        mutualCount,
+      )
+
+      return {
+        // Public card data (nothing sensitive)
+        id: c.id,
+        name: c.name,
+        userName: c.profile?.userName ?? null,
+        avatarUrl: c.profile?.avatarUrl ?? null,
+        bio: c.profile?.bio ?? null,
+        profession: c.profile?.profession ?? null,
+        city: c.profile?.city ?? null,
+        country: c.profile?.country ?? null,
+        accountType: c.accountType,
+        fields: c.fields ?? [],
+        subFields: c.subFields ?? [],
+        profileVisibility: c.profileVisibility,
+
+        // Suggestion metadata
+        mutualConnections: mutualCount,
+        score: total,
+        reasons,
+      }
+    })
+
+    /* ---------- 7. Sort: score desc, then mutuals desc, then name asc ---------- */
+    scored.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score
+      if (b.mutualConnections !== a.mutualConnections) {
+        return b.mutualConnections - a.mutualConnections
+      }
+      return a.name.localeCompare(b.name)
+    })
+
+    /* ---------- 8. Drop zero-score candidates unless we need filler ---------- */
+    const meaningful = scored.filter((s) => s.score > 0)
+
+    // If we have enough meaningful suggestions, use them. Otherwise,
+    // fall back to including zero-score candidates so the list isn't empty.
+    const finalList =
+      meaningful.length >= limit
+        ? meaningful.slice(0, limit)
+        : [...meaningful, ...scored.filter((s) => s.score === 0)]
+            .slice(0, limit)
+
+    logger.info('User suggestions ready', {
+      functionName: 'UserService.getSuggestions',
+      metadata: {
+        viewerId,
+        candidateCount: candidates.length,
+        returnedCount: finalList.length,
+      },
+    })
+
+    return finalList
   }
 
 

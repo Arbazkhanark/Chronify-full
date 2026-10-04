@@ -14,8 +14,8 @@ import {
   LayoutDashboard,
   ChevronDown,
   Loader2,
-  ExternalLink,        // 🔥 NEW
-  Sparkles,            // 🔥 NEW
+  ExternalLink,
+  Sparkles,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -34,7 +34,7 @@ import { AuthService, type User } from '@/hooks/useAuth'
    CONSTANTS
    ============================================================================ */
 
-const DSA_TOOL_URL = 'https://dsa-revision.in/'   // 🔥 NEW
+const DSA_TOOL_URL = 'https://dsa-revision.in/'
 
 /* ============================================================================
    HELPERS
@@ -132,7 +132,7 @@ export function Header() {
   }
 
   /* --------------------------------------------------------------------
-     Nav links
+     Nav links — desktop only
      -------------------------------------------------------------------- */
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -149,14 +149,18 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* ============================== LOGO ============================== */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-              <span className="text-sm font-bold text-primary-foreground">SF</span>
+              <span className="text-sm font-bold text-primary-foreground">
+                SF
+              </span>
             </div>
-            <span className="font-bold text-lg text-foreground">Chronify AI</span>
+            <span className="font-bold text-lg text-foreground hidden sm:inline">
+              Chronify AI
+            </span>
           </Link>
 
-          {/* ============================== NAVIGATION ============================== */}
+          {/* ============================== NAVIGATION (desktop only) ============================== */}
           <nav className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
@@ -168,7 +172,7 @@ export function Header() {
               </Link>
             ))}
 
-            {/* 🔥 NEW: DSA Tool external link */}
+            {/* DSA Tool external link */}
             <a
               href={DSA_TOOL_URL}
               target="_blank"
@@ -219,7 +223,11 @@ export function Header() {
                   </button>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent align="end" className="w-64 p-2" sideOffset={8}>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-64 p-2"
+                  sideOffset={8}
+                >
                   {/* ---- User info header ---- */}
                   <div className="flex items-center gap-3 px-3 py-3 mb-1 rounded-lg bg-muted/50">
                     <Avatar className="h-10 w-10 border-2 border-primary/20 flex-shrink-0">
@@ -256,25 +264,31 @@ export function Header() {
 
                   <DropdownMenuSeparator />
 
-                  {/* ---- Profile ---- */}
                   <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/dashboard/profile" className="flex items-center gap-2 py-2.5">
+                    <Link
+                      href="/dashboard/profile"
+                      className="flex items-center gap-2 py-2.5"
+                    >
                       <UserIcon className="w-4 h-4 text-muted-foreground" />
                       <span>My Profile</span>
                     </Link>
                   </DropdownMenuItem>
 
-                  {/* ---- Dashboard ---- */}
                   <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/dashboard" className="flex items-center gap-2 py-2.5">
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-2 py-2.5"
+                    >
                       <LayoutDashboard className="w-4 h-4 text-muted-foreground" />
                       <span>Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
 
-                  {/* ---- Settings ---- */}
                   <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/dashboard/settings" className="flex items-center gap-2 py-2.5">
+                    <Link
+                      href="/dashboard/settings"
+                      className="flex items-center gap-2 py-2.5"
+                    >
                       <Settings className="w-4 h-4 text-muted-foreground" />
                       <span>Settings</span>
                     </Link>
@@ -282,7 +296,6 @@ export function Header() {
 
                   <DropdownMenuSeparator />
 
-                  {/* 🔥 NEW: DSA Tool link in dropdown (mobile users ke liye) */}
                   <DropdownMenuItem asChild className="cursor-pointer">
                     <a
                       href={DSA_TOOL_URL}
@@ -298,7 +311,6 @@ export function Header() {
 
                   <DropdownMenuSeparator />
 
-                  {/* ---- Logout ---- */}
                   <DropdownMenuItem
                     onClick={(e) => {
                       e.preventDefault()
@@ -323,7 +335,7 @@ export function Header() {
               </DropdownMenu>
             ) : (
               <Link href="/auth/login">
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-4 sm:px-6 py-2">
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-3 sm:px-6 py-2 text-sm">
                   Sign In
                 </Button>
               </Link>
@@ -334,13 +346,13 @@ export function Header() {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="rounded-full w-10 h-10"
+              className="rounded-full w-9 h-9 sm:w-10 sm:h-10"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-accent" />
+                <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
               ) : (
-                <Moon className="w-5 h-5 text-primary" />
+                <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               )}
             </Button>
           </div>

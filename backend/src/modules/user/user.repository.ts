@@ -728,4 +728,203 @@ static findOAuthAccount(provider: 'GOOGLE' | 'GITHUB', providerId: string) {
 
 
 
+
+
+  /* ==========================================================================
+     🔥 SUGGESTIONS — DATA FETCHING
+     ========================================================================== */
+
+  /**
+   * Fetch the "viewer" (logged-in user) with all data needed for scoring:
+   * fields, subFields, profile (education, experience, location, profession).
+   */
+  static async getViewerForSuggestions(userId: string) {
+    return prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        accountType: true,
+        fields: true,
+        subFields: true,
+        profile: {
+          select: {
+            profession: true,
+            city: true,
+            state: true,
+            country: true,
+            education: { select: { institution: true } },
+            experience: { select: { organization: true } },
+          },
+        },
+      },
+    })
+  }
+
+  /**
+   * Get IDs of everyone the viewer should NOT be suggested:
+   *   - Self
+   *   - Existing friends (both directions)
+   *   - Pending / accepted / rejected friend requests (both directions)
+   *
+   * We keep rejected too, to avoid re-suggesting someone the user
+   * already declined. (Remove if you want rejected ones back.)
+   */
+  static async getExcludedUserIds(userId: string): Promise<Set<string>> {
+    const excluded = new Set<string>([userId])
+
+    // Friends (both directions)
+    const friends = await prisma.friend.findMany({
+      where: {
+        OR: [{ userId }, { friendId: userId }],
+      },
+      select: { userId: true, friendId: true },
+    })
+
+    for (const f of friends) {
+      excluded.add(f.userId)
+      excluded.add(f.friendId)
+    }
+
+    // Friend requests (both directions, any status)
+    const requests = await prisma.friendRequest.findMany({
+      where: {
+        OR: [{ senderId: userId }, { receiverId: userId }],
+      },
+      select: { senderId: true, receiverId: true, status: true },
+    })
+
+    for (const r of requests) {
+      // Keep PENDING + ACCEPTED excluded.
+      // Also exclude REJECTED (don't re-suggest). Remove this check
+      // if you want rejected users to be re-suggested.
+      excluded.add(r.senderId)
+      excluded.add(r.receiverId)
+    }
+
+    return excluded
+  }
+
+  /**
+   * Fetch candidate users (everyone except excluded) with the data
+   * needed for scoring.
+   *
+   * We cap at `take` for performance. If your user base is huge,
+   * consider a two-pass approach: first cheap filter, then detailed fetch.
+   */
+  static async getSuggestionCandidates(
+    excludedIds: string[],
+    take: number = 200,
+  ) {
+    return prisma.user.findMany({
+      where: {
+        id: { notIn: excludedIds },
+        // Only suggest verified users (optional — remove if you want all)
+        verified: true,
+      },
+      take,
+      orderBy: {
+        // Prefer recently active users
+        lastLogin: 'desc',
+      },
+      select: {
+        id: true,
+        name: true,
+        accountType: true,
+        fields: true,
+        subFields: true,
+        profileVisibility: true,
+        profile: {
+          select: {
+            userName: true,
+            avatarUrl: true,
+            bio: true,
+            profession: true,
+            city: true,
+            state: true,
+            country: true,
+            education: { select: { institution: true } },
+            experience: { select: { organization: true } },
+          },
+        },
+      },
+    })
+  }
+
+  /**
+   * Count mutual connections between viewer and a set of candidate IDs.
+   *
+   * Returns a Map<candidateId, mutualCount>.
+   *
+   * A "mutual connection" = someone who is a friend of the viewer
+   * AND a friend of the candidate.
+   */
+  static async getMutualCounts(
+    viewerId: string,
+    candidateIds: string[],
+  ): Promise<Map<string, number>> {
+    const result = new Map<string, number>()
+
+    if (candidateIds.length === 0) return result
+
+    // 1. Get viewer's friends
+    const viewerFriends = await prisma.friend.findMany({
+      where: {
+        OR: [{ userId: viewerId }, { friendId: viewerId }],
+        status: 'ACTIVE',
+      },
+      select: { userId: true, friendId: true },
+    })
+
+    const viewerFriendIds = new Set<string>()
+    for (const f of viewerFriends) {
+      viewerFriendIds.add(f.userId === viewerId ? f.friendId : f.userId)
+    }
+
+    if (viewerFriendIds.size === 0) {
+      // No friends → no mutuals possible
+      for (const id of candidateIds) result.set(id, 0)
+      return result
+    }
+
+    // 2. Get friends of all candidates in one query
+    const candidateFriends = await prisma.friend.findMany({
+      where: {
+        OR: [
+          { userId: { in: candidateIds } },
+          { friendId: { in: candidateIds } },
+        ],
+        status: 'ACTIVE',
+      },
+      select: { userId: true, friendId: true },
+    })
+
+    // 3. Build mutual counts
+    const counts = new Map<string, number>()
+    for (const id of candidateIds) counts.set(id, 0)
+
+    for (const f of candidateFriends) {
+      // Determine which side is the candidate
+      let candidateId: string | null = null
+      let friendId: string | null = null
+
+      if (candidateIds.includes(f.userId)) {
+        candidateId = f.userId
+        friendId = f.friendId
+      } else if (candidateIds.includes(f.friendId)) {
+        candidateId = f.friendId
+        friendId = f.userId
+      }
+
+      if (!candidateId || !friendId) continue
+
+      // Is this friend also a friend of the viewer?
+      if (viewerFriendIds.has(friendId)) {
+        counts.set(candidateId, (counts.get(candidateId) ?? 0) + 1)
+      }
+    }
+
+    return counts
+  }
+
+
 }

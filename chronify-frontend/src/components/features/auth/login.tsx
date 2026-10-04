@@ -49,8 +49,7 @@ export function LoginForm() {
 
       if (!user) {
         toast.error('Login failed', {
-          description:
-            'Could not load your account. Please try again.',
+          description: 'Could not load your account. Please try again.',
         })
         return
       }
@@ -58,37 +57,14 @@ export function LoginForm() {
       // 1️⃣ Not verified → verification page
       if (!user.verified) {
         toast.info('Email not verified', {
-          description:
-            'Please verify your email before continuing.',
+          description: 'Please verify your email before continuing.',
           duration: 5000,
         })
         router.push('/auth/verify-email')
         return
       }
 
-      // 2️⃣ Onboarding incomplete → resume onboarding
-      const step = user.onboardingStep ?? 0
-
-      if (step < 4) {
-        toast.success('Login successful!', {
-          description: 'Let\u2019s finish your profile setup.',
-        })
-
-        if (step === 0) {
-          router.push('/onboarding/role')
-        } else if (step === 1) {
-          router.push('/onboarding/details')
-        } else if (step === 2) {
-          router.push('/onboarding/profile')
-        } else if (step === 3) {
-          router.push('/onboarding/complete')
-        } else {
-          router.push('/onboarding/role')
-        }
-        return
-      }
-
-      // 3️⃣ Fully onboarded → dashboard
+      // 2️⃣ Verified → dashboard
       toast.success('Welcome back!', {
         description: `Logged in as ${user.name || user.email}`,
       })
@@ -356,13 +332,45 @@ export function LoginForm() {
           {/* Footer links */}
           <div className="mt-10 pt-6 border-t border-border/60">
             <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-              <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-              <Link href="/features" className="hover:text-foreground transition-colors">Features</Link>
-              <Link href="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
-              <Link href="/about" className="hover:text-foreground transition-colors">About</Link>
-              <Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link>
-              <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
-              <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+              <Link href="/" className="hover:text-foreground transition-colors">
+                Home
+              </Link>
+              <Link
+                href="/features"
+                className="hover:text-foreground transition-colors"
+              >
+                Features
+              </Link>
+              <Link
+                href="/pricing"
+                className="hover:text-foreground transition-colors"
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/about"
+                className="hover:text-foreground transition-colors"
+              >
+                About
+              </Link>
+              <Link
+                href="/contact"
+                className="hover:text-foreground transition-colors"
+              >
+                Contact
+              </Link>
+              <Link
+                href="/privacy"
+                className="hover:text-foreground transition-colors"
+              >
+                Privacy
+              </Link>
+              <Link
+                href="/terms"
+                className="hover:text-foreground transition-colors"
+              >
+                Terms
+              </Link>
             </div>
             <p className="mt-4 text-center text-xs text-muted-foreground">
               © {new Date().getFullYear()} Chronify AI. Made for

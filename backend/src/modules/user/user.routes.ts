@@ -70,5 +70,8 @@ router.get('/full-profile', optionalAuthMiddleware, UserController.getFullDetail
 router.get('/me', authMiddleware, UserController.profile)
 router.get('/get-profile-by-username', optionalAuthMiddleware, UserController.getPublicProfile)
 router.post('/save-fcm-token', authMiddleware, UserController.saveFcmToken)
+// User suggestions ("People you may know")
+router.get('/suggestions', authMiddleware, UserController.getSuggestions)
+
 
 export default router

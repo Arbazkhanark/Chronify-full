@@ -3,11 +3,18 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, CheckCircle, Sparkles, ChevronLeft, ChevronRight, Zap, Target, Brain, Calendar, Clock, TrendingUp, BookOpen, Grid, List, Columns, Layout, Star, Timer, Bell, CheckSquare, PieChart, BarChart3, Activity, Target as TargetIcon, Award, School, Bus, Github, Coffee, Moon, Sun, Battery, Users, FileText, PenTool, Headphones, Video, Mic, Book, Laptop, GraduationCap } from 'lucide-react'
+import {
+  ArrowRight, Sparkles, ChevronLeft, ChevronRight, Target, Brain,
+  Calendar, TrendingUp, BookOpen, Grid, Columns, Layout, Timer,
+  CheckSquare, PieChart, Award, School, Bus, Coffee, Moon, Sun,
+  Laptop, GraduationCap, Clock,
+} from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 
-// ==================== FIXED: Discriminated union types for each design ====================
+/* ============================================================================
+   TYPES
+   ============================================================================ */
 
 interface CollegeStyleData {
   days: string[]
@@ -65,7 +72,6 @@ interface CircularWheelData {
   total: string
 }
 
-// Discriminated union type for each design
 type TimetableDesign =
   | { id: 'college-style'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: CollegeStyleData }
   | { id: 'weekly-schedule'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: WeeklyScheduleData }
@@ -75,7 +81,9 @@ type TimetableDesign =
   | { id: 'time-blocks'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: TimeBlocksData }
   | { id: 'circular-wheel'; title: string; icon: any; color: string; borderColor: string; description: string; type: string; data: CircularWheelData }
 
-// ==================== END FIXED ====================
+/* ============================================================================
+   DATA
+   ============================================================================ */
 
 const timetableDesigns: TimetableDesign[] = [
   {
@@ -106,8 +114,8 @@ const timetableDesigns: TimetableDesign[] = [
         ['SAP', 'ANK', '', '', 'STATISTICS'],
         ['GS', 'DCCN Lab', '', '', 'Software Eng'],
         ['', 'RJT', '', '', 'Self Study'],
-      ]
-    }
+      ],
+    },
   },
   {
     id: 'weekly-schedule',
@@ -125,7 +133,7 @@ const timetableDesigns: TimetableDesign[] = [
         { time: '9:30-4:45', type: 'college', icon: School },
         { time: '5:10-7:30', type: 'travel', icon: Bus },
         { time: '8:15-9:00', type: 'break', icon: Coffee },
-        { time: '9:00-10:30', type: 'study', icon: Book },
+        { time: '9:00-10:30', type: 'study', icon: BookOpen },
         { time: '10:30-10:45', type: 'break', icon: Coffee },
         { time: '10:45-11:45', type: 'study', icon: Laptop },
         { time: '11:45-12:00', type: 'learning', icon: Brain },
@@ -135,19 +143,19 @@ const timetableDesigns: TimetableDesign[] = [
         [
           { task: 'Wake Up + Plan', emoji: '⏰' },
           { task: 'BUS: DSA Audio/Video', emoji: '🎧' },
-          { task: 'COLLEGE\nFREE TIME = DSA / CODING', emoji: '💻' },
+          { task: 'COLLEGE FREE TIME = DSA', emoji: '💻' },
           { task: 'BUS: DSA Revision', emoji: '📱' },
           { task: 'DINNER & BREAK', emoji: '🍽️' },
           { task: 'DSA (Concepts + Problems)', emoji: '📚' },
           { task: 'SHORT BREAK', emoji: '☕' },
-          { task: 'DSA Problems Solution', emoji: '✅' },
+          { task: 'DSA Problems', emoji: '✅' },
           { task: 'AI-ML Learning', emoji: '🤖' },
-          { task: 'WIND DOWN + PLAN', emoji: '✨' },
+          { task: 'WIND DOWN', emoji: '✨' },
         ],
         [
           { task: 'Wake Up + Exercise', emoji: '💪' },
           { task: '', emoji: '' },
-          { task: 'DSA DEEP DIVE (4hrs)', emoji: '🔍' },
+          { task: 'DSA DEEP DIVE', emoji: '🔍' },
           { task: 'LUNCH BREAK', emoji: '🥗' },
           { task: '', emoji: '' },
           { task: 'PROJECT WORK', emoji: '🚀' },
@@ -157,9 +165,9 @@ const timetableDesigns: TimetableDesign[] = [
           { task: 'WIND DOWN', emoji: '🌙' },
         ],
         [
-          { task: 'Wake Up + Weekly Plan', emoji: '📅' },
+          { task: 'Wake Up + Plan', emoji: '📅' },
           { task: '', emoji: '' },
-          { task: 'DSA MOCK TESTS (4hrs)', emoji: '📝' },
+          { task: 'DSA MOCK TESTS', emoji: '📝' },
           { task: 'LUNCH BREAK', emoji: '🥪' },
           { task: '', emoji: '' },
           { task: 'COLLEGE STUDIES', emoji: '🎓' },
@@ -168,8 +176,8 @@ const timetableDesigns: TimetableDesign[] = [
           { task: 'DSA WEAK TOPICS', emoji: '🎯' },
           { task: 'WIND DOWN', emoji: '😴' },
         ],
-      ]
-    }
+      ],
+    },
   },
   {
     id: 'time-breakdown',
@@ -188,11 +196,11 @@ const timetableDesigns: TimetableDesign[] = [
       ],
       total: '60-67 hours',
       stats: [
-        { label: 'Productivity Score', value: '92%', icon: TrendingUp },
+        { label: 'Productivity', value: '92%', icon: TrendingUp },
         { label: 'Focus Hours', value: '42h', icon: Timer },
         { label: 'Consistency', value: '7/7', icon: CheckSquare },
-      ]
-    }
+      ],
+    },
   },
   {
     id: 'kanban',
@@ -200,7 +208,7 @@ const timetableDesigns: TimetableDesign[] = [
     icon: Columns,
     color: 'from-orange-500/20 to-red-500/20',
     borderColor: 'border-orange-200 dark:border-orange-700',
-    description: 'Drag-and-drop task management with progress tracking',
+    description: 'Drag-and-drop task management',
     type: 'productivity',
     data: {
       columns: [
@@ -210,7 +218,7 @@ const timetableDesigns: TimetableDesign[] = [
           tasks: [
             { task: 'DSA Tree Problems', time: '2 hrs', priority: 'High', type: 'coding' },
             { task: 'DBMS Assignment', time: '1.5 hrs', priority: 'Medium', type: 'academic' },
-          ]
+          ],
         },
         {
           title: 'In Progress',
@@ -218,14 +226,12 @@ const timetableDesigns: TimetableDesign[] = [
           tasks: [
             { task: 'ML Project', time: '3 hrs', progress: 60, type: 'project' },
             { task: 'System Design', time: '2 hrs', progress: 40, type: 'coding' },
-          ]
+          ],
         },
         {
           title: 'Review',
           color: 'bg-purple-100 dark:bg-purple-900/30',
-          tasks: [
-            { task: 'OS Notes', time: '1 hr', progress: 100, type: 'academic' },
-          ]
+          tasks: [{ task: 'OS Notes', time: '1 hr', progress: 100, type: 'academic' }],
         },
         {
           title: 'Done',
@@ -233,15 +239,15 @@ const timetableDesigns: TimetableDesign[] = [
           tasks: [
             { task: 'LeetCode Daily', time: '1 hr', completed: true, type: 'coding' },
             { task: 'College Lectures', time: '4 hrs', completed: true, type: 'academic' },
-          ]
-        }
-      ]
-    }
+          ],
+        },
+      ],
+    },
   },
   {
     id: 'priority-matrix',
     title: 'Priority Matrix',
-    icon: TargetIcon,
+    icon: Target,
     color: 'from-pink-500/20 to-rose-500/20',
     borderColor: 'border-pink-200 dark:border-pink-700',
     description: 'Eisenhower Matrix for task prioritization',
@@ -254,15 +260,15 @@ const timetableDesigns: TimetableDesign[] = [
           tasks: [
             { task: 'Project Deadline', time: 'Today', emoji: '🔥' },
             { task: 'DSA Assessment', time: 'Tomorrow', emoji: '⚡' },
-          ]
+          ],
         },
         {
           title: 'Important Not Urgent',
           color: 'from-green-100 to-green-200 dark:from-green-900/40 dark:to-green-800/40',
           tasks: [
-            { task: 'Long-term Projects', time: 'This Week', emoji: '🚀' },
+            { task: 'Long-term Projects', time: 'Week', emoji: '🚀' },
             { task: 'Skill Building', time: 'Ongoing', emoji: '📈' },
-          ]
+          ],
         },
         {
           title: 'Urgent Not Important',
@@ -270,7 +276,7 @@ const timetableDesigns: TimetableDesign[] = [
           tasks: [
             { task: 'Emails', time: 'Today', emoji: '📧' },
             { task: 'Meetings', time: 'Today', emoji: '👥' },
-          ]
+          ],
         },
         {
           title: 'Not Urgent Not Important',
@@ -278,10 +284,10 @@ const timetableDesigns: TimetableDesign[] = [
           tasks: [
             { task: 'Social Media', time: 'Limit', emoji: '📱' },
             { task: 'Entertainment', time: 'Leisure', emoji: '🎬' },
-          ]
-        }
-      ]
-    }
+          ],
+        },
+      ],
+    },
   },
   {
     id: 'time-blocks',
@@ -300,8 +306,8 @@ const timetableDesigns: TimetableDesign[] = [
         { time: '3:00-5:00', activity: 'Skill Development', type: 'learning', color: 'bg-red-200 dark:bg-red-800', duration: '2h' },
         { time: '5:00-7:00', activity: 'Exercise & Break', type: 'health', color: 'bg-cyan-200 dark:bg-cyan-800', duration: '2h' },
         { time: '7:00-9:00', activity: 'Revision & Planning', type: 'review', color: 'bg-indigo-200 dark:bg-indigo-800', duration: '2h' },
-      ]
-    }
+      ],
+    },
   },
   {
     id: 'circular-wheel',
@@ -313,16 +319,20 @@ const timetableDesigns: TimetableDesign[] = [
     type: 'visualization',
     data: {
       categories: [
-        { name: 'DSA Practice', value: 25, color: 'bg-purple-500', hours: 10 },
-        { name: 'College Studies', value: 30, color: 'bg-blue-500', hours: 12 },
-        { name: 'Projects', value: 20, color: 'bg-green-500', hours: 8 },
-        { name: 'Skill Dev', value: 15, color: 'bg-orange-500', hours: 6 },
-        { name: 'Health & Breaks', value: 10, color: 'bg-pink-500', hours: 4 },
+        { name: 'DSA Practice', value: 25, color: '#a855f7', hours: 10 },
+        { name: 'College Studies', value: 30, color: '#3b82f6', hours: 12 },
+        { name: 'Projects', value: 20, color: '#22c55e', hours: 8 },
+        { name: 'Skill Dev', value: 15, color: '#f97316', hours: 6 },
+        { name: 'Health & Breaks', value: 10, color: '#ec4899', hours: 4 },
       ],
-      total: '40 hours'
-    }
-  }
+      total: '40 hours',
+    },
+  },
 ]
+
+/* ============================================================================
+   HERO SECTION
+   ============================================================================ */
 
 export function HeroSection() {
   const [currentDesign, setCurrentDesign] = useState(0)
@@ -345,19 +355,21 @@ export function HeroSection() {
   const currentTimetable = timetableDesigns[currentDesign]
 
   return (
-    <section className="relative overflow-hidden pt-24 pb-20 px-4 sm:px-6 lg:px-8">
-      {/* Enhanced background effects */}
+    <section className="relative overflow-hidden pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8">
+      {/* Background effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-      <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse-glow" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse-glow" />
-      
-      {/* Animated grid background */}
+      <div className="absolute top-20 left-10 w-48 sm:w-72 h-48 sm:h-72 bg-primary/10 rounded-full blur-3xl animate-pulse-glow" />
+      <div className="absolute bottom-20 right-10 w-64 sm:w-96 h-64 sm:h-96 bg-accent/10 rounded-full blur-3xl animate-pulse-glow" />
+
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(to right, #8882 1px, transparent 1px),
-                          linear-gradient(to bottom, #8882 1px, transparent 1px)`,
-          backgroundSize: '40px 40px'
-        }} />
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `linear-gradient(to right, #8882 1px, transparent 1px),
+                            linear-gradient(to bottom, #8882 1px, transparent 1px)`,
+            backgroundSize: '40px 40px',
+          }}
+        />
       </div>
 
       <div className="relative max-w-7xl mx-auto">
@@ -367,157 +379,205 @@ export function HeroSection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-4xl mx-auto"
         >
-          {/* Enhanced Badge */}
+          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 mb-6 animate-slide-up"
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 mb-6"
           >
-            <Sparkles className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent flex-shrink-0" />
+            <span className="text-xs sm:text-sm font-medium bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               AI-Powered Student Productivity
             </span>
           </motion.div>
-          
-          {/* Main heading with enhanced animation */}
+
+          {/* Heading */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-5 sm:mb-6 leading-tight"
           >
             <span className="block">Master Your Time,</span>
             <span className="block bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
               Master Your Future
             </span>
           </motion.h1>
-          
+
           {/* Subheading */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto"
+            className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto px-2"
           >
-            Chronify AI creates personalized timetables that balance DSA, college studies, projects, 
-            and life—helping you achieve placement goals with smart time management.
+            Chronify AI creates personalized timetables that balance DSA, college
+            studies, projects, and life—helping you achieve placement goals with
+            smart time management.
           </motion.p>
-          
-          {/* CTA Buttons */}
+
+          {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-16 px-4 sm:px-0"
           >
-            <Link href="/dashboard">
-              <Button size="lg" className="rounded-xl px-8 py-6 text-lg gap-2 group">
+            <Link href="/dashboard" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                className="rounded-xl px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg gap-2 group w-full sm:w-auto"
+              >
                 <span>Create Your Timetable</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Link href="/features">
-              <Button size="lg" variant="outline" className="rounded-xl px-8 py-6 text-lg">
+            <Link href="/features" className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                variant="outline"
+                className="rounded-xl px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg w-full sm:w-auto"
+              >
                 See How It Works
               </Button>
             </Link>
           </motion.div>
-          
-          {/* Features list with enhanced animations */}
+
+          {/* Feature pills */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-12"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 max-w-3xl mx-auto mb-12"
           >
             {[
               { text: '7 Different View Styles', icon: Layout },
               { text: 'College Timetable Import', icon: School },
-              { text: 'Smart Priority Sorting', icon: TrendingUp }
+              { text: 'Smart Priority Sorting', icon: TrendingUp },
             ].map((feature, index) => (
               <motion.div
                 key={feature.text}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="flex items-center gap-3 p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border hover:border-primary/50 transition-all hover:shadow-lg"
+                whileHover={{ scale: 1.03, y: -3 }}
+                className="flex items-center gap-3 p-3 sm:p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border hover:border-primary/50 transition-all hover:shadow-lg"
               >
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <feature.icon className="w-5 h-5 text-accent" />
+                <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
+                  <feature.icon className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
                 </div>
-                <span className="text-sm font-medium">{feature.text}</span>
+                <span className="text-xs sm:text-sm font-medium text-left">
+                  {feature.text}
+                </span>
               </motion.div>
             ))}
           </motion.div>
         </motion.div>
-        
-        {/* Interactive Timetable Showcase */}
+
+        {/* ============================================================
+            INTERACTIVE TIMETABLE SHOWCASE
+           ============================================================ */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-16 relative"
+          className="mt-12 sm:mt-16 relative"
         >
-          {/* Design selector */}
-          <div className="flex flex-col items-center mb-8">
-            <h3 className="text-2xl font-bold mb-4 text-center">
+          {/* Design selector header */}
+          <div className="flex flex-col items-center mb-6 sm:mb-8">
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-center px-2">
               Explore 7 Different Timetable Styles
             </h3>
-            <p className="text-muted-foreground mb-6 text-center max-w-2xl">
-              From college schedules to time wheels - find your perfect productivity view
+            <p className="text-sm sm:text-base text-muted-foreground mb-5 sm:mb-6 text-center max-w-2xl px-2">
+              From college schedules to time wheels — find your perfect
+              productivity view
             </p>
-            
-            <div className="flex items-center gap-4 mb-6">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={prevDesign}
-                disabled={isAnimating}
-                className="rounded-full"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              
-              <div className="flex flex-wrap justify-center gap-2 max-w-3xl">
-                {timetableDesigns.map((design, index) => (
-                  <motion.button
-                    key={design.id}
-                    onClick={() => {
-                      if (!isAnimating) {
-                        setIsAnimating(true)
-                        setCurrentDesign(index)
-                        setTimeout(() => setIsAnimating(false), 500)
-                      }
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`relative px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${
-                      index === currentDesign 
-                        ? 'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/20' 
-                        : 'bg-secondary hover:bg-secondary/80'
-                    }`}
-                  >
-                    <design.icon className="w-4 h-4" />
-                    <span className="text-sm font-medium whitespace-nowrap">{design.title}</span>
-                  </motion.button>
-                ))}
+
+            {/* Tab selector — horizontal scroll on mobile */}
+            <div className="w-full">
+              {/* ---------- MOBILE: Horizontal scroll tabs ---------- */}
+              <div className="md:hidden overflow-x-auto -mx-4 px-4 pb-2">
+                <div className="flex gap-2 min-w-max">
+                  {timetableDesigns.map((design, index) => {
+                    const Icon = design.icon
+                    return (
+                      <button
+                        key={design.id}
+                        onClick={() => {
+                          if (!isAnimating) {
+                            setIsAnimating(true)
+                            setCurrentDesign(index)
+                            setTimeout(() => setIsAnimating(false), 500)
+                          }
+                        }}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex-shrink-0 ${
+                          index === currentDesign
+                            ? 'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/20'
+                            : 'bg-secondary text-foreground hover:bg-secondary/80'
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                        <span>{design.title}</span>
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
-              
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={nextDesign}
-                disabled={isAnimating}
-                className="rounded-full"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+
+              {/* ---------- DESKTOP: Nav arrows + wrap tabs ---------- */}
+              <div className="hidden md:flex items-center gap-4 justify-center">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={prevDesign}
+                  disabled={isAnimating}
+                  className="rounded-full flex-shrink-0"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+
+                <div className="flex flex-wrap justify-center gap-2 max-w-3xl">
+                  {timetableDesigns.map((design, index) => (
+                    <motion.button
+                      key={design.id}
+                      onClick={() => {
+                        if (!isAnimating) {
+                          setIsAnimating(true)
+                          setCurrentDesign(index)
+                          setTimeout(() => setIsAnimating(false), 500)
+                        }
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`relative px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${
+                        index === currentDesign
+                          ? 'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/20'
+                          : 'bg-secondary hover:bg-secondary/80'
+                      }`}
+                    >
+                      <design.icon className="w-4 h-4" />
+                      <span className="text-sm font-medium whitespace-nowrap">
+                        {design.title}
+                      </span>
+                    </motion.button>
+                  ))}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={nextDesign}
+                  disabled={isAnimating}
+                  className="rounded-full flex-shrink-0"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
-          
-          {/* Timetable Display */}
+
+          {/* ============ TIMETABLE DISPLAY ============ */}
           <AnimatePresence mode="wait">
             <motion.div
               key={currentDesign}
@@ -527,35 +587,108 @@ export function HeroSection() {
               transition={{ duration: 0.3 }}
               className="relative"
             >
-              {/* Design 1: College Timetable */}
+              {/* =========================================================
+                  DESIGN 1: COLLEGE TIMETABLE
+                 ========================================================= */}
               {currentTimetable.id === 'college-style' && (
-                <div className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}>
-                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-6`}>
-                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                      <div className="flex items-center justify-between mb-6">
+                <div
+                  className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}
+                >
+                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-3 sm:p-6`}>
+                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-3 sm:p-6 shadow-lg">
+                      {/* Header */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
                         <div className="flex items-center gap-3">
-                          <div className="p-3 rounded-lg bg-primary/10">
-                            <currentTimetable.icon className="w-6 h-6 text-primary" />
+                          <div className="p-2 sm:p-3 rounded-lg bg-primary/10 flex-shrink-0">
+                            <currentTimetable.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                           </div>
-                          <div>
-                            <h3 className="font-bold text-xl">{currentTimetable.title}</h3>
-                            <p className="text-sm text-muted-foreground">{currentTimetable.description}</p>
+                          <div className="min-w-0">
+                            <h3 className="font-bold text-base sm:text-xl truncate">
+                              {currentTimetable.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
+                              {currentTimetable.description}
+                            </p>
                           </div>
                         </div>
-                        <div className="text-sm px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                        <div className="text-xs px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 w-fit">
                           Odd Semester 2025-26
                         </div>
                       </div>
-                      
-                      {/* College Timetable Grid */}
-                      <div className="overflow-x-auto">
+
+                      {/* ---------- MOBILE: Card list ---------- */}
+                      <div className="md:hidden space-y-4">
+                        {currentTimetable.data.days.map((day, dayIndex) => (
+                          <div
+                            key={day}
+                            className="bg-gray-50 dark:bg-gray-800/60 rounded-xl p-3"
+                          >
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                <span className="text-xs font-bold text-primary">
+                                  {day.slice(0, 3)}
+                                </span>
+                              </div>
+                              <span className="font-semibold text-sm">{day}</span>
+                            </div>
+
+                            <div className="space-y-2">
+                              {currentTimetable.data.periods.map((period, pIdx) => {
+                                const subject =
+                                  currentTimetable.data.schedule[pIdx]?.[dayIndex]
+                                if (!subject) return null
+
+                                return (
+                                  <div
+                                    key={pIdx}
+                                    className={`flex items-center gap-3 p-2.5 rounded-lg ${
+                                      period.break
+                                        ? 'bg-red-50 dark:bg-red-900/20'
+                                        : 'bg-white dark:bg-gray-900'
+                                    }`}
+                                  >
+                                    <div className="text-[10px] font-medium text-muted-foreground w-16 flex-shrink-0">
+                                      {period.time}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="text-sm font-medium truncate">
+                                        {subject}
+                                      </div>
+                                      {period.period && (
+                                        <div className="text-[10px] text-muted-foreground">
+                                          Period {period.period}
+                                        </div>
+                                      )}
+                                      {period.break && (
+                                        <div className="text-[10px] text-red-500 font-medium">
+                                          {period.break}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* ---------- DESKTOP: Table ---------- */}
+                      <div className="hidden md:block overflow-x-auto">
                         <table className="w-full border-collapse">
                           <thead>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
-                              <th className="p-3 text-left text-sm font-medium text-muted-foreground">DAY</th>
-                              <th className="p-3 text-left text-sm font-medium text-muted-foreground">TIME</th>
-                              {currentTimetable.data.days.map((day, index) => (
-                                <th key={day} className="p-3 text-center text-sm font-medium text-muted-foreground">
+                              <th className="p-3 text-left text-sm font-medium text-muted-foreground">
+                                DAY
+                              </th>
+                              <th className="p-3 text-left text-sm font-medium text-muted-foreground">
+                                TIME
+                              </th>
+                              {currentTimetable.data.days.map((day) => (
+                                <th
+                                  key={day}
+                                  className="p-3 text-center text-sm font-medium text-muted-foreground"
+                                >
                                   {day}
                                 </th>
                               ))}
@@ -571,74 +704,84 @@ export function HeroSection() {
                                 className="border-b border-gray-100 dark:border-gray-800"
                               >
                                 {periodIndex === 0 && (
-                                  <td rowSpan={currentTimetable.data.periods.length} className="p-3 align-top">
+                                  <td
+                                    rowSpan={currentTimetable.data.periods.length}
+                                    className="p-3 align-top"
+                                  >
                                     <div className="text-center">
                                       <div className="font-bold text-lg">Week</div>
-                                      <div className="text-sm text-muted-foreground">Schedule</div>
+                                      <div className="text-sm text-muted-foreground">
+                                        Schedule
+                                      </div>
                                     </div>
                                   </td>
                                 )}
                                 <td className="p-3 whitespace-nowrap">
-                                  <div className="text-sm font-medium">{period.time}</div>
+                                  <div className="text-sm font-medium">
+                                    {period.time}
+                                  </div>
                                   {period.period && (
-                                    <div className="text-xs text-muted-foreground">Period {period.period}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                      Period {period.period}
+                                    </div>
                                   )}
                                   {period.break && (
-                                    <div className="text-xs text-red-500 font-medium">{period.break}</div>
+                                    <div className="text-xs text-red-500 font-medium">
+                                      {period.break}
+                                    </div>
                                   )}
                                 </td>
                                 {currentTimetable.data.days.map((day, dayIndex) => {
-                                  const subject = currentTimetable.data.schedule[periodIndex]?.[dayIndex];
+                                  const subject =
+                                    currentTimetable.data.schedule[periodIndex]?.[dayIndex]
                                   return (
                                     <td key={dayIndex} className="p-3">
                                       {subject ? (
                                         <motion.div
                                           whileHover={{ scale: 1.02 }}
                                           className={`p-3 rounded-lg text-center cursor-pointer ${
-                                            period.break 
-                                              ? 'bg-red-50 dark:bg-red-900/20' 
+                                            period.break
+                                              ? 'bg-red-50 dark:bg-red-900/20'
                                               : 'bg-blue-50 dark:bg-blue-900/20'
                                           }`}
                                         >
-                                          <div className="font-medium">{subject.split('\n')[0]}</div>
-                                          {subject.includes('\n') && (
-                                            <div className="text-xs text-muted-foreground mt-1">
-                                              {subject.split('\n')[1]}
-                                            </div>
-                                          )}
+                                          <div className="font-medium">{subject}</div>
                                         </motion.div>
                                       ) : (
-                                        <div className="p-3 text-sm text-muted-foreground text-center">-</div>
+                                        <div className="p-3 text-sm text-muted-foreground text-center">
+                                          -
+                                        </div>
                                       )}
                                     </td>
-                                  );
+                                  )
                                 })}
                               </motion.tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
-                      
-                      {/* Subject Legend */}
-                      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                        <h4 className="text-sm font-medium mb-3">Subject Codes</h4>
-                        <div className="flex flex-wrap gap-3">
+
+                      {/* Subject legend */}
+                      <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <h4 className="text-xs sm:text-sm font-medium mb-3">
+                          Subject Codes
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
                           {[
-                            { code: 'CGMS', name: 'Computer Graphics & Multimedia' },
-                            { code: 'ADBMS', name: 'Advanced Database Management' },
-                            { code: 'DCCN', name: 'Data Communication & Computer Networks' },
-                            { code: 'CPUCL', name: 'Computer Programming Using C Language' },
-                          ].map((subject, index) => (
-                            <motion.div
+                            { code: 'CGMS', name: 'Computer Graphics' },
+                            { code: 'ADBMS', name: 'Advanced DB' },
+                            { code: 'DCCN', name: 'Data Comm & Networks' },
+                            { code: 'CPUCL', name: 'C Programming' },
+                          ].map((subject) => (
+                            <div
                               key={subject.code}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.1 }}
-                              className="px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm"
+                              className="px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-xs"
                             >
                               <span className="font-medium">{subject.code}</span>
-                              <span className="text-muted-foreground ml-2">- {subject.name}</span>
-                            </motion.div>
+                              <span className="text-muted-foreground ml-1.5 hidden sm:inline">
+                                - {subject.name}
+                              </span>
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -647,181 +790,222 @@ export function HeroSection() {
                 </div>
               )}
 
-              {/* Design 2: Weekly Schedule */}
+              {/* =========================================================
+                  DESIGN 2: WEEKLY SCHEDULE
+                 ========================================================= */}
               {currentTimetable.id === 'weekly-schedule' && (
-                <div className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}>
-                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-6`}>
-                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                      <div className="flex items-center justify-between mb-6">
+                <div
+                  className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}
+                >
+                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-3 sm:p-6`}>
+                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-3 sm:p-6 shadow-lg">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
                         <div className="flex items-center gap-3">
-                          <div className="p-3 rounded-lg bg-primary/10">
-                            <currentTimetable.icon className="w-6 h-6 text-primary" />
+                          <div className="p-2 sm:p-3 rounded-lg bg-primary/10 flex-shrink-0">
+                            <currentTimetable.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                           </div>
-                          <div>
-                            <h3 className="font-bold text-xl">{currentTimetable.title}</h3>
-                            <p className="text-sm text-muted-foreground">{currentTimetable.description}</p>
+                          <div className="min-w-0">
+                            <h3 className="font-bold text-base sm:text-xl truncate">
+                              {currentTimetable.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
+                              {currentTimetable.description}
+                            </p>
                           </div>
                         </div>
-                        <div className="text-sm px-3 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
+                        <div className="text-xs px-2.5 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 w-fit">
                           Balanced Weekly Plan
                         </div>
                       </div>
-                      
-                      {/* Weekly Schedule Grid */}
-                      <div className="overflow-x-auto">
+
+                      {/* ---------- MOBILE: Day cards ---------- */}
+                      <div className="md:hidden space-y-4">
+                        {currentTimetable.data.days.map((day, dayIndex) => (
+                          <div
+                            key={day}
+                            className="bg-gray-50 dark:bg-gray-800/60 rounded-xl p-3"
+                          >
+                            <div className="flex items-center gap-2 mb-3">
+                              <Calendar className="w-4 h-4 text-primary" />
+                              <span className="font-semibold text-sm">{day}</span>
+                            </div>
+
+                            <div className="space-y-2">
+                              {currentTimetable.data.slots.map((slot, slotIndex) => {
+                                const activity =
+                                  currentTimetable.data.activities[dayIndex]?.[slotIndex]
+                                if (!activity?.task) return null
+
+                                const SlotIcon = slot.icon
+                                return (
+                                  <div
+                                    key={slotIndex}
+                                    className="flex items-start gap-2 p-2.5 rounded-lg bg-white dark:bg-gray-900"
+                                  >
+                                    <div className="text-[10px] font-medium text-muted-foreground w-14 flex-shrink-0 pt-0.5">
+                                      {slot.time}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-1.5">
+                                        <span className="text-base flex-shrink-0">
+                                          {activity.emoji}
+                                        </span>
+                                        <span className="text-sm font-medium break-words">
+                                          {activity.task}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-1 mt-0.5">
+                                        {SlotIcon && (
+                                          <SlotIcon className="w-3 h-3 text-muted-foreground" />
+                                        )}
+                                        <span className="text-[10px] text-muted-foreground capitalize">
+                                          {slot.type}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* ---------- DESKTOP: Table ---------- */}
+                      <div className="hidden md:block overflow-x-auto">
                         <table className="w-full border-collapse">
                           <thead>
                             <tr className="border-b border-gray-200 dark:border-gray-700">
-                              <th className="p-3 text-left text-sm font-medium text-muted-foreground">TIME</th>
-                              {currentTimetable.data.days.map((day, index) => (
-                                <th key={day} className="p-3 text-center text-sm font-medium text-muted-foreground">
+                              <th className="p-3 text-left text-sm font-medium text-muted-foreground">
+                                TIME
+                              </th>
+                              {currentTimetable.data.days.map((day) => (
+                                <th
+                                  key={day}
+                                  className="p-3 text-center text-sm font-medium text-muted-foreground"
+                                >
                                   {day}
-                                  {index > 0 && (
-                                    <div className="text-xs font-normal mt-1">Weekend Focus</div>
-                                  )}
                                 </th>
                               ))}
                             </tr>
                           </thead>
                           <tbody>
                             {currentTimetable.data.slots.map((slot, slotIndex) => {
-                              const SlotIcon = slot.icon;
+                              const SlotIcon = slot.icon
                               return (
-                                <motion.tr
+                                <tr
                                   key={slotIndex}
-                                  initial={{ opacity: 0, x: -20 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: slotIndex * 0.05 }}
-                                  className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                  className="border-b border-gray-100 dark:border-gray-800"
                                 >
                                   <td className="p-3">
                                     <div className="flex items-center gap-3">
                                       {SlotIcon && (
-                                        <div className={`p-2 rounded-lg ${
-                                          slot.type === 'morning' ? 'bg-yellow-100 dark:bg-yellow-900' :
-                                          slot.type === 'travel' ? 'bg-blue-100 dark:bg-blue-900' :
-                                          slot.type === 'college' ? 'bg-green-100 dark:bg-green-900' :
-                                          slot.type === 'break' ? 'bg-gray-100 dark:bg-gray-900' :
-                                          'bg-purple-100 dark:bg-purple-900'
-                                        }`}>
+                                        <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900">
                                           <SlotIcon className="w-4 h-4" />
                                         </div>
                                       )}
                                       <div>
                                         <div className="font-medium">{slot.time}</div>
-                                        <div className="text-xs text-muted-foreground capitalize">{slot.type}</div>
+                                        <div className="text-xs text-muted-foreground capitalize">
+                                          {slot.type}
+                                        </div>
                                       </div>
                                     </div>
                                   </td>
-                                  {currentTimetable.data.activities.map((dayActivities, dayIndex) => {
-                                    const activity = dayActivities[slotIndex];
-                                    return (
-                                      <td key={dayIndex} className="p-3">
-                                        {activity?.task ? (
-                                          <motion.div
-                                            whileHover={{ scale: 1.02 }}
-                                            className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800 cursor-pointer"
-                                          >
-                                            <div className="flex items-start gap-2">
-                                              <span className="text-xl">{activity.emoji}</span>
-                                              <div>
-                                                {activity.task.split('\n').map((line, i) => (
-                                                  <div key={i} className={i > 0 ? 'text-xs text-muted-foreground mt-1' : 'font-medium'}>
-                                                    {line}
-                                                  </div>
-                                                ))}
+                                  {currentTimetable.data.activities.map(
+                                    (dayActivities, dayIndex) => {
+                                      const activity = dayActivities[slotIndex]
+                                      return (
+                                        <td key={dayIndex} className="p-3">
+                                          {activity?.task ? (
+                                            <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                              <div className="flex items-start gap-2">
+                                                <span className="text-xl">
+                                                  {activity.emoji}
+                                                </span>
+                                                <div className="font-medium">
+                                                  {activity.task}
+                                                </div>
                                               </div>
                                             </div>
-                                          </motion.div>
-                                        ) : (
-                                          <div className="p-3 text-sm text-muted-foreground text-center">-</div>
-                                        )}
-                                      </td>
-                                    );
-                                  })}
-                                </motion.tr>
-                              );
+                                          ) : (
+                                            <div className="p-3 text-sm text-muted-foreground text-center">
+                                              -
+                                            </div>
+                                          )}
+                                        </td>
+                                      )
+                                    },
+                                  )}
+                                </tr>
+                              )
                             })}
                           </tbody>
                         </table>
-                      </div>
-                      
-                      {/* Weekly Goals */}
-                      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          {[
-                            { title: 'Weekdays Focus', desc: 'College + DSA Consistency', icon: School },
-                            { title: 'Saturday Deep Dive', desc: '4hr DSA + Projects', icon: Brain },
-                            { title: 'Sunday Review', desc: 'Mock Tests + Weak Topics', icon: TargetIcon },
-                          ].map((goal, index) => (
-                            <motion.div
-                              key={goal.title}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: index * 0.1 }}
-                              className="p-4 rounded-lg bg-gradient-to-br from-primary/5 to-accent/5"
-                            >
-                              <div className="flex items-center gap-3 mb-2">
-                                <goal.icon className="w-5 h-5 text-primary" />
-                                <h4 className="font-medium">{goal.title}</h4>
-                              </div>
-                              <p className="text-sm text-muted-foreground">{goal.desc}</p>
-                            </motion.div>
-                          ))}
-                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Design 3: Time Breakdown */}
+              {/* =========================================================
+                  DESIGN 3: TIME BREAKDOWN
+                 ========================================================= */}
               {currentTimetable.id === 'time-breakdown' && (
-                <div className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}>
-                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-6`}>
-                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                      <div className="flex items-center justify-between mb-6">
+                <div
+                  className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}
+                >
+                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-3 sm:p-6`}>
+                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-3 sm:p-6 shadow-lg">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
                         <div className="flex items-center gap-3">
-                          <div className="p-3 rounded-lg bg-primary/10">
-                            <currentTimetable.icon className="w-6 h-6 text-primary" />
+                          <div className="p-2 sm:p-3 rounded-lg bg-primary/10 flex-shrink-0">
+                            <currentTimetable.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                           </div>
-                          <div>
-                            <h3 className="font-bold text-xl">{currentTimetable.title}</h3>
-                            <p className="text-sm text-muted-foreground">{currentTimetable.description}</p>
+                          <div className="min-w-0">
+                            <h3 className="font-bold text-base sm:text-xl">
+                              {currentTimetable.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground">
+                              {currentTimetable.description}
+                            </p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground">Total Weekly Hours</div>
-                          <div className="text-2xl font-bold text-primary">{currentTimetable.data.total}</div>
+                        <div className="text-left sm:text-right">
+                          <div className="text-xs text-muted-foreground">
+                            Total Weekly Hours
+                          </div>
+                          <div className="text-lg sm:text-2xl font-bold text-primary">
+                            {currentTimetable.data.total}
+                          </div>
                         </div>
                       </div>
-                      
-                      {/* Time Allocation Chart */}
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-8">
                         {/* Bar Chart */}
                         <div className="space-y-4">
-                          <h4 className="font-medium">Weekly Time Distribution</h4>
+                          <h4 className="font-medium text-sm">Weekly Time Distribution</h4>
                           {currentTimetable.data.categories.map((category, index) => {
-                            const CategoryIcon = category.icon;
+                            const CategoryIcon = category.icon
                             return (
-                              <motion.div
-                                key={category.name}
-                                initial={{ width: 0 }}
-                                animate={{ width: '100%' }}
-                                transition={{ delay: index * 0.1 }}
-                                className="space-y-2"
-                              >
+                              <div key={category.name} className="space-y-2">
                                 <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <div className={`w-3 h-3 rounded-full ${category.color}`} />
-                                    <div className="flex items-center gap-2">
-                                      <CategoryIcon className="w-4 h-4 text-muted-foreground" />
-                                      <span className="font-medium">{category.name}</span>
-                                    </div>
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <div
+                                      className={`w-3 h-3 rounded-full ${category.color} flex-shrink-0`}
+                                    />
+                                    <CategoryIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                    <span className="font-medium text-sm truncate">
+                                      {category.name}
+                                    </span>
                                   </div>
-                                  <div className="text-right">
-                                    <div className="font-bold">{category.hours} hrs</div>
-                                    <div className="text-sm text-muted-foreground">{category.percentage}%</div>
+                                  <div className="text-right flex-shrink-0 ml-2">
+                                    <div className="font-bold text-sm">
+                                      {category.hours} hrs
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {category.percentage}%
+                                    </div>
                                   </div>
                                 </div>
                                 <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -832,76 +1016,78 @@ export function HeroSection() {
                                     className={`h-full ${category.color} rounded-full`}
                                   />
                                 </div>
-                              </motion.div>
-                            );
+                              </div>
+                            )
                           })}
                         </div>
-                        
-                        {/* Stats and Priority */}
-                        <div className="space-y-6">
-                          {/* Stats */}
+
+                        {/* Stats + Priority */}
+                        <div className="space-y-5">
                           <div>
-                            <h4 className="font-medium mb-4">Weekly Performance</h4>
-                            <div className="grid grid-cols-3 gap-4">
-                              {currentTimetable.data.stats.map((stat, index) => {
-                                const StatIcon = stat.icon;
+                            <h4 className="font-medium text-sm mb-3">
+                              Weekly Performance
+                            </h4>
+                            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                              {currentTimetable.data.stats.map((stat) => {
+                                const StatIcon = stat.icon
                                 return (
-                                  <motion.div
+                                  <div
                                     key={stat.label}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: index * 0.1 }}
-                                    className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 text-center"
+                                    className="bg-gray-100 dark:bg-gray-800 rounded-lg p-2.5 sm:p-4 text-center"
                                   >
-                                    <StatIcon className="w-6 h-6 text-primary mx-auto mb-2" />
-                                    <div className="text-2xl font-bold">{stat.value}</div>
-                                    <div className="text-xs text-muted-foreground">{stat.label}</div>
-                                  </motion.div>
-                                );
+                                    <StatIcon className="w-4 h-4 sm:w-6 sm:h-6 text-primary mx-auto mb-1.5" />
+                                    <div className="text-base sm:text-2xl font-bold">
+                                      {stat.value}
+                                    </div>
+                                    <div className="text-[10px] sm:text-xs text-muted-foreground">
+                                      {stat.label}
+                                    </div>
+                                  </div>
+                                )
                               })}
                             </div>
                           </div>
-                          
-                          {/* Priority Order */}
+
                           <div>
-                            <h4 className="font-medium mb-3">Priority Order</h4>
-                            <div className="space-y-3">
+                            <h4 className="font-medium text-sm mb-3">Priority Order</h4>
+                            <div className="space-y-2">
                               {[
-                                { priority: '1', task: 'DSA (55%)', desc: 'Core for placement interviews' },
-                                { priority: '2', task: 'College Studies (18%)', desc: 'Maintain CGPA consistency' },
-                                { priority: '3', task: 'Projects / AI-ML (15%)', desc: 'Build portfolio & experience' },
-                                { priority: '4', task: 'Travel Learning (12%)', desc: 'Utilize commute time' },
-                              ].map((item, index) => (
-                                <motion.div
+                                { priority: '1', task: 'DSA (55%)', desc: 'Core for placements' },
+                                { priority: '2', task: 'College Studies (18%)', desc: 'Maintain CGPA' },
+                                { priority: '3', task: 'Projects / AI-ML (15%)', desc: 'Build portfolio' },
+                                { priority: '4', task: 'Travel Learning (12%)', desc: 'Utilize commute' },
+                              ].map((item) => (
+                                <div
                                   key={item.priority}
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: index * 0.1 }}
-                                  className="flex items-center gap-3 p-3 rounded-lg bg-white/50 dark:bg-gray-800/50"
+                                  className="flex items-center gap-3 p-2.5 sm:p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50"
                                 >
-                                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+                                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0">
                                     {item.priority}
                                   </div>
-                                  <div className="flex-1">
-                                    <div className="font-medium">{item.task}</div>
-                                    <div className="text-sm text-muted-foreground">{item.desc}</div>
+                                  <div className="min-w-0">
+                                    <div className="font-medium text-sm truncate">
+                                      {item.task}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground truncate">
+                                      {item.desc}
+                                    </div>
                                   </div>
-                                </motion.div>
+                                </div>
                               ))}
                             </div>
                           </div>
                         </div>
                       </div>
-                      
-                      {/* Key Notes */}
-                      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                        <div className="p-4 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10">
+
+                      <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <div className="p-3 sm:p-4 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10">
                           <div className="flex items-center gap-3 mb-2">
-                            <Sparkles className="w-5 h-5 text-accent" />
-                            <h4 className="font-medium">Key Notes</h4>
+                            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0" />
+                            <h4 className="font-medium text-sm">Key Notes</h4>
                           </div>
-                          <p className="text-sm">
-                            "Consistency beats intensity. 1 hour DSA daily {'>'} 5 hours in one day."
+                          <p className="text-xs sm:text-sm">
+                            "Consistency beats intensity. 1 hour DSA daily &gt; 5
+                            hours in one day."
                           </p>
                         </div>
                       </div>
@@ -910,193 +1096,182 @@ export function HeroSection() {
                 </div>
               )}
 
-              {/* Design 4: Kanban Board */}
+              {/* =========================================================
+                  DESIGN 4: KANBAN BOARD
+                 ========================================================= */}
               {currentTimetable.id === 'kanban' && (
-                <div className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}>
-                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-6`}>
-                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                      <div className="flex items-center justify-between mb-6">
+                <div
+                  className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}
+                >
+                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-3 sm:p-6`}>
+                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-3 sm:p-6 shadow-lg">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
                         <div className="flex items-center gap-3">
-                          <div className="p-3 rounded-lg bg-primary/10">
-                            <currentTimetable.icon className="w-6 h-6 text-primary" />
+                          <div className="p-2 sm:p-3 rounded-lg bg-primary/10 flex-shrink-0">
+                            <currentTimetable.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                           </div>
-                          <div>
-                            <h3 className="font-bold text-xl">{currentTimetable.title}</h3>
-                            <p className="text-sm text-muted-foreground">{currentTimetable.description}</p>
+                          <div className="min-w-0">
+                            <h3 className="font-bold text-base sm:text-xl">
+                              {currentTimetable.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground">
+                              {currentTimetable.description}
+                            </p>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span className="animate-pulse">●</span>
-                          <span>Drag tasks between columns</span>
                         </div>
                       </div>
-                      
-                      {/* Kanban Board */}
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        {currentTimetable.data.columns.map((column, colIndex) => (
-                          <motion.div
+
+                      {/* Kanban — 1 col mobile, 2 col sm, 4 col md+ */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                        {currentTimetable.data.columns.map((column) => (
+                          <div
                             key={column.title}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: colIndex * 0.1 }}
-                            className={`${column.color} rounded-xl p-4 min-h-[300px]`}
+                            className={`${column.color} rounded-xl p-3 sm:p-4 min-h-[200px] md:min-h-[300px]`}
                           >
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="font-bold text-lg">{column.title}</h4>
-                              <span className="text-sm bg-white/50 dark:bg-black/50 px-2 py-1 rounded-full">
-                                {column.tasks.length} tasks
+                            <div className="flex items-center justify-between mb-3">
+                              <h4 className="font-bold text-sm sm:text-base">
+                                {column.title}
+                              </h4>
+                              <span className="text-xs bg-white/50 dark:bg-black/50 px-2 py-0.5 rounded-full">
+                                {column.tasks.length}
                               </span>
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                               {column.tasks.map((task, taskIndex) => (
-                                <motion.div
+                                <div
                                   key={`${task.task}-${taskIndex}`}
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: colIndex * 0.1 + taskIndex * 0.05 }}
-                                  whileHover={{ scale: 1.02, y: -2 }}
-                                  drag
-                                  dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                                  className="bg-white/80 dark:bg-black/50 p-3 rounded-lg shadow-sm cursor-move active:cursor-grabbing"
+                                  className="bg-white/80 dark:bg-black/50 p-2.5 sm:p-3 rounded-lg shadow-sm"
                                 >
-                                  <div className="flex items-start justify-between mb-2">
-                                    <span className="font-medium">{task.task}</span>
+                                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                                    <span className="font-medium text-sm">
+                                      {task.task}
+                                    </span>
                                     {task.completed && (
-                                      <CheckSquare className="w-4 h-4 text-green-500" />
+                                      <CheckSquare className="w-4 h-4 text-green-500 flex-shrink-0" />
                                     )}
                                   </div>
-                                  <div className="flex items-center justify-between text-sm">
-                                    <span className="text-muted-foreground">{task.time}</span>
+                                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                                    <span className="text-muted-foreground">
+                                      {task.time}
+                                    </span>
                                     {task.priority && (
-                                      <span className={`px-2 py-0.5 rounded-full text-xs ${
-                                        task.priority === 'High' 
-                                          ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                                          : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                                      }`}>
+                                      <span
+                                        className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                                          task.priority === 'High'
+                                            ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                            : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                                        }`}
+                                      >
                                         {task.priority}
                                       </span>
                                     )}
-                                    {task.progress && (
+                                    {task.progress !== undefined && (
                                       <div className="flex items-center gap-1">
-                                        <div className="w-16 h-1 bg-gray-200 rounded-full overflow-hidden">
-                                          <div 
+                                        <div className="w-10 h-1 bg-gray-200 rounded-full overflow-hidden">
+                                          <div
                                             className="h-full bg-green-500 rounded-full"
                                             style={{ width: `${task.progress}%` }}
                                           />
                                         </div>
-                                        <span className="text-xs">{task.progress}%</span>
+                                        <span className="text-[10px]">
+                                          {task.progress}%
+                                        </span>
                                       </div>
                                     )}
                                   </div>
                                   {task.type && (
-                                    <div className="mt-2 text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 w-fit">
+                                    <div className="mt-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 w-fit">
                                       {task.type}
                                     </div>
                                   )}
-                                </motion.div>
+                                </div>
                               ))}
                             </div>
-                          </motion.div>
+                          </div>
                         ))}
-                      </div>
-                      
-                      {/* Board Stats */}
-                      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                        <div className="flex flex-wrap items-center justify-between gap-4">
-                          <div className="text-sm text-muted-foreground">
-                            Total: 7 tasks across 4 columns
-                          </div>
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-blue-500" />
-                              <span className="text-sm">To Do</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                              <span className="text-sm">In Progress</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-green-500" />
-                              <span className="text-sm">Completed</span>
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Design 5: Priority Matrix */}
+              {/* =========================================================
+                  DESIGN 5: PRIORITY MATRIX
+                 ========================================================= */}
               {currentTimetable.id === 'priority-matrix' && (
-                <div className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}>
-                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-6`}>
-                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                      <div className="flex items-center justify-between mb-6">
+                <div
+                  className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}
+                >
+                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-3 sm:p-6`}>
+                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-3 sm:p-6 shadow-lg">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
                         <div className="flex items-center gap-3">
-                          <div className="p-3 rounded-lg bg-primary/10">
-                            <currentTimetable.icon className="w-6 h-6 text-primary" />
+                          <div className="p-2 sm:p-3 rounded-lg bg-primary/10 flex-shrink-0">
+                            <currentTimetable.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                           </div>
-                          <div>
-                            <h3 className="font-bold text-xl">{currentTimetable.title}</h3>
-                            <p className="text-sm text-muted-foreground">{currentTimetable.description}</p>
+                          <div className="min-w-0">
+                            <h3 className="font-bold text-base sm:text-xl">
+                              {currentTimetable.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground">
+                              {currentTimetable.description}
+                            </p>
                           </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground">Eisenhower Matrix</div>
-                          <div className="text-2xl font-bold text-accent">Priority Score: 8.7</div>
                         </div>
                       </div>
-                      
-                      {/* Priority Matrix Grid */}
-                      <div className="grid grid-cols-2 gap-4">
-                        {currentTimetable.data.quadrants.map((quadrant, index) => (
-                          <motion.div
+
+                      {/* Matrix — 1 col mobile, 2 col sm+ */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        {currentTimetable.data.quadrants.map((quadrant) => (
+                          <div
                             key={quadrant.title}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: index * 0.1 }}
-                            whileHover={{ scale: 1.02 }}
-                            className={`bg-gradient-to-br ${quadrant.color} rounded-xl p-5 min-h-[180px]`}
+                            className={`bg-gradient-to-br ${quadrant.color} rounded-xl p-3 sm:p-5 min-h-[150px]`}
                           >
-                            <h4 className="font-bold text-lg mb-4">{quadrant.title}</h4>
-                            <div className="space-y-3">
-                              {quadrant.tasks.map((task, taskIndex) => (
-                                <motion.div
+                            <h4 className="font-bold text-sm sm:text-base mb-3">
+                              {quadrant.title}
+                            </h4>
+                            <div className="space-y-2">
+                              {quadrant.tasks.map((task) => (
+                                <div
                                   key={task.task}
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: index * 0.1 + taskIndex * 0.1 }}
-                                  className="flex items-center justify-between p-3 bg-white/70 dark:bg-black/50 rounded-lg"
+                                  className="flex items-center justify-between gap-2 p-2 sm:p-3 bg-white/70 dark:bg-black/50 rounded-lg"
                                 >
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-lg">{task.emoji}</span>
-                                    <span className="font-medium">{task.task}</span>
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <span className="text-base flex-shrink-0">
+                                      {task.emoji}
+                                    </span>
+                                    <span className="font-medium text-xs sm:text-sm truncate">
+                                      {task.task}
+                                    </span>
                                   </div>
-                                  <span className="text-sm px-2 py-1 rounded-full bg-white dark:bg-black">
+                                  <span className="text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full bg-white dark:bg-black flex-shrink-0">
                                     {task.time}
                                   </span>
-                                </motion.div>
+                                </div>
                               ))}
                             </div>
-                          </motion.div>
+                          </div>
                         ))}
                       </div>
-                      
-                      {/* Matrix Legend */}
-                      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                      {/* Legend */}
+                      <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                           {[
-                            { color: 'bg-red-500', title: 'Do First', desc: 'Urgent & important tasks' },
-                            { color: 'bg-green-500', title: 'Schedule', desc: 'Important but not urgent' },
-                            { color: 'bg-yellow-500', title: 'Delegate', desc: 'Urgent but not important' },
+                            { color: 'bg-red-500', title: 'Do First', desc: 'Urgent & important' },
+                            { color: 'bg-green-500', title: 'Schedule', desc: 'Important, not urgent' },
+                            { color: 'bg-yellow-500', title: 'Delegate', desc: 'Urgent, not important' },
                             { color: 'bg-gray-500', title: 'Eliminate', desc: 'Not urgent or important' },
-                          ].map((item, index) => (
-                            <div key={item.title} className="flex items-center gap-3">
-                              <div className={`w-4 h-4 rounded-full ${item.color}`} />
-                              <div>
-                                <div className="font-medium text-sm">{item.title}</div>
-                                <div className="text-xs text-muted-foreground">{item.desc}</div>
+                          ].map((item) => (
+                            <div key={item.title} className="flex items-start gap-2">
+                              <div
+                                className={`w-3 h-3 rounded-full ${item.color} flex-shrink-0 mt-1`}
+                              />
+                              <div className="min-w-0">
+                                <div className="font-medium text-xs">{item.title}</div>
+                                <div className="text-[10px] text-muted-foreground">
+                                  {item.desc}
+                                </div>
                               </div>
                             </div>
                           ))}
@@ -1107,86 +1282,98 @@ export function HeroSection() {
                 </div>
               )}
 
-              {/* Design 6: Time Blocks */}
+              {/* =========================================================
+                  DESIGN 6: TIME BLOCKS
+                 ========================================================= */}
               {currentTimetable.id === 'time-blocks' && (
-                <div className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}>
-                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-6`}>
-                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                      <div className="flex items-center justify-between mb-6">
+                <div
+                  className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}
+                >
+                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-3 sm:p-6`}>
+                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-3 sm:p-6 shadow-lg">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
                         <div className="flex items-center gap-3">
-                          <div className="p-3 rounded-lg bg-primary/10">
-                            <currentTimetable.icon className="w-6 h-6 text-primary" />
+                          <div className="p-2 sm:p-3 rounded-lg bg-primary/10 flex-shrink-0">
+                            <currentTimetable.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                           </div>
-                          <div>
-                            <h3 className="font-bold text-xl">{currentTimetable.title}</h3>
-                            <p className="text-sm text-muted-foreground">{currentTimetable.description}</p>
+                          <div className="min-w-0">
+                            <h3 className="font-bold text-base sm:text-xl">
+                              {currentTimetable.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground">
+                              {currentTimetable.description}
+                            </p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground">Daily Focus Time</div>
-                          <div className="text-2xl font-bold text-primary">8.5 hours</div>
+                        <div className="text-left sm:text-right">
+                          <div className="text-xs text-muted-foreground">
+                            Daily Focus Time
+                          </div>
+                          <div className="text-lg sm:text-2xl font-bold text-primary">
+                            8.5 hours
+                          </div>
                         </div>
                       </div>
-                      
-                      {/* Time Blocks */}
-                      <div className="space-y-4">
-                        {currentTimetable.data.blocks.map((block, index) => (
-                          <motion.div
+
+                      <div className="space-y-3 sm:space-y-4">
+                        {currentTimetable.data.blocks.map((block) => (
+                          <div
                             key={block.time}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="flex items-center gap-4"
+                            className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
                           >
-                            <div className="w-24">
-                              <div className="text-sm font-medium">{block.time}</div>
-                              <div className="text-xs text-muted-foreground">{block.duration}</div>
+                            <div className="sm:w-24 flex sm:flex-col items-center sm:items-start gap-2 sm:gap-0">
+                              <div className="text-xs sm:text-sm font-medium">
+                                {block.time}
+                              </div>
+                              <div className="text-[10px] text-muted-foreground">
+                                {block.duration}
+                              </div>
                             </div>
                             <div className="flex-1">
-                              <div className={`${block.color} rounded-xl p-4 transition-all hover:shadow-md`}>
-                                <div className="flex items-center justify-between">
-                                  <div>
-                                    <h4 className="font-bold text-lg mb-1">{block.activity}</h4>
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-sm text-muted-foreground capitalize">{block.type}</span>
-                                      <div className="w-2 h-2 rounded-full bg-current opacity-50" />
-                                      <span className="text-sm">{block.duration}</span>
-                                    </div>
+                              <div
+                                className={`${block.color} rounded-xl p-3 sm:p-4`}
+                              >
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="min-w-0">
+                                    <h4 className="font-bold text-sm sm:text-base mb-0.5 truncate">
+                                      {block.activity}
+                                    </h4>
+                                    <span className="text-xs text-muted-foreground capitalize">
+                                      {block.type}
+                                    </span>
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <Button size="sm" variant="ghost" className="rounded-full">
-                                      Start
-                                    </Button>
-                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                  </div>
+                                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
                                 </div>
                               </div>
                             </div>
-                          </motion.div>
+                          </div>
                         ))}
                       </div>
-                      
-                      {/* Daily Stats */}
-                      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                      <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
                           {[
                             { label: 'Study Hours', value: '6.5h', icon: BookOpen },
                             { label: 'Focus Time', value: '5.2h', icon: Timer },
                             { label: 'Breaks Taken', value: '4', icon: Coffee },
                             { label: 'Productivity', value: '92%', icon: TrendingUp },
-                          ].map((stat, index) => (
-                            <motion.div
-                              key={stat.label}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: index * 0.1 }}
-                              className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 text-center"
-                            >
-                              <stat.icon className="w-5 h-5 text-primary mx-auto mb-2" />
-                              <div className="text-xl font-bold">{stat.value}</div>
-                              <div className="text-xs text-muted-foreground">{stat.label}</div>
-                            </motion.div>
-                          ))}
+                          ].map((stat) => {
+                            const StatIcon = stat.icon
+                            return (
+                              <div
+                                key={stat.label}
+                                className="bg-gray-100 dark:bg-gray-800 rounded-lg p-2.5 sm:p-4 text-center"
+                              >
+                                <StatIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary mx-auto mb-1.5" />
+                                <div className="text-base sm:text-xl font-bold">
+                                  {stat.value}
+                                </div>
+                                <div className="text-[10px] sm:text-xs text-muted-foreground">
+                                  {stat.label}
+                                </div>
+                              </div>
+                            )
+                          })}
                         </div>
                       </div>
                     </div>
@@ -1194,108 +1381,127 @@ export function HeroSection() {
                 </div>
               )}
 
-              {/* Design 7: Circular Time Wheel */}
+              {/* =========================================================
+                  DESIGN 7: CIRCULAR TIME WHEEL
+                 ========================================================= */}
               {currentTimetable.id === 'circular-wheel' && (
-                <div className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}>
-                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-6`}>
-                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                      <div className="flex items-center justify-between mb-6">
+                <div
+                  className={`rounded-2xl overflow-hidden border-2 ${currentTimetable.borderColor} shadow-2xl shadow-primary/10`}
+                >
+                  <div className={`bg-gradient-to-r ${currentTimetable.color} p-3 sm:p-6`}>
+                    <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-3 sm:p-6 shadow-lg">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
                         <div className="flex items-center gap-3">
-                          <div className="p-3 rounded-lg bg-primary/10">
-                            <currentTimetable.icon className="w-6 h-6 text-primary" />
+                          <div className="p-2 sm:p-3 rounded-lg bg-primary/10 flex-shrink-0">
+                            <currentTimetable.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                           </div>
-                          <div>
-                            <h3 className="font-bold text-xl">{currentTimetable.title}</h3>
-                            <p className="text-sm text-muted-foreground">{currentTimetable.description}</p>
+                          <div className="min-w-0">
+                            <h3 className="font-bold text-base sm:text-xl">
+                              {currentTimetable.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground">
+                              {currentTimetable.description}
+                            </p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground">Weekly Total</div>
-                          <div className="text-2xl font-bold text-primary">{currentTimetable.data.total}</div>
+                        <div className="text-left sm:text-right">
+                          <div className="text-xs text-muted-foreground">
+                            Weekly Total
+                          </div>
+                          <div className="text-lg sm:text-2xl font-bold text-primary">
+                            {currentTimetable.data.total}
+                          </div>
                         </div>
                       </div>
-                      
-                      {/* Circular Chart */}
-                      <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-                        {/* Pie Chart */}
-                        <div className="relative w-64 h-64">
-                          <svg className="w-full h-full transform -rotate-90">
-                            {currentTimetable.data.categories.reduce((acc, category, index, arr) => {
-                              const prevValue = acc.prev;
-                              const newValue = prevValue + category.value;
-                              
-                              const angle = (newValue / 100) * 360;
-                              const prevAngle = (prevValue / 100) * 360;
-                              
-                              const largeArc = category.value > 50 ? 1 : 0;
-                              
-                              const x1 = 128 + 100 * Math.cos((prevAngle * Math.PI) / 180);
-                              const y1 = 128 + 100 * Math.sin((prevAngle * Math.PI) / 180);
-                              const x2 = 128 + 100 * Math.cos((angle * Math.PI) / 180);
-                              const y2 = 128 + 100 * Math.sin((angle * Math.PI) / 180);
-                              
-                              acc.paths.push(
-                                <motion.path
-                                  key={category.name}
-                                  initial={{ pathLength: 0 }}
-                                  animate={{ pathLength: 1 }}
-                                  transition={{ duration: 1, delay: index * 0.2 }}
-                                  d={`M 128 128 L ${x1} ${y1} A 100 100 0 ${largeArc} 1 ${x2} ${y2} Z`}
-                                  fill={category.color}
-                                  className="opacity-80 hover:opacity-100 transition-opacity"
-                                />
-                              );
-                              
-                              acc.prev = newValue;
-                              return acc;
-                            }, { prev: 0, paths: [] as React.ReactElement[] }).paths}
-                            
-                            {/* Center circle */}
-                            <circle cx="128" cy="128" r="50" fill="white" className="dark:bg-gray-900" />
-                            <text x="128" y="128" textAnchor="middle" dy=".3em" className="text-2xl font-bold">
-                              {currentTimetable.data.total}
-                            </text>
+
+                      {/* Stacked on mobile, side-by-side on lg */}
+                      <div className="flex flex-col lg:flex-row items-center justify-between gap-5 sm:gap-8">
+                        {/* Pie chart */}
+                        <div className="relative w-48 h-48 sm:w-56 sm:h-56 flex-shrink-0">
+                          <svg viewBox="0 0 256 256" className="w-full h-full -rotate-90">
+                            {(() => {
+                              let prev = 0
+                              return currentTimetable.data.categories.map(
+                                (category) => {
+                                  const newValue = prev + category.value
+                                  const angle = (newValue / 100) * 360
+                                  const prevAngle = (prev / 100) * 360
+                                  const largeArc = category.value > 50 ? 1 : 0
+
+                                  const x1 = 128 + 100 * Math.cos((prevAngle * Math.PI) / 180)
+                                  const y1 = 128 + 100 * Math.sin((prevAngle * Math.PI) / 180)
+                                  const x2 = 128 + 100 * Math.cos((angle * Math.PI) / 180)
+                                  const y2 = 128 + 100 * Math.sin((angle * Math.PI) / 180)
+
+                                  const path = (
+                                    <path
+                                      key={category.name}
+                                      d={`M 128 128 L ${x1} ${y1} A 100 100 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                                      fill={category.color}
+                                      className="opacity-80 hover:opacity-100 transition-opacity"
+                                    />
+                                  )
+
+                                  prev = newValue
+                                  return path
+                                },
+                              )
+                            })()}
+                            <circle cx="128" cy="128" r="50" fill="white" />
                           </svg>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-center bg-white dark:bg-gray-900 rounded-full w-20 h-20 sm:w-24 sm:h-24 flex flex-col items-center justify-center">
+                              <div className="text-sm sm:text-lg font-bold">
+                                {currentTimetable.data.total}
+                              </div>
+                              <div className="text-[10px] text-muted-foreground">
+                                per week
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        
-                        {/* Category Details */}
-                        <div className="flex-1 space-y-4">
-                          {currentTimetable.data.categories.map((category, index) => (
-                            <motion.div
+
+                        {/* Category list */}
+                        <div className="flex-1 w-full space-y-2 sm:space-y-4">
+                          {currentTimetable.data.categories.map((category) => (
+                            <div
                               key={category.name}
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.1 }}
-                              whileHover={{ x: 5 }}
-                              className="flex items-center justify-between p-4 rounded-lg bg-gray-100 dark:bg-gray-800"
+                              className="flex items-center justify-between p-2.5 sm:p-4 rounded-lg bg-gray-100 dark:bg-gray-800"
                             >
-                              <div className="flex items-center gap-3">
-                                <div 
-                                  className="w-4 h-4 rounded-full"
+                              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                                <div
+                                  className="w-3 h-3 sm:w-4 sm:h-4 rounded-full flex-shrink-0"
                                   style={{ backgroundColor: category.color }}
                                 />
-                                <div>
-                                  <div className="font-medium">{category.name}</div>
-                                  <div className="text-sm text-muted-foreground">{category.hours} hours/week</div>
+                                <div className="min-w-0">
+                                  <div className="font-medium text-xs sm:text-sm truncate">
+                                    {category.name}
+                                  </div>
+                                  <div className="text-[10px] sm:text-xs text-muted-foreground">
+                                    {category.hours} hours/week
+                                  </div>
                                 </div>
                               </div>
-                              <div className="text-right">
-                                <div className="text-xl font-bold">{category.value}%</div>
-                                <div className="text-sm text-muted-foreground">of time</div>
+                              <div className="text-right flex-shrink-0 ml-2">
+                                <div className="text-base sm:text-xl font-bold">
+                                  {category.value}%
+                                </div>
                               </div>
-                            </motion.div>
+                            </div>
                           ))}
                         </div>
                       </div>
-                      
-                      {/* Balance Indicator */}
-                      <div className="mt-6 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10">
+
+                      <div className="mt-4 sm:mt-6 p-3 sm:p-4 rounded-lg bg-gradient-to-r from-primary/10 to-accent/10">
                         <div className="flex items-center gap-3">
-                          <Award className="w-5 h-5 text-accent" />
-                          <div>
-                            <div className="font-medium">Optimal Balance Achieved</div>
-                            <div className="text-sm text-muted-foreground">
-                              Your time distribution aligns perfectly with placement preparation goals
+                          <Award className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0" />
+                          <div className="min-w-0">
+                            <div className="font-medium text-sm">
+                              Optimal Balance Achieved
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Your time distribution aligns with placement
+                              preparation goals
                             </div>
                           </div>
                         </div>
@@ -1304,38 +1510,28 @@ export function HeroSection() {
                   </div>
                 </div>
               )}
-              
-              {/* Floating elements */}
+
+              {/* Floating decorations */}
               <motion.div
-                animate={{
-                  y: [0, -20, 0],
-                  rotate: [0, 5, 0],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="absolute -top-6 -left-6 w-24 h-24 bg-accent/20 rounded-full blur-xl"
+                animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute -top-6 -left-6 w-16 sm:w-24 h-16 sm:h-24 bg-accent/20 rounded-full blur-xl pointer-events-none"
               />
               <motion.div
-                animate={{
-                  y: [0, 20, 0],
-                  rotate: [0, -5, 0],
-                }}
+                animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
                 transition={{
                   duration: 5,
                   repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1
+                  ease: 'easeInOut',
+                  delay: 1,
                 }}
-                className="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/20 rounded-full blur-xl"
+                className="absolute -bottom-6 -right-6 w-20 sm:w-32 h-20 sm:h-32 bg-primary/20 rounded-full blur-xl pointer-events-none"
               />
             </motion.div>
           </AnimatePresence>
-          
-          {/* Design indicator */}
-          <div className="flex justify-center mt-8 gap-2">
+
+          {/* Design indicator dots */}
+          <div className="flex justify-center mt-6 sm:mt-8 gap-2 flex-wrap">
             {timetableDesigns.map((_, index) => (
               <button
                 key={index}
@@ -1346,58 +1542,35 @@ export function HeroSection() {
                     setTimeout(() => setIsAnimating(false), 500)
                   }
                 }}
-                className={`w-2 h-2 rounded-full transition-all ${index === currentDesign ? 'w-8 bg-primary' : 'bg-gray-300 dark:bg-gray-700 hover:bg-primary/50'}`}
+                aria-label={`Go to design ${index + 1}`}
+                className={`h-2 rounded-full transition-all ${
+                  index === currentDesign
+                    ? 'w-8 bg-primary'
+                    : 'w-2 bg-gray-300 dark:bg-gray-700 hover:bg-primary/50'
+                }`}
               />
             ))}
           </div>
-          
-          {/* View All Designs Link */}
-          <div className="text-center mt-6">
-            <Link href="/templates">
-              <Button variant="link" className="gap-2">
-                View All 7 Design Templates
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
-          </div>
         </motion.div>
       </div>
-      
-      {/* Add custom CSS for animations */}
+
+      {/* Custom animations */}
       <style jsx global>{`
         @keyframes gradient {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
-        
         .animate-gradient {
           animation: gradient 3s ease infinite;
           background-size: 200% auto;
         }
-        
         @keyframes pulse-glow {
           0%, 100% { opacity: 0.5; }
           50% { opacity: 0.8; }
         }
-        
         .animate-pulse-glow {
           animation: pulse-glow 4s ease-in-out infinite;
-        }
-        
-        @keyframes slide-up {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        .animate-slide-up {
-          animation: slide-up 0.5s ease-out;
         }
       `}</style>
     </section>

@@ -12,34 +12,6 @@ const API_BASE_URL =
 // TYPES
 // ============================================================
 
-export type UserRole =
-  | 'student'
-  | 'employed'
-  | 'unemployed'
-  | 'other'
-
-export interface UserDetails {
-  role: UserRole
-
-  // Student
-  educationLevel?: string
-  field?: string
-  institution?: string
-  graduationYear?: string
-
-  // Employed
-  profession?: string
-  company?: string
-  experience?: string
-
-  // Unemployed
-  seeking?: string
-  lastWorked?: string
-
-  // Other
-  description?: string
-}
-
 export interface UserProfile {
   userName?: string
   avatarUrl?: string
@@ -61,9 +33,6 @@ export interface User {
   timezone?: string
   verified: boolean
   createdAt?: string
-  onboardingStep?: number
-  role?: UserRole
-  details?: UserDetails
   profile?: UserProfile
   stats?: UserStats
 }
@@ -188,6 +157,14 @@ export class AuthServiceClass {
   // TOKEN MANAGEMENT
   // ==========================================================
 
+  /**
+   * Saves access + refresh tokens to:
+   *   1. localStorage  → for client-side AuthService
+   *   2. cookies       → for middleware (server/edge runtime)
+   *
+   * 🔥 Why cookies? Middleware runs on the edge/server and CANNOT
+   *    read localStorage. It can only read cookies.
+   */
   private setTokens(
     accessToken: string,
     refreshToken: string,
@@ -196,6 +173,7 @@ export class AuthServiceClass {
     this.refreshToken = refreshToken
 
     if (typeof window !== 'undefined') {
+      // 1) localStorage (client-side)
       localStorage.setItem(
         'access_token',
         accessToken,
@@ -205,45 +183,58 @@ export class AuthServiceClass {
         'refresh_token',
         refreshToken,
       )
+
+      // 2) cookies (middleware-side)
+      const maxAge = 60 * 60 * 24 * 7 // 7 days
+
+      document.cookie =
+        `access_token=${accessToken}; path=/; max-age=${maxAge}; SameSite=Lax`
+
+      document.cookie =
+        `refresh_token=${refreshToken}; path=/; max-age=${maxAge}; SameSite=Lax`
     }
   }
 
-  // getAccessToken(): string | null {
-  //   return this.accessToken
-  // }
   getAccessToken(): string | null {
-  // 🔥 ALWAYS read from localStorage — instance cache stale ho
-  //    sakta hai (jaise OAuth callback ke baad)
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('access_token')
-    if (stored) {
-      this.accessToken = stored   // keep instance in sync
-      return stored
+    // 🔥 ALWAYS read from localStorage — instance cache stale ho
+    //    sakta hai (jaise OAuth callback ke baad)
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('access_token')
+      if (stored) {
+        this.accessToken = stored // keep instance in sync
+        return stored
+      }
+      // localStorage me nahi hai → instance bhi null karo
+      this.accessToken = null
+      return null
     }
-    // localStorage me nahi hai → instance bhi null karo
-    this.accessToken = null
-    return null
-  }
 
-  // SSR fallback
-  return this.accessToken
-}
+    // SSR fallback
+    return this.accessToken
+  }
 
   // ==========================================================
   // SESSION CLEAR (internal)
   // ==========================================================
 
   /**
-   * Wipes the entire local session — tokens + cached user.
+   * Wipes the entire local session — tokens + cached user,
+   * from BOTH localStorage AND cookies.
    */
   private clearSession(): void {
     this.accessToken = null
     this.refreshToken = null
 
     if (typeof window !== 'undefined') {
+      // 1) localStorage
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
       localStorage.removeItem('current_user')
+
+      // 2) cookies — must delete, otherwise middleware will
+      //    keep seeing a stale token and consider user logged in.
+      document.cookie = 'access_token=; path=/; max-age=0'
+      document.cookie = 'refresh_token=; path=/; max-age=0'
     }
   }
 
@@ -251,31 +242,12 @@ export class AuthServiceClass {
   // FORCE LOGOUT (public)
   // ==========================================================
 
-  /**
-   * Public helper to force a logout + redirect to /auth/login.
-   *
-   * Safe to call from anywhere. Idempotent — calling it twice
-   * does not cause double redirects.
-   */
   forceLogout(): void {
     this.clearSession()
 
-    // if (typeof window === 'undefined') {
-    //   return
-    // }
-
-    // const currentPath = window.location.pathname
-
-    // // Don't redirect if we're already on an auth page — avoids
-    // // infinite loops when login/signup itself returns 401.
-    // if (!currentPath.startsWith('/auth/')) {
-    //   sessionStorage.setItem(
-    //     'redirectAfterLogin',
-    //     currentPath,
-    //   )
-
-    //   window.location.href = '/auth/login'
-    // }
+    // 🔥 NOTE: Redirect is intentionally disabled here.
+    //    The `dashboard/layout.tsx` (or page-level guards) handle
+    //    redirects. Doing it here would cause loops on public pages.
   }
 
   // ==========================================================
@@ -304,15 +276,11 @@ export class AuthServiceClass {
       }
     }
 
-    if (this.accessToken) {
-      headers['Authorization'] =
-        `Bearer ${this.accessToken}`
+    // 🔥 Always read fresh token (from localStorage)
+    const token = this.getAccessToken()
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
     }
-
-      const token = this.getAccessToken()
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`
-  }
 
     try {
       const response = await fetch(
@@ -376,13 +344,6 @@ export class AuthServiceClass {
         }
 
         // 🔥 GLOBAL 401/403 INTERCEPTOR
-        //
-        // Any protected API call that comes back Unauthorized /
-        // Forbidden means the token is invalid or expired.
-        // Clear session + hard-redirect to /auth/login.
-        //
-        // Skipped for auth endpoints — otherwise the login screen
-        // itself would redirect-loop on bad credentials.
         if (
           response.status === 401 ||
           response.status === 403
@@ -460,15 +421,12 @@ export class AuthServiceClass {
         const user: User = {
           ...response.data,
           verified: false,
-          onboardingStep: 0,
         }
 
         localStorage.setItem(
           'current_user',
           JSON.stringify(user),
         )
-
-        
 
         toast.success(
           '🎉 Registration successful!',
@@ -544,8 +502,7 @@ export class AuthServiceClass {
         response.data.refreshToken,
       )
 
-      // Preserve any existing onboarding state we have cached
-      // for this user, so a returning user doesn't lose progress.
+      // Preserve any cached profile/stats we already had
       let cachedUser: User | null = null
       try {
         const raw = localStorage.getItem('current_user')
@@ -566,9 +523,6 @@ export class AuthServiceClass {
       const user: User = {
         ...response.data.user,
         verified: cachedUser?.verified ?? false,
-        onboardingStep: cachedUser?.onboardingStep ?? 0,
-        role: cachedUser?.role,
-        details: cachedUser?.details,
         profile: cachedUser?.profile,
         stats: cachedUser?.stats,
       }
@@ -578,8 +532,8 @@ export class AuthServiceClass {
         JSON.stringify(user),
       )
 
-      // Fetch fresh user — merges authoritative `verified` and
-      // `onboardingStep` if backend returns them.
+      // Fetch fresh user — merges authoritative `verified`
+      // if backend returns it.
       await this.getCurrentUser()
 
       toast.success(
@@ -668,28 +622,12 @@ export class AuthServiceClass {
       }
 
       const backendUser = response.data as User & {
-        onboardingStep?: number
-        role?: UserRole
-        details?: UserDetails
         profile?: UserProfile
         stats?: UserStats
       }
 
       const user: User = {
         ...response.data,
-
-        onboardingStep:
-          backendUser.onboardingStep ??
-          existingUser?.onboardingStep ??
-          0,
-
-        role:
-          backendUser.role ??
-          existingUser?.role,
-
-        details:
-          backendUser.details ??
-          existingUser?.details,
 
         profile:
           backendUser.profile ??
@@ -712,11 +650,7 @@ export class AuthServiceClass {
         getErrorMessage(error),
       )
 
-      // 🔥 CRITICAL FIX
-      //
-      // Auth failures MUST NOT fall back to the cached user.
-      // Otherwise a stale cached user keeps the dashboard
-      // accessible even though the token is invalid/expired.
+      // 🔥 Auth failures MUST NOT fall back to the cached user.
       const status =
         isRecord(error) &&
         typeof error.status === 'number'
@@ -731,243 +665,6 @@ export class AuthServiceClass {
       // Only fall back to cache for genuine network/transient
       // errors (backend down, offline, timeout, etc.)
       return this.getCurrentUserFromStorage()
-    }
-  }
-
-  // ==========================================================
-  // SAVE ROLE
-  // ==========================================================
-
-  saveRole(
-    role: UserRole,
-  ): void {
-    if (typeof window === 'undefined') {
-      return
-    }
-
-    const existingUserStr =
-      localStorage.getItem(
-        'current_user',
-      )
-
-    if (!existingUserStr) {
-      toast.error(
-        'User session not found',
-      )
-
-      throw new Error(
-        'Current user not found',
-      )
-    }
-
-    let existingUser: User
-
-    try {
-      const parsed: unknown =
-        JSON.parse(
-          existingUserStr,
-        )
-
-      if (!isUser(parsed)) {
-        throw new Error(
-          'Invalid stored user data',
-        )
-      }
-
-      existingUser = parsed
-    } catch {
-      toast.error(
-        'Unable to load your account data',
-      )
-
-      throw new Error(
-        'Invalid stored user data',
-      )
-    }
-
-    const updatedUser: User = {
-      ...existingUser,
-
-      onboardingStep: 1,
-
-      role,
-    }
-
-    localStorage.setItem(
-      'current_user',
-      JSON.stringify(updatedUser),
-    )
-  }
-
-  // ==========================================================
-  // SAVE ONBOARDING DETAILS
-  // ==========================================================
-
-  saveDetails(
-    details: UserDetails,
-  ): void {
-    if (typeof window === 'undefined') {
-      return
-    }
-
-    const existingUserStr =
-      localStorage.getItem(
-        'current_user',
-      )
-
-    if (!existingUserStr) {
-      toast.error(
-        'User session not found',
-      )
-
-      throw new Error(
-        'Current user not found',
-      )
-    }
-
-    let existingUser: User
-
-    try {
-      const parsed: unknown =
-        JSON.parse(
-          existingUserStr,
-        )
-
-      if (!isUser(parsed)) {
-        throw new Error(
-          'Invalid stored user data',
-        )
-      }
-
-      existingUser = parsed
-    } catch {
-      toast.error(
-        'Unable to load your account data',
-      )
-
-      throw new Error(
-        'Invalid stored user data',
-      )
-    }
-
-    const updatedUser: User = {
-      ...existingUser,
-
-      onboardingStep: 2,
-
-      role: details.role,
-
-      details,
-    }
-
-    localStorage.setItem(
-      'current_user',
-      JSON.stringify(updatedUser),
-    )
-  }
-
-  // ==========================================================
-  // SAVE ONBOARDING PROFILE
-  // ==========================================================
-
-  saveProfile(
-    profile: UserProfile,
-  ): void {
-    if (typeof window === 'undefined') {
-      return
-    }
-
-    const existingUserStr =
-      localStorage.getItem(
-        'current_user',
-      )
-
-    if (!existingUserStr) {
-      toast.error(
-        'User session not found',
-      )
-
-      throw new Error(
-        'Current user not found',
-      )
-    }
-
-    let existingUser: User
-
-    try {
-      const parsed: unknown =
-        JSON.parse(
-          existingUserStr,
-        )
-
-      if (!isUser(parsed)) {
-        throw new Error(
-          'Invalid stored user data',
-        )
-      }
-
-      existingUser = parsed
-    } catch {
-      toast.error(
-        'Unable to load your account data',
-      )
-
-      throw new Error(
-        'Invalid stored user data',
-      )
-    }
-
-    const updatedUser: User = {
-      ...existingUser,
-
-      onboardingStep: 3,
-
-      profile,
-    }
-
-    localStorage.setItem(
-      'current_user',
-      JSON.stringify(updatedUser),
-    )
-  }
-
-  // ==========================================================
-  // COMPLETE ONBOARDING (Step 4)
-  // ==========================================================
-
-  completeOnboarding(): void {
-    if (typeof window === 'undefined') {
-      return
-    }
-
-    const existingUserStr =
-      localStorage.getItem(
-        'current_user',
-      )
-
-    if (!existingUserStr) {
-      return
-    }
-
-    try {
-      const parsed: unknown =
-        JSON.parse(existingUserStr)
-
-      if (!isUser(parsed)) {
-        return
-      }
-
-      const updatedUser: User = {
-        ...parsed,
-        onboardingStep: 4,
-      }
-
-      localStorage.setItem(
-        'current_user',
-        JSON.stringify(updatedUser),
-      )
-    } catch {
-      // Silent fail — not critical
     }
   }
 

@@ -60,6 +60,11 @@ function CallbackHandler() {
         localStorage.setItem('access_token', accessToken)
         localStorage.setItem('refresh_token', refreshToken)
 
+        // 🔥 ALSO store tokens in cookies so middleware can see them
+        const maxAge = 60 * 60 * 24 * 7 // 7 days
+        document.cookie = `access_token=${accessToken}; path=/; max-age=${maxAge}; SameSite=Lax`
+        document.cookie = `refresh_token=${refreshToken}; path=/; max-age=${maxAge}; SameSite=Lax`
+
         // 4️⃣ Fetch fresh user profile
         const userRes = await fetch(`${API_BASE_URL}/users/me`, {
           headers: {
@@ -90,19 +95,13 @@ function CallbackHandler() {
           description: 'Redirecting...',
         })
 
-        // 6️⃣ Redirect based on state
-        const step = user.onboardingStep ?? 0
+        // 6️⃣ Redirect based ONLY on verification status.
+        //    🔥 Onboarding is removed — no more /onboarding/* routes.
         const isVerified = user.verified === true
 
         setTimeout(() => {
           if (!isVerified) {
             router.replace('/auth/verify-email')
-          } else if (step < 4) {
-            if (step === 0) router.replace('/onboarding/role')
-            else if (step === 1) router.replace('/onboarding/details')
-            else if (step === 2) router.replace('/onboarding/profile')
-            else if (step === 3) router.replace('/onboarding/complete')
-            else router.replace('/onboarding/role')
           } else {
             router.replace('/dashboard')
           }
@@ -194,3 +193,4 @@ export default function OAuthCallbackPage() {
     </Suspense>
   )
 }
+
