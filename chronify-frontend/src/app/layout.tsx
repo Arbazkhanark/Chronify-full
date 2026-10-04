@@ -6,7 +6,6 @@ import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 import { Header } from "@/components/shared/header"
 import { Footer } from "@/components/shared/footer"
-import { TutorialTourProvider } from '@/contexts/tutorial-tour-context'
 import FCMProvider from "@/components/shared/FCMProvider"
 import { MobileBottomNav } from "@/components/shared/MobileBottomNav"
 

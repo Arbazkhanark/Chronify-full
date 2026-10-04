@@ -541,7 +541,7 @@ export default function DashboardClient() {
   }
 
   const displayName = user.name || user.email
-  const isNewUser = user.onboardingStep === 4
+  const isNewUser = user
   const greeting = isNewUser ? 'Welcome to Chronify' : 'Welcome back'
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
