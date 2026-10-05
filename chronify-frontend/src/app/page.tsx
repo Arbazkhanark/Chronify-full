@@ -39,7 +39,7 @@ export default function Home() {
         <Testimonials />
         <CTASection />
         {/* <Footer /> */}
-      <MobileBottomNav/>
+      {/* <MobileBottomNav/> */}
       </main>
     </>
   )
