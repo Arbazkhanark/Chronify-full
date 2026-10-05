@@ -10,6 +10,7 @@ import {
   Calendar,
   Target,
   Hammer,
+  House,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { AuthService, type User } from '@/hooks/useAuth'
@@ -20,8 +21,16 @@ import { AuthService, type User } from '@/hooks/useAuth'
 
 const BOTTOM_NAV_ITEMS = [
   {
-    href: '/dashboard',
+    href: '/',
     label: 'Home',
+    icon: House ,
+    matchPaths: ['/'],
+    excludePaths: ['/dashboard/timetable', '/dashboard/goal'],
+    requiresAuth: true,
+  },
+  {
+    href: '/dashboard',
+    label: 'Dashboard',
     icon: LayoutDashboard,
     matchPaths: ['/dashboard'],
     excludePaths: ['/dashboard/timetable', '/dashboard/goal'],
@@ -37,7 +46,7 @@ const BOTTOM_NAV_ITEMS = [
   },
   {
     href: '/dashboard/timetable',
-    label: 'Schedule',
+    label: 'Timetable',
     icon: Calendar,
     matchPaths: ['/dashboard/timetable'],
     excludePaths: ['/dashboard/timetable/builder'],

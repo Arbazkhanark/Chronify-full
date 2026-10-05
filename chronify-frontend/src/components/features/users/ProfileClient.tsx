@@ -934,7 +934,7 @@ export default function ProfileClient() {
         const message =
           (err as FullProfileApiError)?.message ??
           (typeof err?.message === 'string' ? err.message : 'Failed to load profile')
-        console.error('Failed to load profile:', err)
+        // console.error('Failed to load profile:', err)
 
         if (!readProfileCache()) {
           setProfileError(message)

@@ -1,7 +1,7 @@
 // src/app/dashboard/timetable/viewer/page.tsx
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, Reorder } from 'framer-motion'
 import {
   Calendar,
@@ -664,12 +664,6 @@ export default function TimetableViewerPage() {
     } catch (e) {
       console.error('Failed to save timetable cache', e)
     }
-  }
-
-  const clearCache = () => {
-    if (typeof window === 'undefined') return
-    const key = getTimetableCacheKey()
-    if (key) localStorage.removeItem(key)
   }
 
   const toggleDarkMode = () => {
@@ -1854,48 +1848,84 @@ export default function TimetableViewerPage() {
   )
 
   const renderGridSection = () => {
-    if (tasks.length === 0 && fixedTimes.length === 0 && sleepSchedules.length === 0) {
+    if (
+      tasks.length === 0 &&
+      fixedTimes.length === 0 &&
+      sleepSchedules.length === 0
+    ) {
       return (
         <div className="text-center py-16">
           <div className="w-24 h-24 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-6">
             <Calendar className="w-12 h-12 text-gray-400" />
           </div>
-          <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-3">No Timetable Found</h3>
+          <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-3">
+            No Timetable Found
+          </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
             You don't have any scheduled items yet.
           </p>
-          <Button onClick={() => (window.location.href = '/dashboard/timetable/builder')}>
+          <Button
+            onClick={() =>
+              (window.location.href = '/dashboard/timetable/builder')
+            }
+          >
             Go to Builder
           </Button>
         </div>
       )
     }
+
     return (
       <Card className="dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
         <CardContent className="p-0">
-          <HorizontalTimetable
-            timeSlots={timeSlots}
-            visibleDays={visibleDays}
-            tasks={tasks}
-            fixedTimes={fixedTimes}
-            timeSettings={timeSettings}
-            getTasksForCell={getTasksForCell}
-            getTaskSpan={getTaskSpan}
-            shouldShowTaskInCell={shouldShowTaskInCell}
-            isTimeInFixedSlot={isTimeInFixedSlot}
-            isTimeInFreePeriod={isTimeInFreePeriod}
-            getTimeSlotColor={getTimeSlotColor}
-            getIconByType={getIconByType}
-            formatDurationShort={formatDurationShort}
-            onTaskClick={handleTaskClick}
-            onComplete={markTaskComplete}
-            isCompleting={isCompleting}
-            isExtendedTime={isExtendedTime}
-            getNextTimeSlot={getNextTimeSlot}
-            cn={cn}
-            todayDayName={todayDayName}
-            nowMinutes={nowMinutes}
-          />
+          {/* 🔥 MOBILE: Day-by-day timeline view */}
+          <div className="md:hidden">
+            <DayTimelineView
+              visibleDays={visibleDays}
+              tasks={tasks}
+              fixedTimes={fixedTimes}
+              sleepSchedules={sleepSchedules}
+              todayDayName={todayDayName}
+              nowMinutes={nowMinutes}
+              timeSettings={timeSettings}
+              onTaskClick={handleTaskClick}
+              onComplete={markTaskComplete}
+              isCompleting={isCompleting}
+              formatTimeDisplay={formatTimeDisplay}
+              formatDuration={formatDuration}
+              getIconByType={getIconByType}
+              getTimeSlotColor={getTimeSlotColor}
+              getSleepTypeInfo={getSleepTypeInfo}
+              cn={cn}
+            />
+          </div>
+
+          {/* 💻 DESKTOP: Existing horizontal grid (unchanged) */}
+          <div className="hidden md:block">
+            <HorizontalTimetable
+              timeSlots={timeSlots}
+              visibleDays={visibleDays}
+              tasks={tasks}
+              fixedTimes={fixedTimes}
+              timeSettings={timeSettings}
+              getTasksForCell={getTasksForCell}
+              getTaskSpan={getTaskSpan}
+              shouldShowTaskInCell={shouldShowTaskInCell}
+              isTimeInFixedSlot={isTimeInFixedSlot}
+              isTimeInFreePeriod={isTimeInFreePeriod}
+              getTimeSlotColor={getTimeSlotColor}
+              getIconByType={getIconByType}
+              formatDurationShort={formatDurationShort}
+              onTaskClick={handleTaskClick}
+              onComplete={markTaskComplete}
+              isCompleting={isCompleting}
+              isExtendedTime={isExtendedTime}
+              getNextTimeSlot={getNextTimeSlot}
+              cn={cn}
+              todayDayName={todayDayName}
+              nowMinutes={nowMinutes}
+            />
+          </div>
         </CardContent>
       </Card>
     )
@@ -2067,7 +2097,6 @@ export default function TimetableViewerPage() {
             </DialogDescription>
           </DialogHeader>
 
-          {/* Presets — fixed at top */}
           <div className="px-6 pb-3 flex-shrink-0">
             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               Quick Presets
@@ -2103,7 +2132,6 @@ export default function TimetableViewerPage() {
 
           <Separator className="dark:bg-gray-700" />
 
-          {/* Draggable list — fixed height with native scroll so ALL 6 rows are reachable */}
           <div className="px-6 pt-3 flex-shrink-0">
             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               Custom Order (drag to reorder)
@@ -2431,7 +2459,7 @@ export default function TimetableViewerPage() {
   )
 }
 
-// ==================== Horizontal Grid ====================
+// ==================== Horizontal Grid (DESKTOP) ====================
 function HorizontalTimetable({
   timeSlots, visibleDays, timeSettings,
   getTasksForCell, getTaskSpan, shouldShowTaskInCell,
@@ -2776,5 +2804,359 @@ function SleepTaskComponent({
         </div>
       </div>
     </motion.div>
+  )
+}
+
+// ==================== DayTimelineView (MOBILE) ====================
+interface DayTimelineViewProps {
+  visibleDays: string[]
+  tasks: TimeSlot[]
+  fixedTimes: FixedTime[]
+  sleepSchedules: SleepSchedule[]
+  todayDayName: string
+  nowMinutes: number
+  timeSettings: TimeSettings
+  onTaskClick: (taskId?: string) => void
+  onComplete: (taskId: string) => void
+  isCompleting: string | null
+  formatTimeDisplay: (time: string) => string
+  formatDuration: (minutes: number) => string
+  getIconByType: (type: string) => React.ReactElement
+  getTimeSlotColor: (type: string) => string
+  getSleepTypeInfo: (type: string) => { label: string; icon: any; color: string }
+  cn: (...classes: (string | boolean | undefined | null)[]) => string
+}
+
+function DayTimelineView({
+  visibleDays,
+  tasks,
+  fixedTimes,
+  sleepSchedules,
+  todayDayName,
+  nowMinutes,
+  timeSettings,
+  onTaskClick,
+  onComplete,
+  isCompleting,
+  formatTimeDisplay,
+  formatDuration,
+  getIconByType,
+  getTimeSlotColor,
+  getSleepTypeInfo,
+  cn,
+}: DayTimelineViewProps) {
+  const [expandedDay, setExpandedDay] = React.useState<string>(todayDayName)
+
+  const isActivityLive = (day: string, startTime: string, endTime: string) => {
+    if (day !== todayDayName) return false
+    const s = convertToMinutes(startTime)
+    const e = convertToMinutes(endTime)
+    if (e < s) return nowMinutes >= s || nowMinutes < e
+    return nowMinutes >= s && nowMinutes < e
+  }
+
+  const buildDayActivities = (day: string) => {
+    const items: Array<{
+      id: string
+      kind: 'task' | 'fixed' | 'sleep' | 'free'
+      title: string
+      subtitle: string
+      color: string
+      startTime: string
+      endTime: string
+      duration: number
+      type: string
+      priority?: string
+      status?: string
+      taskId?: string
+    }> = []
+
+    tasks
+      .filter((t) => t.day === day && !t.isSleepTime)
+      .forEach((t) => {
+        items.push({
+          id: t.id,
+          kind: 'task',
+          title: t.title,
+          subtitle: t.subject,
+          color: t.color,
+          startTime: t.startTime,
+          endTime: t.endTime,
+          duration: t.duration,
+          type: t.type,
+          priority: t.priority,
+          status: t.status,
+          taskId: t.id,
+        })
+      })
+
+    fixedTimes
+      .filter((ft) => ft.days.includes(day))
+      .forEach((ft) => {
+        const isFree = (ft.freePeriods || []).some((fp) => fp.day === day)
+        items.push({
+          id: `fixed-${ft.id}-${day}`,
+          kind: isFree ? 'free' : 'fixed',
+          title: ft.title,
+          subtitle: `${ft.type.charAt(0)}${ft.type.slice(1).toLowerCase()}`,
+          color: ft.color || '#6B7280',
+          startTime: ft.startTime,
+          endTime: ft.endTime,
+          duration: calculateDuration(ft.startTime, ft.endTime),
+          type: ft.type,
+        })
+      })
+
+    const sleep = sleepSchedules.find((s) => s.day === day && s.isActive)
+    if (sleep) {
+      items.push({
+        id: `sleep-${sleep.id}`,
+        kind: 'sleep',
+        title: sleep.type === 'POWER_NAP' ? 'Power Nap' : 'Sleep',
+        subtitle: getSleepTypeInfo(sleep.type).label,
+        color: sleep.color || '#4B5563',
+        startTime: sleep.bedtime,
+        endTime: sleep.wakeTime,
+        duration: sleep.duration,
+        type: 'sleep',
+      })
+    }
+
+    return items.sort(
+      (a, b) => convertToMinutes(a.startTime) - convertToMinutes(b.startTime),
+    )
+  }
+
+  return (
+    <div className="divide-y divide-gray-200 dark:divide-gray-700">
+      {visibleDays.map((day) => {
+        const isToday = day === todayDayName
+        const activities = buildDayActivities(day)
+        const isExpanded = expandedDay === day
+        const taskCount = activities.filter((a) => a.kind === 'task').length
+        const completedCount = activities.filter(
+          (a) => a.kind === 'task' && a.status === 'COMPLETED',
+        ).length
+
+        return (
+          <div key={day} className="bg-white dark:bg-gray-800">
+            {/* ---------- DAY HEADER ---------- */}
+            <button
+              type="button"
+              onClick={() => setExpandedDay(isExpanded ? '' : day)}
+              className={cn(
+                'w-full flex items-center justify-between gap-3 p-4 text-left transition-colors',
+                isToday && 'bg-red-50/50 dark:bg-red-900/10',
+                !isExpanded && 'hover:bg-gray-50 dark:hover:bg-gray-700/50',
+              )}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className={cn(
+                    'w-11 h-11 rounded-full flex flex-col items-center justify-center flex-shrink-0 border-2',
+                    isToday
+                      ? 'bg-red-500 border-red-500 text-white'
+                      : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300',
+                  )}
+                >
+                  <span className="text-[9px] uppercase font-semibold leading-none">
+                    {DAY_DISPLAY[day]}
+                  </span>
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3
+                      className={cn(
+                        'text-sm font-semibold truncate',
+                        isToday
+                          ? 'text-red-700 dark:text-red-300'
+                          : 'text-gray-900 dark:text-gray-100',
+                      )}
+                    >
+                      {DAY_FULL_DISPLAY[day]}
+                    </h3>
+                    {isToday && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 flex-shrink-0">
+                        TODAY
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    {activities.length === 0
+                      ? 'No activities'
+                      : `${activities.length} ${
+                          activities.length === 1 ? 'activity' : 'activities'
+                        }${
+                          taskCount > 0
+                            ? ` • ${completedCount}/${taskCount} done`
+                            : ''
+                        }`}
+                  </p>
+                </div>
+              </div>
+
+              <ChevronRight
+                className={cn(
+                  'w-5 h-5 text-gray-400 flex-shrink-0 transition-transform',
+                  isExpanded && 'rotate-90',
+                )}
+              />
+            </button>
+
+            {/* ---------- EXPANDED ACTIVITIES ---------- */}
+            {isExpanded && (
+              <div className="px-3 pb-3 space-y-1.5">
+                {activities.length === 0 ? (
+                  <div className="text-center py-6">
+                    <Calendar className="w-6 h-6 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Nothing scheduled for {DAY_FULL_DISPLAY[day]}
+                    </p>
+                  </div>
+                ) : (
+                  activities.map((activity, idx) => {
+                    const isLive = isActivityLive(
+                      day,
+                      activity.startTime,
+                      activity.endTime,
+                    )
+                    const isCompleted =
+                      activity.kind === 'task' &&
+                      activity.status === 'COMPLETED'
+                    const isTask = activity.kind === 'task'
+
+                    return (
+                      <motion.div
+                        key={`${activity.id}-${idx}`}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.03 }}
+                        onClick={() => {
+                          if (isTask && activity.taskId) {
+                            onTaskClick(activity.taskId)
+                          }
+                        }}
+                        className={cn(
+                          'relative flex gap-3 p-3 rounded-xl border transition-all',
+                          isLive
+                            ? 'border-red-400 dark:border-red-700 bg-red-50/60 dark:bg-red-900/20 ring-2 ring-red-400/40'
+                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50',
+                          isTask && 'cursor-pointer active:scale-[0.99]',
+                          isCompleted && 'opacity-60',
+                        )}
+                      >
+                        <div
+                          className="w-1 rounded-full flex-shrink-0 self-stretch"
+                          style={{ backgroundColor: activity.color }}
+                        />
+
+                        <div
+                          className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                          style={{ backgroundColor: `${activity.color}20` }}
+                        >
+                          {activity.kind === 'sleep' ? (
+                            <Moon className="w-4 h-4" style={{ color: activity.color }} />
+                          ) : activity.kind === 'fixed' ? (
+                            getIconByType(activity.type)
+                          ) : activity.kind === 'free' ? (
+                            <Coffee className="w-4 h-4 text-green-600 dark:text-green-400" />
+                          ) : (
+                            <Book className="w-4 h-4" style={{ color: activity.color }} />
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h4
+                              className={cn(
+                                'text-sm font-semibold truncate',
+                                isCompleted
+                                  ? 'text-gray-500 dark:text-gray-400 line-through'
+                                  : 'text-gray-900 dark:text-gray-100',
+                              )}
+                            >
+                              {activity.title}
+                            </h4>
+
+                            {isLive && (
+                              <span className="flex items-center gap-1 flex-shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/50">
+                                <span className="relative flex h-1.5 w-1.5">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
+                                </span>
+                                LIVE
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400 flex-wrap">
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {formatTimeDisplay(activity.startTime)} –{' '}
+                              {formatTimeDisplay(activity.endTime)}
+                            </span>
+                            <span className="text-gray-300 dark:text-gray-600">•</span>
+                            <span>{formatDuration(activity.duration)}</span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                            {activity.subtitle && (
+                              <span className="text-[10px] text-gray-500 dark:text-gray-400 truncate">
+                                {activity.subtitle}
+                              </span>
+                            )}
+
+                            {activity.priority && (
+                              <span
+                                className={cn(
+                                  'text-[9px] font-semibold px-1.5 py-0.5 rounded-full uppercase',
+                                  activity.priority === 'CRITICAL'
+                                    ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                    : activity.priority === 'HIGH'
+                                      ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+                                      : activity.priority === 'MEDIUM'
+                                        ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                                        : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+                                )}
+                              >
+                                {activity.priority}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {isTask && activity.taskId && !isCompleted && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              onComplete(activity.taskId!)
+                            }}
+                            disabled={isCompleting === activity.taskId}
+                            className="self-center p-2 rounded-full hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors flex-shrink-0"
+                            aria-label="Mark complete"
+                          >
+                            {isCompleting === activity.taskId ? (
+                              <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                            ) : (
+                              <CheckCircle2 className="w-4 h-4 text-gray-400 hover:text-green-500" />
+                            )}
+                          </button>
+                        )}
+
+                        {isCompleted && (
+                          <CheckCircle2 className="w-4 h-4 text-green-500 self-center flex-shrink-0" />
+                        )}
+                      </motion.div>
+                    )
+                  })
+                )}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
   )
 }
