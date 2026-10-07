@@ -1,0 +1,31 @@
+<!-- src/app/apple-icon.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <defs>
+    <linearGradient id="appleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="50%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#8B5CF6" />
+    </linearGradient>
+  </defs>
+
+  <!-- Full-bleed background (iOS adds its own rounded mask) -->
+  <rect x="0" y="0" width="180" height="180" fill="url(#appleGrad)" />
+
+  <!-- Clock ring -->
+  <circle
+    cx="90" cy="90" r="48"
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-width="12"
+    stroke-linecap="round"
+    stroke-dasharray="226 76"
+    transform="rotate(-45 90 90)"
+  />
+
+  <!-- Clock hands -->
+  <line x1="90" y1="90" x2="90" y2="62" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" />
+  <line x1="90" y1="90" x2="112" y2="90" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" />
+
+  <!-- Center dot -->
+  <circle cx="90" cy="90" r="7" fill="#FFFFFF" />
+</svg>

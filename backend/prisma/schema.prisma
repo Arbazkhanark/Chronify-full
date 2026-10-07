@@ -14,6 +14,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ============================================================================
+// ENUMS
+// ============================================================================
+
 enum GoalType {
   SHORT_TERM
   LONG_TERM
@@ -60,9 +64,9 @@ enum TaskStatus {
   ONGOING // abhi chal raha hai
   COMPLETED // successfully done
   MISSED // time nikal gaya, nahi hua
-  SKIPPED      // ❌ MISSING
-  DELAYED      // ❌ MISSING
-  RESCHEDULED  // ❌ MISSING
+  SKIPPED
+  DELAYED
+  RESCHEDULED
 }
 
 enum SessionStatus {
@@ -124,148 +128,9 @@ enum TimeSlotType {
   OTHER
 }
 
-model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String?
-
-  timezone    String      @default("Asia/Kolkata")
-  accountType AccountType @default(STUDENT)
-  verified    Boolean     @default(false)
-
-  // 🔥 DOMAIN / INTERESTS (ARRAY)
-  fields    String[] // ["Tech", "Design"]
-  subFields String[] // ["Backend Developer", "AI", "DevOps"]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  lastLogin DateTime? // Track last login time
-  isOnline  Boolean   @default(false) // Track if the user is online or not
-
-  profileVisibility ProfileVisibility @default(PUBLIC) // Who can see the user's profile?
-
-  phoneNumber      String? // If required
-  twoFactorEnabled Boolean @default(false) // To handle 2FA
-
-  lastTimetableLockAt DateTime? // - Track when user last locked timetable
-
-
-  // 🔥 NEW: OAuth accounts linked to this user
-  oauthAccounts OAuthAccount[]
-
-
-  // Core
-  goals      Goal[]
-  tasks      Task[]
-  streak     Streak?
-  aiSessions AISession[]
-
-  // Profile
-  profile Profile?
-  privacy PrivacySettings?
-  playSound       Boolean   @default(true)     // Sound notifications
-  gracePeriod Int     @default(60)        // Minutes (60 = 1 hour)
-
-  notifyBeforeTask  Int     @default(15)    // kitne min pehle notify karna hai
-  notifyAtTaskStart Boolean @default(true)  // start pe notify?
-  notifyAtTaskEnd   Boolean @default(true)  // end pe notify?
-  snoozeUntil       DateTime?               // notification snooze
-
-  // Social
-  posts    Post[]
-  reaction Reaction[]
-  comments Comment[]
-
-  sentRequests     FriendRequest[] @relation("SentRequests")
-  receivedRequests FriendRequest[] @relation("ReceivedRequests")
-
-  // 🔥 SELF RELATION (IMPORTANT)
-  friendsAsUser   Friend[] @relation("UserAsOwner")
-  friendsAsFriend Friend[] @relation("UserAsFriend")
-
-  reminders     Reminder[]
-  taskReminders TaskReminder[]
-
-  // 🔥 ADD THIS LINE - Push subscriptions for this user
-  pushSubscriptions PushSubscription[]  // Ek user ke multiple devices ho sakte hain, toh multiple subscriptions
-  
-
-  // 🔥 ADDED: Relation to FixedTime
-  fixedTimes     FixedTime[]
-  sleepSchedules SleepSchedule[]
-  taskFeedbacks  TaskFeedback[]
-}
-
-
-// 🔥 NEW: OAuth provider accounts
 enum OAuthProvider {
   GOOGLE
   GITHUB
-}
-
-
-
-model OAuthAccount {
-  id         String        @id @default(uuid())
-  userId     String
-  provider   OAuthProvider
-  providerId String        // Provider's user id (e.g. Google "sub", GitHub "id")
-
-  // Provider-specific snapshot (optional, useful for debugging/display)
-  email      String?
-  name       String?
-  avatarUrl  String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerId])
-  @@index([userId])
-}
-
-
-model Profile {
-  id     String @id @default(uuid())
-  userId String @unique
-
-  userName    String       @unique
-  avatarUrl   String?
-  coverPhoto  String?
-  bio         String?
-  dob         DateTime? // Adding DOB
-  profession  String? // Adding Profession
-  hobbies     String[] // Hobbies stored as an array of strings
-  socialLinks SocialLink[] // Link to social media platforms
-
-  // Location as separate fields
-  city    String?
-  state   String?
-  country String?
-
-  // 🔥 NEW: Education and Experience (LinkedIn-style)
-  education   Education[]
-  experience  Experience[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
-}
-
-model SocialLink {
-  id        String         @id @default(uuid())
-  profileId String // Foreign key to Profile
-  platform  SocialPlatform // E.g., "facebook", "twitter", etc.
-  url       String // URL to the social media profile
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  profile Profile @relation(fields: [profileId], references: [id])
 }
 
 enum SocialPlatform {
@@ -278,47 +143,6 @@ enum SocialPlatform {
   GITHUB
   OTHER
 }
-
-// ============================================================================
-// 🔥 NEW MODEL: Education (LinkedIn-style)
-// ============================================================================
-model Education {
-  id        String @id @default(uuid())
-  profileId String // Foreign key to Profile
-
-  // Basic Info
-  institution String // "Amity University"
-  degree      String // "MCA", "BCA", "B.Tech"
-  field       String? // "Computer Applications"
-  grade       String? // "8.7 GPA", "First Class", "85%"
-
-  // Duration
-  startYear   String? // "2023" (store as string for flexibility)
-  endYear     String? // "2025" or "Present"
-  startDate   DateTime? // Optional: full date if needed
-  endDate     DateTime? // Optional: full date if needed
-
-  // Extra details (LinkedIn style)
-  description String? // "Specialized in AI and distributed systems..."
-  location    String? // "Mumbai, India"
-  activities  String? // "Coding Club, Robotics Society"
-  isCurrent   Boolean  @default(false) // Currently studying here?
-
-  // Ordering (for drag-drop reorder later)
-  order       Int      @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  @@index([profileId])
-  @@index([profileId, order])
-}
-
-// ============================================================================
-// 🔥 NEW MODEL: Experience (LinkedIn-style)
-// ============================================================================
 
 enum EmploymentType {
   FULL_TIME
@@ -337,53 +161,6 @@ enum LocationType {
   HYBRID
 }
 
-model Experience {
-  id        String @id @default(uuid())
-  profileId String // Foreign key to Profile
-
-  // Basic Info
-  role          String         // "Software Development Intern"
-  organization  String         // "TechStart Solutions"
-  employmentType EmploymentType @default(FULL_TIME)
-  locationType  LocationType   @default(ON_SITE)
-
-  // Duration
-  startDate   String? // "Jun 2025" (store as string for flexibility)
-  endDate     String? // "Aug 2025" or "Present"
-  startDateTime DateTime? // Optional: full date if needed
-  endDateTime   DateTime? // Optional: full date if needed
-  isCurrent     Boolean   @default(false) // Currently working here?
-
-  // Extra details (LinkedIn style)
-  location    String? // "Mumbai, India"
-  description String? // "Built internal tooling with Next.js..."
-  skills      String[] // ["React", "Node.js", "PostgreSQL"]
-  companyUrl  String? // "https://techstart.com"
-  companyLogo String? // URL to company logo
-
-  // Ordering (for drag-drop reorder later)
-  order       Int      @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  @@index([profileId])
-  @@index([profileId, order])
-}
-
-model PrivacySettings {
-  id     String @id @default(uuid())
-  userId String @unique
-
-  profilePublic   Boolean @default(true)
-  timetablePublic Boolean @default(false)
-  progressPublic  Boolean @default(true)
-
-  user User @relation(fields: [userId], references: [id])
-}
-
 enum SleepType {
   REGULAR
   POWER_NAP
@@ -400,34 +177,6 @@ enum SleepDay {
   FRIDAY
   SATURDAY
   SUNDAY
-}
-
-model SleepSchedule {
-  id     String @id @default(uuid())
-  userId String
-
-  // Day-specific schedule
-  day      SleepDay
-  bedtime  String // Format: "23:00"
-  wakeTime String // Format: "07:00"
-  duration Int // In minutes
-  isActive Boolean   @default(true)
-  type     SleepType @default(REGULAR)
-  notes    String?
-  color    String    @default("#4B5563")
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // @@unique([userId, day])
-  @@index([userId])
-  @@index([day])
-  @@index([userId, type])  // Fast query by type
-  @@index([userId, day])   // Fast query by day (not unique)
 }
 
 enum GoalPriority {
@@ -455,6 +204,293 @@ enum GoalCategory {
   SOCIAL
   CREATIVE
 }
+
+enum TaskCategory {
+  ACADEMIC
+  PROFESSIONAL
+  HEALTH
+  PERSONAL
+  LEARNING
+  BREAK
+  COMMUTE
+  PROJECT
+  SLEEP
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  SAD
+  ANGRY
+  HAHA
+}
+
+enum ReminderType {
+  BEFORE_START // X minutes pehle
+  AT_START // exactly start time pe
+  AFTER_END // complete karne ke liye (1 hour grace mein)
+}
+
+// ============================================================================
+// MODELS
+// ============================================================================
+
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  email    String  @unique
+  password String?
+
+  timezone    String      @default("Asia/Kolkata")
+  accountType AccountType @default(STUDENT)
+  verified    Boolean     @default(false)
+
+  // 🔥 NEW: direct avatar for dashboard (avoids Profile join)
+  avatarUrl String?
+
+  // 🔥 DOMAIN / INTERESTS (ARRAY)
+  fields    String[] // ["Tech", "Design"]
+  subFields String[] // ["Backend Developer", "AI", "DevOps"]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lastLogin DateTime? // Track last login time
+  isOnline  Boolean   @default(false) // Track if the user is online or not
+
+  profileVisibility ProfileVisibility @default(PUBLIC) // Who can see the user's profile?
+
+  phoneNumber      String? // If required
+  twoFactorEnabled Boolean @default(false) // To handle 2FA
+
+  lastTimetableLockAt DateTime? // Track when user last locked timetable
+
+  // 🔥 NEW: OAuth accounts linked to this user
+  oauthAccounts OAuthAccount[]
+
+  // Core
+  goals      Goal[]
+  tasks      Task[]
+  streak     Streak?
+  aiSessions AISession[]
+
+  // Profile
+  profile Profile?
+  privacy PrivacySettings?
+
+  // 🔔 Notification prefs
+  playSound         Boolean @default(true)
+  gracePeriod       Int     @default(60) // Minutes (60 = 1 hour)
+  notifyBeforeTask  Int     @default(15) // kitne min pehle notify karna hai
+  notifyAtTaskStart Boolean @default(true) // start pe notify?
+  notifyAtTaskEnd   Boolean @default(true) // end pe notify?
+  snoozeUntil       DateTime? // notification snooze
+
+  // Social
+  posts    Post[]
+  reaction Reaction[]
+  comments Comment[]
+
+  sentRequests     FriendRequest[] @relation("SentRequests")
+  receivedRequests FriendRequest[] @relation("ReceivedRequests")
+
+  // 🔥 SELF RELATION
+  friendsAsUser   Friend[] @relation("UserAsOwner")
+  friendsAsFriend Friend[] @relation("UserAsFriend")
+
+  reminders     Reminder[]
+  taskReminders TaskReminder[]
+
+  // Push subscriptions for this user
+  pushSubscriptions PushSubscription[]
+
+  // Fixed times + sleep schedules + task feedback
+  fixedTimes     FixedTime[]
+  sleepSchedules SleepSchedule[]
+  taskFeedbacks  TaskFeedback[]
+}
+
+// ============================================================================
+// AUTH / OAUTH
+// ============================================================================
+
+model OAuthAccount {
+  id         String        @id @default(uuid())
+  userId     String
+  provider   OAuthProvider
+  providerId String // Provider's user id (Google "sub", GitHub "id")
+
+  email     String?
+  name      String?
+  avatarUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerId])
+  @@index([userId])
+}
+
+// ============================================================================
+// PROFILE
+// ============================================================================
+
+model Profile {
+  id     String @id @default(uuid())
+  userId String @unique
+
+  userName   String        @unique
+  avatarUrl  String?
+  coverPhoto String?
+  bio        String?
+  dob        DateTime?
+  profession String?
+  hobbies    String[]
+  socialLinks SocialLink[]
+
+  // Location as separate fields
+  city    String?
+  state   String?
+  country String?
+
+  // 🔥 NEW: Education and Experience (LinkedIn-style)
+  education  Education[]
+  experience Experience[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model SocialLink {
+  id        String         @id @default(uuid())
+  profileId String
+  platform  SocialPlatform
+  url       String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id])
+}
+
+model Education {
+  id        String @id @default(uuid())
+  profileId String
+
+  // Basic Info
+  institution String
+  degree      String
+  field       String?
+  grade       String?
+
+  // Duration
+  startYear   String?
+  endYear     String?
+  startDate   DateTime?
+  endDate     DateTime?
+
+  // Extra details
+  description String?
+  location    String?
+  activities  String?
+  isCurrent   Boolean @default(false)
+
+  // Ordering
+  order Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([profileId, order])
+}
+
+model Experience {
+  id        String @id @default(uuid())
+  profileId String
+
+  // Basic Info
+  role          String
+  organization  String
+  employmentType EmploymentType @default(FULL_TIME)
+  locationType  LocationType   @default(ON_SITE)
+
+  // Duration
+  startDate     String?
+  endDate       String?
+  startDateTime DateTime?
+  endDateTime   DateTime?
+  isCurrent     Boolean   @default(false)
+
+  // Extra details
+  location    String?
+  description String?
+  skills      String[]
+  companyUrl  String?
+  companyLogo String?
+
+  // Ordering
+  order Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([profileId, order])
+}
+
+model PrivacySettings {
+  id     String @id @default(uuid())
+  userId String @unique
+
+  profilePublic   Boolean @default(true)
+  timetablePublic Boolean @default(false)
+  progressPublic  Boolean @default(true)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// ============================================================================
+// SLEEP SCHEDULE
+// ============================================================================
+
+model SleepSchedule {
+  id     String @id @default(uuid())
+  userId String
+
+  // Day-specific schedule
+  day      SleepDay
+  bedtime  String // Format: "23:00"
+  wakeTime String // Format: "07:00"
+  duration Int // In minutes
+  isActive Boolean   @default(true)
+  type     SleepType @default(REGULAR)
+  notes    String?
+  color    String    @default("#4B5563")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 🔥 One schedule per day per user
+  @@unique([userId, day])
+  @@index([userId])
+  @@index([day])
+  @@index([userId, type])
+}
+
+// ============================================================================
+// GOALS
+// ============================================================================
 
 model Goal {
   id     String @id @default(uuid())
@@ -505,18 +541,20 @@ model Goal {
   @@index([status])
   @@index([targetDate])
   @@index([category])
+  // 🔥 NEW: dashboard sort optimization
+  @@index([userId, status, priority])
 }
 
 model Milestone {
-  id             String    @id @default(uuid())
+  id             String  @id @default(uuid())
   goalId         String
   title          String
   description    String?
-  completed      Boolean   @default(false)
+  completed      Boolean @default(false)
   targetDate     DateTime?
-  progress       Float     @default(0)
-  scheduledHours Int       @default(0)
-  completedHours Int       @default(0)
+  progress       Float   @default(0)
+  scheduledHours Int     @default(0)
+  completedHours Int     @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -529,26 +567,18 @@ model Milestone {
   @@index([goalId])
 }
 
-enum TaskCategory {
-  ACADEMIC
-  PROFESSIONAL
-  HEALTH
-  PERSONAL
-  LEARNING
-  BREAK
-  COMMUTE
-  PROJECT
-  SLEEP
-}
+// ============================================================================
+// TASKS
+// ============================================================================
 
 model Task {
-  id     String  @id @default(uuid())
-  goalId String?
-  userId String
+  id      String  @id @default(uuid())
+  goalId  String?
+  userId  String
 
-  title     String // Task name
+  title     String
   subject   String?
-  notes      String?
+  notes     String?
   startTime String
   endTime   String
   duration  Int // Minutes
@@ -566,51 +596,49 @@ model Task {
   // Goal tracking - milestone can have multiple tasks
   milestoneId String?
 
-  status      TaskStatus @default(PENDING)
-  isCompleted Boolean    @default(false)
-  completedAt DateTime?
+  status             TaskStatus @default(PENDING)
+  isCompleted        Boolean    @default(false)
+  completedAt        DateTime?
   lastStatusUpdateAt DateTime?
 
-  // 🟢 STARTED AT - IMPORTANT
-  startedAt DateTime?   // ✅ ADD THIS - Jab user "Start Task" karega tab set karo
-  
-  // 🟢 ACTUAL DURATION - IMPORTANT
-  actualDuration Int?   // ✅ ADD THIS - Actually kitna time laga (minutes)
+  // 🟢 STARTED AT
+  startedAt DateTime?
+
+  // 🟢 ACTUAL DURATION
+  actualDuration Int?
 
   // 🟢 GRACE PERIOD HANDLING
-  gracePeriodEndsAt DateTime? // ✅ ADD THIS - Task end time + 1 hour
+  gracePeriodEndsAt DateTime?
 
-
-
-  // 1. For rescheduling (ek baar ke liye)
-  isRescheduled     Boolean   @default(false) // Kya task reschedule hua hai?
-  rescheduledToTime String?   // Naya start time agar reschedule kiya toh
-  rescheduledDay    String?   // Naya day agar reschedule kiya toh
-  rescheduledCount  Int       @default(0) // Sirf 0 ya 1 hoga
+  // Rescheduling
+  isRescheduled     Boolean @default(false)
+  rescheduledToTime String?
+  rescheduledDay    String?
+  rescheduledCount  Int     @default(0)
 
   taskReminders TaskReminder[]
 
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
 
-   // RELATIONS
+  // RELATIONS
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   goal      Goal?      @relation(fields: [goalId], references: [id], onDelete: Cascade)
   milestone Milestone? @relation("MilestoneTasks", fields: [milestoneId], references: [id], onDelete: Cascade)
   fixedTime FixedTime? @relation(fields: [fixedTimeId], references: [id], onDelete: Cascade)
 
-  // Relation to TimeSlot
-  // timeSlots TimeSlot[]
-  feedback  TaskFeedback?
+  feedback TaskFeedback?
 
   @@index([userId])
   @@index([day])
-  @@index([status])     // ✅ ADD THIS - Fast filtering by status
-  @@index([startTime])  // ✅ ADD THIS
+  @@index([status])
+  @@index([startTime])
   @@index([goalId])
   @@index([fixedTimeId])
+  // 🔥 NEW: dashboard queries
+  @@index([userId, day, status])
+  @@index([userId, completedAt])
+  @@index([userId, updatedAt])
 }
 
 model TaskFeedback {
@@ -621,13 +649,17 @@ model TaskFeedback {
   focusLevel    Int // 1-10
   completedWell Boolean @default(true)
   notes         String?
-  duration    Int?    // Actually kitna time laga (minutes mein)
+  duration      Int? // Actually kitna time laga (minutes mein)
 
   createdAt DateTime @default(now())
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+// ============================================================================
+// FIXED TIMES
+// ============================================================================
 
 model FixedTime {
   id          String        @id @default(uuid())
@@ -647,7 +679,6 @@ model FixedTime {
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   freePeriods FreePeriod[]
   tasks       Task[]
-  // @@index([days])
 
   @@index([userId])
 }
@@ -670,6 +701,9 @@ model FreePeriod {
   @@index([day])
 }
 
+// ============================================================================
+// STREAK
+// ============================================================================
 
 model Streak {
   id     String @id @default(uuid())
@@ -684,12 +718,16 @@ model Streak {
   user User @relation(fields: [userId], references: [id])
 }
 
+// ============================================================================
+// AI SESSIONS
+// ============================================================================
+
 model AISession {
   id     String @id @default(uuid())
   userId String
 
-  input    String // User ka natural language input
-  response String // AI ka output
+  input    String
+  response String
   intent   AIIntent
 
   createdAt DateTime @default(now())
@@ -697,6 +735,10 @@ model AISession {
 
   user User @relation(fields: [userId], references: [id])
 }
+
+// ============================================================================
+// SOCIAL
+// ============================================================================
 
 model FriendRequest {
   id         String              @id @default(uuid())
@@ -710,7 +752,6 @@ model FriendRequest {
   sender   User @relation("SentRequests", fields: [senderId], references: [id])
   receiver User @relation("ReceivedRequests", fields: [receiverId], references: [id])
 
-  // To prevent duplicate requests
   @@unique([senderId, receiverId])
 }
 
@@ -719,7 +760,7 @@ model Friend {
 
   userId   String
   friendId String
-  status   FriendStatus @default(ACTIVE) // Added status
+  status   FriendStatus @default(ACTIVE)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -763,14 +804,6 @@ model Reaction {
   @@unique([commentId, userId])
 }
 
-enum ReactionType {
-  LIKE
-  LOVE
-  SAD
-  ANGRY
-  HAHA
-}
-
 model Comment {
   id        String    @id @default(uuid())
   postId    String
@@ -792,30 +825,26 @@ model Comment {
   reactions Reaction[]
 }
 
+// ============================================================================
+// REMINDERS / PUSH
+// ============================================================================
 
 model TaskReminder {
-  id        String   @id @default(uuid())
-  taskId    String
-  userId    String
-  
-  remindAt  DateTime  // kab remind karna hai
-  type      ReminderType // BEFORE_START, AT_START, AFTER_END
-  sent      Boolean  @default(false)  // bhej diya?
-  sentAt    DateTime?
-  
+  id       String @id @default(uuid())
+  taskId   String
+  userId   String
+  remindAt DateTime
+  type     ReminderType
+  sent     Boolean  @default(false)
+  sentAt   DateTime?
+
   createdAt DateTime @default(now())
-  
+
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId, remindAt])
   @@index([sent])
-}
-
-enum ReminderType {
-  BEFORE_START  // X minutes pehle
-  AT_START      // exactly start time pe
-  AFTER_END     // complete karne ke liye (1 hour grace mein)
 }
 
 model Reminder {
@@ -827,18 +856,15 @@ model Reminder {
   user User @relation(fields: [userId], references: [id])
 }
 
-
-
-
 model PushSubscription {
   id        String   @id @default(uuid())
   userId    String   @unique
-  token     String   // FCM token (long string)
-  platform  String   @default("web") // web, android, ios (future ke liye)
+  token     String // FCM token (long string)
+  platform  String   @default("web") // web, android, ios
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }

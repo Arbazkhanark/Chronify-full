@@ -1,47 +1,21 @@
 // src/app/dashboard/DashboardClient.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { AuthService, type User } from '@/hooks/useAuth'
 import { useVerification } from '@/hooks/useVerification'
+import { useDashboard } from '@/hooks/useDashboard'
+import { useWeeklyActivity } from '@/hooks/useWeeklyActivity'
+import { useInsights, type InsightsRange } from '@/hooks/useInsights'
 import {
-  Target,
-  CheckCircle2,
-  Circle,
-  Clock,
-  Calendar,
-  TrendingUp,
-  Flame,
-  Moon,
-  Sun,
-  BookOpen,
-  Briefcase,
-  Dumbbell,
-  Heart,
-  GraduationCap,
-  Palette,
-  Wallet,
-  Users2,
-  Settings,
-  Plus,
-  ArrowRight,
-  Coffee,
-  Car,
-  Utensils,
-  Gamepad2,
-  Building2,
-  Sparkles,
-  ListChecks,
-  BarChart3,
-  Bed,
-  ChevronRight,
-  Loader2,
-  ShieldAlert,
-  ShieldCheck,
-  X,
+  Target, CheckCircle2, Circle, Clock, Calendar, TrendingUp, Flame, Moon, Sun,
+  BookOpen, Briefcase, Dumbbell, Heart, GraduationCap, Palette, Wallet, Users2,
+  Settings, Plus, ArrowRight, Coffee, Car, Utensils, Gamepad2, Building2,
+  Sparkles, ListChecks, BarChart3, Bed, ChevronRight, ChevronLeft, Loader2,
+  ShieldAlert, ShieldCheck, X, RefreshCw, AlertCircle, Zap,
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -54,266 +28,28 @@ import { toast } from 'sonner'
    ============================================================================ */
 
 type GoalCategory =
-  | 'ACADEMIC'
-  | 'PROFESSIONAL'
-  | 'HEALTH'
-  | 'PERSONAL'
-  | 'SKILL_DEVELOPMENT'
-  | 'FINANCIAL'
-  | 'SOCIAL'
-  | 'CREATIVE'
+  | 'ACADEMIC' | 'PROFESSIONAL' | 'HEALTH' | 'PERSONAL'
+  | 'SKILL_DEVELOPMENT' | 'FINANCIAL' | 'SOCIAL' | 'CREATIVE'
 
-type GoalPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
-type GoalStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'DELAYED' | 'FAILED'
-
-interface DashboardGoal {
-  id: string
-  title: string
-  category: GoalCategory
-  priority: GoalPriority
-  status: GoalStatus
-  progress: number
-  totalHours: number
-  completedHours: number
-  milestonesTotal: number
-  milestonesCompleted: number
-  targetDate: string
-  color: string
-}
-
-type TaskStatus = 'PENDING' | 'ONGOING' | 'COMPLETED' | 'MISSED' | 'SKIPPED' | 'DELAYED' | 'RESCHEDULED'
-type TaskCategory =
-  | 'ACADEMIC'
-  | 'PROFESSIONAL'
-  | 'HEALTH'
-  | 'PERSONAL'
-  | 'LEARNING'
-  | 'BREAK'
-  | 'COMMUTE'
-  | 'PROJECT'
-  | 'SLEEP'
 type Priority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
 
-interface DashboardTask {
-  id: string
-  title: string
-  subject?: string
-  startTime: string
-  endTime: string
-  priority: Priority
-  status: TaskStatus
-  category: TaskCategory
-  color: string
-  goalTitle?: string
-}
+type TaskStatus =
+  | 'PENDING' | 'ONGOING' | 'COMPLETED'
+  | 'MISSED' | 'SKIPPED' | 'DELAYED' | 'RESCHEDULED'
 
 type FixedTimeType =
-  | 'COLLEGE'
-  | 'OFFICE'
-  | 'SCHOOL'
-  | 'COMMUTE'
-  | 'MEETING'
-  | 'WORKOUT'
-  | 'MEAL'
-  | 'ENTERTAINMENT'
-  | 'FREE'
-  | 'FAMILY'
-  | 'HEALTH'
-  | 'OTHER'
-
-interface DashboardFixedTime {
-  id: string
-  title: string
-  type: FixedTimeType
-  startTime: string
-  endTime: string
-  days: string[]
-  color: string
-}
-
-type SleepType = 'REGULAR' | 'POWER_NAP' | 'RECOVERY' | 'EARLY' | 'LATE'
-
-interface DashboardSleepNight {
-  day: string
-  bedtime: string
-  wakeTime: string
-  duration: number
-  type: SleepType
-}
-
-interface WeeklyActivityDay {
-  day: string
-  hours: number
-  tasksCompleted: number
-}
+  | 'COLLEGE' | 'OFFICE' | 'SCHOOL' | 'COMMUTE' | 'MEETING'
+  | 'WORKOUT' | 'MEAL' | 'ENTERTAINMENT' | 'FREE' | 'FAMILY'
+  | 'HEALTH' | 'OTHER'
 
 /* ============================================================================
-   DUMMY DATA
+   STYLE MAPS
    ============================================================================ */
 
-const DUMMY_GOALS: DashboardGoal[] = [
-  {
-    id: 'goal-1',
-    title: 'Master Data Structures & Algorithms',
-    category: 'ACADEMIC',
-    priority: 'HIGH',
-    status: 'IN_PROGRESS',
-    progress: 62,
-    totalHours: 120,
-    completedHours: 74,
-    milestonesTotal: 5,
-    milestonesCompleted: 3,
-    targetDate: '2026-12-15',
-    color: '#3B82F6',
-  },
-  {
-    id: 'goal-2',
-    title: 'Ship Side Project MVP',
-    category: 'PROFESSIONAL',
-    priority: 'CRITICAL',
-    status: 'IN_PROGRESS',
-    progress: 40,
-    totalHours: 80,
-    completedHours: 32,
-    milestonesTotal: 4,
-    milestonesCompleted: 1,
-    targetDate: '2026-11-01',
-    color: '#8B5CF6',
-  },
-  {
-    id: 'goal-3',
-    title: 'Build a Strength Training Habit',
-    category: 'HEALTH',
-    priority: 'MEDIUM',
-    status: 'IN_PROGRESS',
-    progress: 75,
-    totalHours: 40,
-    completedHours: 30,
-    milestonesTotal: 3,
-    milestonesCompleted: 2,
-    targetDate: '2026-10-20',
-    color: '#EC4899',
-  },
-  {
-    id: 'goal-4',
-    title: 'Conversational Spanish',
-    category: 'SKILL_DEVELOPMENT',
-    priority: 'LOW',
-    status: 'NOT_STARTED',
-    progress: 10,
-    totalHours: 60,
-    completedHours: 6,
-    milestonesTotal: 6,
-    milestonesCompleted: 0,
-    targetDate: '2027-03-01',
-    color: '#F59E0B',
-  },
-]
-
-const DUMMY_TASKS: DashboardTask[] = [
-  {
-    id: 't1',
-    title: 'Deep Work: DSA — Graphs',
-    subject: 'DSA',
-    startTime: '09:00',
-    endTime: '11:00',
-    priority: 'HIGH',
-    status: 'COMPLETED',
-    category: 'ACADEMIC',
-    color: '#3B82F6',
-    goalTitle: 'Master Data Structures & Algorithms',
-  },
-  {
-    id: 't2',
-    title: 'Team Standup',
-    subject: 'Work',
-    startTime: '11:15',
-    endTime: '11:30',
-    priority: 'MEDIUM',
-    status: 'COMPLETED',
-    category: 'PROFESSIONAL',
-    color: '#8B5CF6',
-  },
-  {
-    id: 't3',
-    title: 'MVP: Auth Flow',
-    subject: 'Side Project',
-    startTime: '14:00',
-    endTime: '16:00',
-    priority: 'CRITICAL',
-    status: 'ONGOING',
-    category: 'PROJECT',
-    color: '#8B5CF6',
-    goalTitle: 'Ship Side Project MVP',
-  },
-  {
-    id: 't4',
-    title: 'Strength Training',
-    subject: 'Gym',
-    startTime: '18:00',
-    endTime: '19:00',
-    priority: 'MEDIUM',
-    status: 'PENDING',
-    category: 'HEALTH',
-    color: '#EC4899',
-    goalTitle: 'Build a Strength Training Habit',
-  },
-  {
-    id: 't5',
-    title: 'Spanish Practice',
-    subject: 'Language',
-    startTime: '20:00',
-    endTime: '20:30',
-    priority: 'LOW',
-    status: 'PENDING',
-    category: 'LEARNING',
-    color: '#F59E0B',
-  },
-]
-
-const DUMMY_FIXED_TIMES: DashboardFixedTime[] = [
-  { id: 'f1', title: 'Office Hours', type: 'OFFICE', startTime: '09:00', endTime: '17:00', days: ['MON', 'TUE', 'WED', 'THU', 'FRI'], color: '#3B82F6' },
-  { id: 'f2', title: 'Gym Session', type: 'WORKOUT', startTime: '18:00', endTime: '19:00', days: ['MON', 'WED', 'FRI'], color: '#EC4899' },
-  { id: 'f3', title: 'Commute', type: 'COMMUTE', startTime: '08:15', endTime: '08:55', days: ['MON', 'TUE', 'WED', 'THU', 'FRI'], color: '#F59E0B' },
-]
-
-const DUMMY_SLEEP: DashboardSleepNight[] = [
-  { day: 'MON', bedtime: '23:00', wakeTime: '07:00', duration: 480, type: 'REGULAR' },
-  { day: 'TUE', bedtime: '23:15', wakeTime: '07:00', duration: 465, type: 'REGULAR' },
-  { day: 'WED', bedtime: '23:00', wakeTime: '06:45', duration: 465, type: 'REGULAR' },
-  { day: 'THU', bedtime: '23:30', wakeTime: '07:00', duration: 450, type: 'REGULAR' },
-  { day: 'FRI', bedtime: '00:00', wakeTime: '07:30', duration: 450, type: 'LATE' },
-  { day: 'SAT', bedtime: '00:30', wakeTime: '08:30', duration: 480, type: 'LATE' },
-  { day: 'SUN', bedtime: '22:45', wakeTime: '07:15', duration: 510, type: 'REGULAR' },
-]
-
-const WEEKLY_ACTIVITY: WeeklyActivityDay[] = [
-  { day: 'Mon', hours: 5.5, tasksCompleted: 4 },
-  { day: 'Tue', hours: 4.0, tasksCompleted: 3 },
-  { day: 'Wed', hours: 6.5, tasksCompleted: 5 },
-  { day: 'Thu', hours: 3.5, tasksCompleted: 2 },
-  { day: 'Fri', hours: 5.0, tasksCompleted: 4 },
-  { day: 'Sat', hours: 2.0, tasksCompleted: 1 },
-  { day: 'Sun', hours: 1.5, tasksCompleted: 1 },
-]
-
-const DUMMY_STREAK = {
-  current: 12,
-  best: 34,
-}
-
-const DUMMY_INSIGHTS = {
-  mostProductiveDay: 'Wednesday',
-  mostProductiveTime: '6:00 PM – 8:00 PM',
-  averageFocusScore: 7.8,
-  onTimeRate: 82,
-}
-
-/* ============================================================================
-   STYLE / ICON MAPS
-   ============================================================================ */
-
-const GOAL_CATEGORY_META: Record<GoalCategory, { icon: typeof Target; bg: string; text: string }> = {
+const GOAL_CATEGORY_META: Record<
+  GoalCategory,
+  { icon: typeof Target; bg: string; text: string }
+> = {
   ACADEMIC: { icon: GraduationCap, bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-600 dark:text-blue-400' },
   PROFESSIONAL: { icon: Briefcase, bg: 'bg-purple-50 dark:bg-purple-900/20', text: 'text-purple-600 dark:text-purple-400' },
   HEALTH: { icon: Heart, bg: 'bg-red-50 dark:bg-red-900/20', text: 'text-red-600 dark:text-red-400' },
@@ -367,21 +103,32 @@ const CATEGORY_LABEL: Record<GoalCategory, string> = {
   CREATIVE: 'Creative',
 }
 
+const CATEGORY_COLOR: Record<string, string> = {
+  ACADEMIC: '#3B82F6',
+  PROFESSIONAL: '#8B5CF6',
+  HEALTH: '#EC4899',
+  PERSONAL: '#10B981',
+  LEARNING: '#F59E0B',
+  BREAK: '#10B981',
+  COMMUTE: '#F97316',
+  PROJECT: '#6366F1',
+  SLEEP: '#4B5563',
+  OTHER: '#6B7280',
+}
+
 /* ============================================================================
    HELPERS
    ============================================================================ */
 
 const formatTime = (time: string): string => {
-  const [hoursStr, minutesStr] = time.split(':')
-  const hours = Number(hoursStr)
-  const minutes = Number(minutesStr)
-  const period = hours >= 12 ? 'PM' : 'AM'
-  const displayHours = hours % 12 || 12
-  return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`
+  const [h, m] = time.split(':').map(Number)
+  const period = h >= 12 ? 'PM' : 'AM'
+  const dh = h % 12 || 12
+  return `${dh}:${String(m).padStart(2, '0')} ${period}`
 }
 
-const getInitials = (name?: string, email?: string): string => {
-  if (name && name.trim().length > 0) {
+const getInitials = (name?: string | null, email?: string | null): string => {
+  if (name && name.trim()) {
     const parts = name.trim().split(/\s+/)
     if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
@@ -390,127 +137,188 @@ const getInitials = (name?: string, email?: string): string => {
   return 'U'
 }
 
+/* ============================================================================
+   COMPONENT
+   ============================================================================ */
+
 export default function DashboardClient() {
   const router = useRouter()
 
+  /* ------------------------------------------------------------------ */
+  /* 1. ALL STATE HOOKS — no early returns above this block             */
+  /* ------------------------------------------------------------------ */
+
   const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [authLoading, setAuthLoading] = useState(true)
   const [darkMode, setDarkMode] = useState(false)
-
-  // Verification banner — user can hide it for this session if it's
-  // annoying, but it comes back on the next visit until they verify.
   const [showVerifyBanner, setShowVerifyBanner] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [weekOffset, setWeekOffset] = useState(0)
+  const [insightsRange, setInsightsRange] = useState<InsightsRange>('8w')
 
-  // Dummy-data state
-  const [goals] = useState<DashboardGoal[]>(DUMMY_GOALS)
-  const [tasks] = useState<DashboardTask[]>(DUMMY_TASKS)
-  const [fixedTimes] = useState<DashboardFixedTime[]>(DUMMY_FIXED_TIMES)
-  const [sleepNights] = useState<DashboardSleepNight[]>(DUMMY_SLEEP)
+  /* ------------------------------------------------------------------ */
+  /* 2. ALL EFFECT HOOKS                                                */
+  /* ------------------------------------------------------------------ */
 
-  /* ================================================================
-     🔥 VERIFICATION HOOK
-     Central source of truth for verification state. Handles email
-     send, polling, cache updates (current_user + profile cache),
-     and broadcasts to all other components via verification-bus.
-  */
+  // Auth
+  useEffect(() => {
+    let mounted = true
+    const run = async () => {
+      try {
+        const token = AuthService.getAccessToken()
+        if (!token) {
+          router.replace('/auth/login')
+          return
+        }
+        const u = await AuthService.getCurrentUser()
+        if (!mounted) return
+        if (!u) {
+          router.replace('/auth/login')
+          return
+        }
+        setUser(u)
+      } catch (e) {
+        console.error(e)
+        if (mounted) router.replace('/auth/login')
+      } finally {
+        if (mounted) setAuthLoading(false)
+      }
+    }
+    void run()
+    return () => {
+      mounted = false
+    }
+  }, [router])
+
+  // Dark mode
+  useEffect(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    setDarkMode(prefersDark)
+    document.documentElement.classList.toggle('dark', prefersDark)
+  }, [])
+
+  /* ------------------------------------------------------------------ */
+  /* 3. ALL CUSTOM HOOKS (order matters!)                               */
+  /* ------------------------------------------------------------------ */
+
   const {
     isVerified,
     isSending: isResendingVerification,
     sendVerificationEmail,
   } = useVerification({
     email: user?.email,
-    onVerified: () => {
-      // Keep local `user` state in sync so the badge/avatar update
-      // instantly without waiting for a refetch.
-      setUser((prev) => (prev ? { ...prev, verified: true } : prev))
-    },
+    onVerified: () => setUser(p => (p ? { ...p, verified: true } : p)),
   })
 
-  // useEffect(() => {
-  //   let isMounted = true
+  const {
+    data: overview,
+    loading: overviewLoading,
+    error: overviewError,
+    refetch: refetchOverview,
+  } = useDashboard()
 
-  //   const fetchUser = async () => {
-  //     try {
-  //       const currentUser = await AuthService.getCurrentUser()
+  const {
+    data: weekly,
+    loading: weeklyLoading,
+    error: weeklyError,
+    refetch: refetchWeekly,
+  } = useWeeklyActivity(weekOffset)
 
-  //       if (!isMounted) return
+  const {
+    data: insights,
+    loading: insightsLoading,
+    error: insightsError,
+    refetch: refetchInsights,
+  } = useInsights(insightsRange)
 
-  //       if (!currentUser) {
-  //         router.push('/auth/login')
-  //         return
-  //       }
+  /* ------------------------------------------------------------------ */
+  /* 4. ALL useMemo / useCallback — must run on EVERY render            */
+  /*    This is where the bug was: useMemo was below the early returns  */
+  /* ------------------------------------------------------------------ */
 
-  //       setUser(currentUser)
-  //     } catch (error: unknown) {
-  //       console.error('Failed to fetch current user:', error)
-  //       if (isMounted) router.push('/auth/login')
-  //     } finally {
-  //       if (isMounted) setLoading(false)
-  //     }
-  //   }
+  // Week label — MUST be called before any `return`
+  const weekLabel = useMemo(() => {
+    if (!weekly) return ''
+    const s = new Date(`${weekly.weekStart}T00:00:00`)
+    const e = new Date(`${weekly.weekEnd}T00:00:00`)
+    const fmt = (d: Date) =>
+      d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    return `${fmt(s)} – ${fmt(e)}`
+  }, [weekly])
 
-  //   void fetchUser()
+  // Combined weekly activity (API vs overview fallback)
+  const weeklyActivity = useMemo(() => {
+    if (weekly?.days?.length) return weekly.days
+    return overview?.weeklyActivity ?? []
+  }, [weekly, overview])
 
-  //   return () => {
-  //     isMounted = false
-  //   }
-  // }, [router])
-
-
-
-
-
-
-    useEffect(() => {
-    let isMounted = true
-
-    const fetchUser = async () => {
-      try {
-        const token = AuthService.getAccessToken()
-
-        // 🔥 No token → redirect immediately.
-        if (!token) {
-          router.replace('/auth/login')
-          return
-        }
-
-        const currentUser = await AuthService.getCurrentUser()
-
-        if (!isMounted) return
-
-        // 🔥 Token existed but backend rejected it
-        //    → redirect to login.
-        if (!currentUser) {
-          router.replace('/auth/login')
-          return
-        }
-
-        setUser(currentUser)
-      } catch (error: unknown) {
-        console.error('Failed to fetch current user:', error)
-
-        if (isMounted) {
-          router.replace('/auth/login')
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false)
-        }
+  // Combined insights (API vs overview fallback)
+  const insightsFinal = useMemo(() => {
+    if (insights) {
+      return {
+        mostProductiveDay: insights.mostProductiveDay,
+        mostProductiveTime: insights.mostProductiveTime,
+        averageFocusScore: insights.averageFocusScore,
+        onTimeRate: insights.onTimeRate,
+        peakFocusWindows: insights.peakFocusWindows,
+        byCategory: insights.byCategory,
+        totalCompletedTasks: insights.totalCompletedTasks,
+        totalCompletedHours: insights.totalCompletedHours,
+        rangeLabel: insights.rangeLabel,
       }
     }
-
-    void fetchUser()
-
-    return () => {
-      isMounted = false
+    return {
+      mostProductiveDay: overview?.insights?.mostProductiveDay ?? null,
+      mostProductiveTime: overview?.insights?.mostProductiveTime ?? null,
+      averageFocusScore: overview?.insights?.averageFocusScore ?? 0,
+      onTimeRate: overview?.insights?.onTimeRate ?? 0,
+      peakFocusWindows: [] as { label: string; completions: number }[],
+      byCategory: [] as { category: string; completions: number; hours: number }[],
+      totalCompletedTasks: 0,
+      totalCompletedHours: 0,
+      rangeLabel: 'Last 8 weeks',
     }
-  }, [router])
+  }, [insights, overview])
 
-  useEffect(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    setDarkMode(prefersDark)
-    document.documentElement.classList.toggle('dark', prefersDark)
-  }, [])
+  // Derived values (safe with optional chaining)
+  const goals = overview?.goals ?? []
+  const tasks = overview?.todayTasks ?? []
+  const fixedTimes = overview?.fixedTimes ?? []
+  const sleepNights = overview?.sleepSchedule ?? []
+  const stats = overview?.stats
+
+  const streak = {
+    current: stats?.currentStreak ?? 0,
+    best: stats?.bestStreak ?? 0,
+  }
+  const weeklyHours = weekly?.totalHours ?? stats?.weeklyHours ?? 0
+  const maxWeeklyHours = Math.max(...weeklyActivity.map(d => d.hours), 1)
+  const tasksCompletedToday = stats?.tasksTodayCompleted ?? 0
+  const completionRate = stats?.completionRate ?? 0
+  const avgSleepHours = stats?.avgSleepHours ?? 0
+  const activeGoalsCount = stats?.activeGoals ?? 0
+
+  const displayName = user?.name || user?.email || ''
+  const isNewUser = goals.length === 0 && tasks.length === 0
+  const greeting = isNewUser ? 'Welcome to Chronify' : 'Welcome back'
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  })
+
+  const statCards = [
+    { label: 'Active Goals', value: activeGoalsCount, icon: Target, bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-600 dark:text-blue-400' },
+    { label: 'Tasks Today', value: `${tasksCompletedToday}/${tasks.length}`, icon: ListChecks, bg: 'bg-green-50 dark:bg-green-900/20', text: 'text-green-600 dark:text-green-400' },
+    { label: 'Completion Rate', value: `${completionRate}%`, icon: TrendingUp, bg: 'bg-purple-50 dark:bg-purple-900/20', text: 'text-purple-600 dark:text-purple-400' },
+    { label: 'Weekly Hours', value: `${weeklyHours.toFixed(1)}h`, icon: Clock, bg: 'bg-indigo-50 dark:bg-indigo-900/20', text: 'text-indigo-600 dark:text-indigo-400' },
+    { label: 'Current Streak', value: `${streak.current}d`, icon: Flame, bg: 'bg-orange-50 dark:bg-orange-900/20', text: 'text-orange-600 dark:text-orange-400' },
+    { label: 'Avg Sleep', value: `${avgSleepHours.toFixed(1)}h`, icon: Moon, bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-600 dark:text-gray-300' },
+  ]
+
+  /* ------------------------------------------------------------------ */
+  /* 5. EVENT HANDLERS                                                  */
+  /* ------------------------------------------------------------------ */
 
   const toggleDarkMode = () => {
     const next = !darkMode
@@ -518,73 +326,90 @@ export default function DashboardClient() {
     document.documentElement.classList.toggle('dark', next)
   }
 
-  /* ---------------- Verification ---------------- */
-  // 🔥 Thin wrapper over the hook — the hook handles email send,
-  //    polling, cache writes, and cross-component broadcast.
   const handleVerifyEmail = async () => {
     await sendVerificationEmail()
   }
 
-  if (loading) {
+  const handleRefreshAll = async () => {
+    setIsRefreshing(true)
+    try {
+      await Promise.all([refetchOverview(), refetchWeekly(), refetchInsights()])
+      toast.success('Dashboard refreshed')
+    } catch {
+      toast.error('Some data could not be refreshed')
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
+
+  /* ==================================================================== */
+  /* 6. EARLY RETURNS — ALL HOOKS ABOVE THIS POINT, NONE BELOW           */
+  /* ==================================================================== */
+
+  if (authLoading || overviewLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <Loader2 className="w-10 h-10 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-500 dark:text-gray-400 text-sm">Loading your dashboard...</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            Loading your dashboard...
+          </p>
         </div>
       </div>
     )
   }
 
-  if (!user) {
-    return null
+  if (!user) return null
+
+  if (overviewError || !overview) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <Card className="max-w-md w-full border-red-200 dark:border-red-900/40">
+          <CardContent className="p-6 text-center">
+            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+              Couldn&apos;t load dashboard
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
+              {overviewError || 'Something went wrong. Please try again.'}
+            </p>
+            <Button onClick={handleRefreshAll} disabled={isRefreshing} className="gap-2">
+              {isRefreshing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4" />
+              )}
+              Try again
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
-  const displayName = user.name || user.email
-  const isNewUser = user
-  const greeting = isNewUser ? 'Welcome to Chronify' : 'Welcome back'
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
-
-  const activeGoalsCount = goals.filter(g => g.status === 'IN_PROGRESS').length
-  const tasksCompletedToday = tasks.filter(t => t.status === 'COMPLETED').length
-  const completionRate = tasks.length > 0 ? Math.round((tasksCompletedToday / tasks.length) * 100) : 0
-  const weeklyHours = WEEKLY_ACTIVITY.reduce((sum, d) => sum + d.hours, 0)
-  const avgSleepHours = sleepNights.length > 0
-    ? sleepNights.reduce((sum, s) => sum + s.duration, 0) / sleepNights.length / 60
-    : 0
-  const maxWeeklyHours = Math.max(...WEEKLY_ACTIVITY.map(d => d.hours), 1)
-
-  const statCards = [
-    { label: 'Active Goals', value: activeGoalsCount, icon: Target, bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-600 dark:text-blue-400' },
-    { label: "Tasks Today", value: `${tasksCompletedToday}/${tasks.length}`, icon: ListChecks, bg: 'bg-green-50 dark:bg-green-900/20', text: 'text-green-600 dark:text-green-400' },
-    { label: 'Completion Rate', value: `${completionRate}%`, icon: TrendingUp, bg: 'bg-purple-50 dark:bg-purple-900/20', text: 'text-purple-600 dark:text-purple-400' },
-    { label: 'Weekly Hours', value: `${weeklyHours.toFixed(1)}h`, icon: Clock, bg: 'bg-indigo-50 dark:bg-indigo-900/20', text: 'text-indigo-600 dark:text-indigo-400' },
-    { label: 'Current Streak', value: `${DUMMY_STREAK.current}d`, icon: Flame, bg: 'bg-orange-50 dark:bg-orange-900/20', text: 'text-orange-600 dark:text-orange-400' },
-    { label: 'Avg Sleep', value: `${avgSleepHours.toFixed(1)}h`, icon: Moon, bg: 'bg-gray-100 dark:bg-gray-800', text: 'text-gray-600 dark:text-gray-300' },
-  ]
+  /* ==================================================================== */
+  /* 7. MAIN RENDER                                                      */
+  /* ==================================================================== */
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6 lg:p-8 transition-colors duration-200">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* ================================================================
-            VERIFICATION WARNING STRIP
-            Slim, dismissible amber bar above everything else. Only shown
-            while `isVerified === false`.
-            ================================================================ */}
+
+        {/* Verify banner */}
         {!isVerified && showVerifyBanner && (
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25 }}
             className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-amber-300/70 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-950/50 shadow-sm"
           >
             <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
             <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-100 flex-1 min-w-0">
               <span className="font-semibold">Your account isn&apos;t verified yet.</span>{' '}
-              Verify{' '}
-              <span className="hidden sm:inline">{user.email}</span>
-              <span className="sm:hidden">your email</span>{' '}
-              to unlock messaging, connections &amp; full profile visibility.
+              Verify <span className="hidden sm:inline">{user.email}</span>
+              <span className="sm:hidden">your email</span> to unlock messaging,
+              connections &amp; full profile visibility.
             </p>
             <Button
               size="sm"
@@ -608,7 +433,6 @@ export default function DashboardClient() {
             <button
               onClick={() => setShowVerifyBanner(false)}
               className="p-1 text-amber-700/70 hover:text-amber-900 dark:text-amber-300/70 dark:hover:text-amber-100 flex-shrink-0"
-              aria-label="Dismiss verification warning"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -619,35 +443,35 @@ export default function DashboardClient() {
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
           <div className="flex items-center gap-4">
-            {/* Avatar with verification indicator — uses `isVerified` */}
             <div className="relative flex-shrink-0">
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-base md:text-lg font-semibold shadow-sm">
-                {getInitials(user.name, user.email)}
-              </div>
+              {overview.user.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={overview.user.avatarUrl}
+                  alt={displayName}
+                  className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover shadow-sm"
+                />
+              ) : (
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white text-base md:text-lg font-semibold shadow-sm">
+                  {getInitials(user.name, user.email)}
+                </div>
+              )}
               {!isVerified && (
-                <span
-                  className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-amber-500 border-2 border-white dark:border-gray-900 flex items-center justify-center"
-                  title="Email not verified"
-                >
+                <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-amber-500 border-2 border-white dark:border-gray-900 flex items-center justify-center">
                   <ShieldAlert className="w-2.5 h-2.5 text-white" />
                 </span>
               )}
             </div>
-
             <div>
               <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2 flex-wrap">
                 <span>
                   {greeting}, {displayName}
                 </span>
                 {isVerified ? (
-                  <CheckCircle2
-                    className="w-4 h-4 text-blue-500 flex-shrink-0"
-                    aria-label="Verified"
-                  />
+                  <CheckCircle2 className="w-4 h-4 text-blue-500 flex-shrink-0" />
                 ) : (
                   <Badge
                     variant="outline"
@@ -658,12 +482,22 @@ export default function DashboardClient() {
                 )}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                {today} · {isNewUser ? "Let's set up your first goal" : "Here's your progress overview"}
+                {today} ·{' '}
+                {isNewUser
+                  ? "Let's set up your first goal"
+                  : "Here's your progress overview"}
               </p>
             </div>
           </div>
-
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleRefreshAll}
+              disabled={isRefreshing}
+              className="p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+              aria-label="Refresh"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </button>
             <button
               onClick={toggleDarkMode}
               className="p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -682,11 +516,10 @@ export default function DashboardClient() {
           </div>
         </motion.div>
 
-        {/* Stats Grid */}
+        {/* Stats */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.05 }}
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3"
         >
           {statCards.map(stat => (
@@ -695,24 +528,30 @@ export default function DashboardClient() {
                 <div className={`w-9 h-9 rounded-lg ${stat.bg} flex items-center justify-center mb-3`}>
                   <stat.icon className={`w-4.5 h-4.5 ${stat.text}`} />
                 </div>
-                <div className="text-xl font-bold text-gray-900 dark:text-gray-100">{stat.value}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{stat.label}</div>
+                <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                  {stat.value}
+                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  {stat.label}
+                </div>
               </CardContent>
             </Card>
           ))}
         </motion.div>
 
-        {/* Main Grid */}
+        {/* Main grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column */}
+          {/* LEFT COLUMN */}
           <div className="lg:col-span-2 space-y-6">
             {/* Today's Schedule */}
-            <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
+            <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}>
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">Today&apos;s Schedule</h2>
+                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                        Today&apos;s Schedule
+                      </h2>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                         {tasksCompletedToday} of {tasks.length} tasks completed
                       </p>
@@ -724,60 +563,88 @@ export default function DashboardClient() {
                       View full timetable <ChevronRight className="w-3 h-3" />
                     </Link>
                   </div>
-
-                  <div className="space-y-2">
-                    {tasks.map(task => (
-                      <div
-                        key={task.id}
-                        className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors"
+                  {tasks.length === 0 ? (
+                    <div className="py-8 text-center">
+                      <Calendar className="w-10 h-10 mx-auto text-gray-300 dark:text-gray-600 mb-3" />
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        No tasks scheduled for today
+                      </p>
+                      <Link
+                        href="/dashboard/timetable/builder"
+                        className="inline-flex items-center gap-1 mt-3 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
                       >
-                        {task.status === 'COMPLETED' ? (
-                          <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                        ) : (
-                          <Circle className="w-5 h-5 text-gray-300 dark:text-gray-600 flex-shrink-0" />
-                        )}
+                        <Plus className="w-3 h-3" /> Add a task
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {tasks.map(task => (
                         <div
-                          className="w-1 h-8 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: task.color }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className={`text-sm font-medium truncate ${task.status === 'COMPLETED' ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-900 dark:text-gray-100'}`}>
+                          key={task.id}
+                          className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors"
+                        >
+                          {task.status === 'COMPLETED' ? (
+                            <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                          ) : (
+                            <Circle className="w-5 h-5 text-gray-300 dark:text-gray-600 flex-shrink-0" />
+                          )}
+                          <div
+                            className="w-1 h-8 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: task.color }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p
+                              className={`text-sm font-medium truncate ${
+                                task.status === 'COMPLETED'
+                                  ? 'text-gray-400 dark:text-gray-500 line-through'
+                                  : 'text-gray-900 dark:text-gray-100'
+                              }`}
+                            >
                               {task.title}
                             </p>
-                          </div>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              {formatTime(task.startTime)} – {formatTime(task.endTime)}
-                            </span>
-                            {task.goalTitle && (
-                              <span className="text-xs text-gray-400 dark:text-gray-500 truncate hidden sm:inline">
-                                · {task.goalTitle}
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                {formatTime(task.startTime)} – {formatTime(task.endTime)}
                               </span>
-                            )}
+                              {task.goalTitle && (
+                                <span className="text-xs text-gray-400 dark:text-gray-500 truncate hidden sm:inline">
+                                  · {task.goalTitle}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <Badge
+                              className={`${PRIORITY_BADGE[task.priority]} text-[10px] px-1.5 py-0 hidden sm:inline-flex`}
+                            >
+                              {task.priority}
+                            </Badge>
+                            <Badge
+                              className={`${STATUS_BADGE[task.status]} text-[10px] px-1.5 py-0`}
+                            >
+                              {task.status}
+                            </Badge>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          <Badge className={`${PRIORITY_BADGE[task.priority]} text-[10px] px-1.5 py-0 hidden sm:inline-flex`}>
-                            {task.priority}
-                          </Badge>
-                          <Badge className={`${STATUS_BADGE[task.status]} text-[10px] px-1.5 py-0`}>
-                            {task.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
 
-            {/* Goals & Milestones */}
-            <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.15 }}>
+            {/* Goals */}
+            <motion.div
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.05 }}
+            >
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="font-semibold text-gray-900 dark:text-gray-100">Goals &amp; Milestones</h2>
+                    <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                      Goals &amp; Milestones
+                    </h2>
                     <Link
                       href="/dashboard/goals"
                       className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
@@ -785,95 +652,358 @@ export default function DashboardClient() {
                       View all goals <ChevronRight className="w-3 h-3" />
                     </Link>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {goals.map(goal => {
-                      const meta = GOAL_CATEGORY_META[goal.category]
-                      const Icon = meta.icon
-                      return (
-                        <div
-                          key={goal.id}
-                          className="p-4 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors"
-                        >
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className={`w-8 h-8 rounded-lg ${meta.bg} flex items-center justify-center flex-shrink-0`}>
-                                <Icon className={`w-4 h-4 ${meta.text}`} />
+                  {goals.length === 0 ? (
+                    <div className="py-8 text-center">
+                      <Target className="w-10 h-10 mx-auto text-gray-300 dark:text-gray-600 mb-3" />
+                      <p className="text-sm text-gray-500 dark:text-gray-400">No goals yet</p>
+                      <Link
+                        href="/dashboard/goals/new"
+                        className="inline-flex items-center gap-1 mt-3 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                      >
+                        <Plus className="w-3 h-3" /> Create your first goal
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {goals.map(goal => {
+                        const cat = (goal.category as GoalCategory) || 'PERSONAL'
+                        const meta = GOAL_CATEGORY_META[cat] || GOAL_CATEGORY_META.PERSONAL
+                        const Icon = meta.icon
+                        return (
+                          <div
+                            key={goal.id}
+                            className="p-4 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors"
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div
+                                  className={`w-8 h-8 rounded-lg ${meta.bg} flex items-center justify-center flex-shrink-0`}
+                                >
+                                  <Icon className={`w-4 h-4 ${meta.text}`} />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                    {goal.title}
+                                  </p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    {CATEGORY_LABEL[cat] || goal.category}
+                                  </p>
+                                </div>
                               </div>
-                              <div className="min-w-0">
-                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{goal.title}</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">{CATEGORY_LABEL[goal.category]}</p>
+                              <Badge
+                                className={`${PRIORITY_BADGE[goal.priority]} text-[10px] px-1.5 py-0 flex-shrink-0`}
+                              >
+                                {goal.priority}
+                              </Badge>
+                            </div>
+                            <div className="mb-2">
+                              <div className="flex items-center justify-between text-xs mb-1">
+                                <span className="text-gray-500 dark:text-gray-400">Progress</span>
+                                <span className="font-medium text-gray-700 dark:text-gray-300">
+                                  {goal.progress}%
+                                </span>
                               </div>
+                              <Progress value={goal.progress} className="h-1.5" />
                             </div>
-                            <Badge className={`${PRIORITY_BADGE[goal.priority]} text-[10px] px-1.5 py-0 flex-shrink-0`}>
-                              {goal.priority}
-                            </Badge>
-                          </div>
-
-                          <div className="mb-2">
-                            <div className="flex items-center justify-between text-xs mb-1">
-                              <span className="text-gray-500 dark:text-gray-400">Progress</span>
-                              <span className="font-medium text-gray-700 dark:text-gray-300">{goal.progress}%</span>
+                            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                              <span>
+                                {goal.completedHours}/{goal.totalHours}h logged
+                              </span>
+                              <span>
+                                {goal.milestonesCompleted}/{goal.milestonesTotal} milestones
+                              </span>
                             </div>
-                            <Progress value={goal.progress} className="h-1.5" />
                           </div>
-
-                          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                            <span>{goal.completedHours}/{goal.totalHours}h logged</span>
-                            <span>{goal.milestonesCompleted}/{goal.milestonesTotal} milestones</span>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
+                        )
+                      })}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
 
             {/* Weekly Activity */}
-            <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.2 }}>
+            <motion.div
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+            >
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between mb-5">
                     <div className="flex items-center gap-2">
                       <BarChart3 className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">Weekly Activity</h2>
+                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                        Weekly Activity
+                      </h2>
                     </div>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">{weeklyHours.toFixed(1)}h total</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setWeekOffset(o => o - 1)}
+                        disabled={weekOffset <= -52}
+                        className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30"
+                      >
+                        <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                      </button>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 min-w-[100px] text-center">
+                        {weekLabel || `${weeklyHours.toFixed(1)}h total`}
+                      </span>
+                      <button
+                        onClick={() => setWeekOffset(o => o + 1)}
+                        disabled={weekOffset >= 52}
+                        className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30"
+                      >
+                        <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="flex items-end justify-between gap-2 h-32">
-                    {WEEKLY_ACTIVITY.map(day => (
-                      <div key={day.day} className="flex-1 flex flex-col items-center gap-2">
-                        <div className="w-full flex-1 flex items-end">
-                          <div
-                            className="w-full rounded-t-md bg-blue-500 dark:bg-blue-600 transition-all"
-                            style={{ height: `${Math.max((day.hours / maxWeeklyHours) * 100, 4)}%` }}
-                            title={`${day.day}: ${day.hours}h · ${day.tasksCompleted} tasks`}
-                          />
-                        </div>
-                        <span className="text-[11px] text-gray-500 dark:text-gray-400">{day.day}</span>
+                  {weeklyLoading ? (
+                    <div className="h-32 flex items-center justify-center">
+                      <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+                    </div>
+                  ) : weeklyError ? (
+                    <div className="h-32 flex flex-col items-center justify-center gap-2">
+                      <AlertCircle className="w-5 h-5 text-red-500" />
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {weeklyError}
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-end justify-between gap-2 h-32">
+                        <AnimatePresence mode="wait">
+                          {weeklyActivity.map(day => (
+                            <motion.div
+                              key={`${weekOffset}-${day.dayFull}`}
+                              initial={{ opacity: 0, scaleY: 0.5 }}
+                              animate={{ opacity: 1, scaleY: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.25 }}
+                              className="flex-1 flex flex-col items-center gap-2 origin-bottom"
+                            >
+                              <div className="w-full flex-1 flex items-end">
+                                <div
+                                  className="w-full rounded-t-md bg-blue-500 dark:bg-blue-600 transition-all"
+                                  style={{
+                                    height: `${Math.max(
+                                      (day.hours / maxWeeklyHours) * 100,
+                                      4
+                                    )}%`,
+                                  }}
+                                  title={`${day.day}: ${day.hours}h · ${day.tasksCompleted} tasks`}
+                                />
+                              </div>
+                              <span className="text-[11px] text-gray-500 dark:text-gray-400">
+                                {day.day}
+                              </span>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
                       </div>
-                    ))}
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
+                        <span>
+                          {(weekly?.totalHours ?? weeklyHours).toFixed(1)}h total
+                        </span>
+                        <span>
+                          {weekly?.totalTasksCompleted ?? 0} tasks completed
+                        </span>
+                        {weekly?.bestDay && (
+                          <span className="hidden sm:inline">
+                            Best: {weekly.bestDay.day} ({weekly.bestDay.hours}h)
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Deep Insights */}
+            <motion.div
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between mb-5 flex-wrap gap-2">
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                        Deep Insights
+                      </h2>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        · {insightsFinal.rangeLabel}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {(['4w', '8w', '12w', 'all'] as InsightsRange[]).map(r => (
+                        <button
+                          key={r}
+                          onClick={() => setInsightsRange(r)}
+                          className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                            insightsRange === r
+                              ? 'bg-blue-600 text-white'
+                              : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          }`}
+                        >
+                          {r === 'all' ? 'All' : r}
+                        </button>
+                      ))}
+                    </div>
                   </div>
+
+                  {insightsLoading ? (
+                    <div className="py-8 flex items-center justify-center">
+                      <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+                    </div>
+                  ) : insightsError ? (
+                    <div className="py-8 flex flex-col items-center gap-2">
+                      <AlertCircle className="w-5 h-5 text-red-500" />
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {insightsError}
+                      </p>
+                    </div>
+                  ) : insightsFinal.totalCompletedTasks === 0 ? (
+                    <div className="py-8 text-center">
+                      <BarChart3 className="w-10 h-10 mx-auto text-gray-300 dark:text-gray-600 mb-3" />
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Complete some tasks to unlock insights
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-5">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                            Tasks
+                          </div>
+                          <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                            {insightsFinal.totalCompletedTasks}
+                          </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                            Hours
+                          </div>
+                          <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                            {insightsFinal.totalCompletedHours}h
+                          </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                            Focus score
+                          </div>
+                          <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                            {insightsFinal.averageFocusScore}/10
+                          </div>
+                        </div>
+                        <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                            On-time
+                          </div>
+                          <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                            {insightsFinal.onTimeRate}%
+                          </div>
+                        </div>
+                      </div>
+
+                      {insightsFinal.peakFocusWindows.length > 0 && (
+                        <div>
+                          <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            Peak focus windows
+                          </h3>
+                          <div className="space-y-2">
+                            {insightsFinal.peakFocusWindows.map((w, idx) => {
+                              const max =
+                                insightsFinal.peakFocusWindows[0].completions || 1
+                              const pct = (w.completions / max) * 100
+                              return (
+                                <div key={idx} className="flex items-center gap-3">
+                                  <span className="text-xs text-gray-600 dark:text-gray-400 w-32 flex-shrink-0">
+                                    {w.label}
+                                  </span>
+                                  <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                    <motion.div
+                                      initial={{ width: 0 }}
+                                      animate={{ width: `${pct}%` }}
+                                      transition={{ duration: 0.5, delay: idx * 0.05 }}
+                                      className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
+                                    />
+                                  </div>
+                                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300 w-10 text-right">
+                                    {w.completions}
+                                  </span>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {insightsFinal.byCategory.length > 0 && (
+                        <div>
+                          <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            By category
+                          </h3>
+                          <div className="grid grid-cols-2 gap-2">
+                            {insightsFinal.byCategory.slice(0, 6).map(cat => (
+                              <div
+                                key={cat.category}
+                                className="flex items-center gap-2 p-2 rounded-md bg-gray-50 dark:bg-gray-800/50"
+                              >
+                                <div
+                                  className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                                  style={{
+                                    backgroundColor:
+                                      CATEGORY_COLOR[cat.category] || '#6B7280',
+                                  }}
+                                />
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate capitalize">
+                                    {cat.category.toLowerCase().replace('_', ' ')}
+                                  </div>
+                                  <div className="text-[10px] text-gray-500 dark:text-gray-400">
+                                    {cat.completions} tasks · {cat.hours}h
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                        <div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            Most productive day
+                          </div>
+                          <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                            {insightsFinal.mostProductiveDay || '—'}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            Peak window
+                          </div>
+                          <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                            {insightsFinal.mostProductiveTime || '—'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
           </div>
 
-          {/* Right Column */}
+          {/* RIGHT COLUMN */}
           <div className="space-y-6">
-            {/* ================================================================
-                DEDICATED VERIFICATION CARD
-                Always shown at the top of the right column while unverified.
-                Gives the user a clear call-to-action every time they visit.
-                ================================================================ */}
             {!isVerified && (
-              <motion.div
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.05 }}
-              >
+              <motion.div initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}>
                 <Card className="border-amber-300/70 dark:border-amber-500/40 bg-amber-50/70 dark:bg-amber-950/30">
                   <CardContent className="p-5">
                     <div className="flex items-start gap-3 mb-3">
@@ -886,7 +1016,6 @@ export default function DashboardClient() {
                         </h3>
                         <p className="text-xs text-amber-800 dark:text-amber-200/90 mt-0.5">
                           Unlock messaging, connections, and full profile visibility.
-                          Verified accounts are shown as trusted users.
                         </p>
                       </div>
                     </div>
@@ -922,7 +1051,11 @@ export default function DashboardClient() {
             )}
 
             {/* Streak */}
-            <motion.div initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
+            <motion.div
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.05 }}
+            >
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-3 mb-4">
@@ -930,107 +1063,186 @@ export default function DashboardClient() {
                       <Flame className="w-5 h-5 text-orange-500" />
                     </div>
                     <div>
-                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">Consistency Streak</h2>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Keep the momentum going</p>
+                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                        Consistency Streak
+                      </h2>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Keep the momentum going
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{DUMMY_STREAK.current} days</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Current streak</div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                        {streak.current} days
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Current streak
+                      </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-400 dark:text-gray-500">{DUMMY_STREAK.best}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Best streak</div>
+                      <div className="text-2xl font-bold text-gray-400 dark:text-gray-500">
+                        {streak.best}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Best streak
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </motion.div>
 
-            {/* Sleep Schedule */}
-            <motion.div initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.15 }}>
+            {/* Sleep */}
+            <motion.div
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+            >
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <Bed className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">Sleep Schedule</h2>
+                      <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                        Sleep Schedule
+                      </h2>
                     </div>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Avg {avgSleepHours.toFixed(1)}h</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Avg {avgSleepHours.toFixed(1)}h
+                    </span>
                   </div>
-                  <div className="space-y-2">
-                    {sleepNights.map(night => (
-                      <div key={night.day} className="flex items-center justify-between text-xs">
-                        <span className="text-gray-500 dark:text-gray-400 w-9">{night.day}</span>
-                        <span className="text-gray-700 dark:text-gray-300">
-                          {formatTime(night.bedtime)} – {formatTime(night.wakeTime)}
-                        </span>
-                        <span className="text-gray-400 dark:text-gray-500">{(night.duration / 60).toFixed(1)}h</span>
-                      </div>
-                    ))}
-                  </div>
+                  {sleepNights.length === 0 ? (
+                    <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-4">
+                      No sleep schedule configured
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {sleepNights.map(night => (
+                        <div
+                          key={night.dayFull}
+                          className="flex items-center justify-between text-xs"
+                        >
+                          <span className="text-gray-500 dark:text-gray-400 w-9">
+                            {night.day}
+                          </span>
+                          <span className="text-gray-700 dark:text-gray-300">
+                            {formatTime(night.bedtime)} – {formatTime(night.wakeTime)}
+                          </span>
+                          <span className="text-gray-400 dark:text-gray-500">
+                            {(night.duration / 60).toFixed(1)}h
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
 
-            {/* Fixed Commitments */}
-            <motion.div initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.2 }}>
+            {/* Fixed times */}
+            <motion.div
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.15 }}
+            >
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="font-semibold text-gray-900 dark:text-gray-100">Fixed Commitments</h2>
-                    <Link href="/dashboard/timetable/builder" className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                    <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                      Fixed Commitments
+                    </h2>
+                    <Link
+                      href="/dashboard/timetable/builder"
+                      className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                    >
                       Manage
                     </Link>
                   </div>
-                  <div className="space-y-3">
-                    {fixedTimes.map(fixedTime => {
-                      const meta = FIXED_TYPE_META[fixedTime.type]
-                      const Icon = meta.icon
-                      return (
-                        <div key={fixedTime.id} className="flex items-center gap-3">
-                          <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                            style={{ backgroundColor: `${meta.color}20` }}
-                          >
-                            <Icon className="w-4 h-4" style={{ color: meta.color }} />
+                  {fixedTimes.length === 0 ? (
+                    <p className="text-xs text-gray-500 dark:text-gray-400 text-center py-4">
+                      No fixed commitments yet
+                    </p>
+                  ) : (
+                    <div className="space-y-3">
+                      {fixedTimes.map(fixedTime => {
+                        const t = (fixedTime.type as FixedTimeType) || 'OTHER'
+                        const meta = FIXED_TYPE_META[t] || FIXED_TYPE_META.OTHER
+                        const Icon = meta.icon
+                        return (
+                          <div key={fixedTime.id} className="flex items-center gap-3">
+                            <div
+                              className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                              style={{ backgroundColor: `${meta.color}20` }}
+                            >
+                              <Icon className="w-4 h-4" style={{ color: meta.color }} />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                {fixedTime.title}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                {formatTime(fixedTime.startTime)} –{' '}
+                                {formatTime(fixedTime.endTime)} ·{' '}
+                                {fixedTime.days.join(', ')}
+                              </p>
+                            </div>
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{fixedTime.title}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {formatTime(fixedTime.startTime)} – {formatTime(fixedTime.endTime)} · {fixedTime.days.join(', ')}
-                            </p>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
+                        )
+                      })}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
 
-            {/* Productivity Insights */}
-            <motion.div initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.25 }}>
+            {/* Insights summary */}
+            <motion.div
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                 <CardContent className="p-5">
-                  <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Productivity Insights</h2>
+                  <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                    Productivity Insights
+                  </h2>
                   <div className="space-y-3 text-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500 dark:text-gray-400">Most productive day</span>
-                      <span className="font-medium text-gray-900 dark:text-gray-100">{DUMMY_INSIGHTS.mostProductiveDay}</span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Most productive day
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
+                        {insightsFinal.mostProductiveDay || '—'}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500 dark:text-gray-400">Peak focus window</span>
-                      <span className="font-medium text-gray-900 dark:text-gray-100">{DUMMY_INSIGHTS.mostProductiveTime}</span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Peak focus window
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
+                        {insightsFinal.mostProductiveTime || '—'}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500 dark:text-gray-400">Avg. focus score</span>
-                      <span className="font-medium text-gray-900 dark:text-gray-100">{DUMMY_INSIGHTS.averageFocusScore}/10</span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        Avg. focus score
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
+                        {insightsFinal.averageFocusScore > 0
+                          ? `${insightsFinal.averageFocusScore}/10`
+                          : '—'}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500 dark:text-gray-400">On-time completion</span>
-                      <span className="font-medium text-gray-900 dark:text-gray-100">{DUMMY_INSIGHTS.onTimeRate}%</span>
+                      <span className="text-gray-500 dark:text-gray-400">
+                        On-time completion
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
+                        {insightsFinal.onTimeRate > 0
+                          ? `${insightsFinal.onTimeRate}%`
+                          : '—'}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -1038,38 +1250,52 @@ export default function DashboardClient() {
             </motion.div>
 
             {/* Quick Actions */}
-            <motion.div initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: 0.3 }}>
+            <motion.div
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.25 }}
+            >
               <Card className="border-gray-200 dark:border-gray-700 dark:bg-gray-800">
                 <CardContent className="p-5">
-                  <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Quick Actions</h2>
+                  <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                    Quick Actions
+                  </h2>
                   <div className="grid grid-cols-2 gap-2">
                     <Link
                       href="/dashboard/goals/new"
                       className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center"
                     >
                       <Plus className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">New Goal</span>
+                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                        New Goal
+                      </span>
                     </Link>
                     <Link
                       href="/dashboard/timetable/builder"
                       className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center"
                     >
                       <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Timetable</span>
+                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                        Timetable
+                      </span>
                     </Link>
                     <Link
                       href="/dashboard/tasks"
                       className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center"
                     >
                       <ListChecks className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Tasks</span>
+                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                        Tasks
+                      </span>
                     </Link>
                     <Link
                       href="/dashboard/settings"
                       className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center"
                     >
                       <Settings className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Settings</span>
+                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                        Settings
+                      </span>
                     </Link>
                   </div>
                 </CardContent>
@@ -1078,9 +1304,13 @@ export default function DashboardClient() {
           </div>
         </div>
 
-        {/* Onboarding guide for brand-new users only */}
+        {/* Onboarding — only for real new users */}
         {isNewUser && (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.3 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
             <Card className="border-blue-200 dark:border-blue-800/40 bg-blue-50/50 dark:bg-blue-900/10">
               <CardContent className="p-5">
                 <div className="flex items-start gap-3 mb-4">
@@ -1088,16 +1318,40 @@ export default function DashboardClient() {
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h2 className="font-semibold text-gray-900 dark:text-gray-100">Get started with Chronify</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">A few steps to set up your first week</p>
+                    <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                      Get started with Chronify
+                    </h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      A few steps to set up your first week
+                    </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   {[
-                    { step: 1, title: 'Set a goal', desc: 'Define what you want to achieve this month', href: '/dashboard/goals/new' },
-                    { step: 2, title: 'Add fixed commitments', desc: 'College, office hours, gym — mark what is fixed', href: '/dashboard/timetable/builder' },
-                    { step: 3, title: 'Build your timetable', desc: 'Fill in free periods with tasks from your goals', href: '/dashboard/timetable/builder' },
-                    { step: 4, title: 'Track your progress', desc: 'Come back daily to keep your streak alive', href: '/dashboard' },
+                    {
+                      step: 1,
+                      title: 'Set a goal',
+                      desc: 'Define what you want to achieve this month',
+                      href: '/dashboard/goals/new',
+                    },
+                    {
+                      step: 2,
+                      title: 'Add fixed commitments',
+                      desc: 'College, office hours, gym — mark what is fixed',
+                      href: '/dashboard/timetable/builder',
+                    },
+                    {
+                      step: 3,
+                      title: 'Build your timetable',
+                      desc: 'Fill in free periods with tasks from your goals',
+                      href: '/dashboard/timetable/builder',
+                    },
+                    {
+                      step: 4,
+                      title: 'Track your progress',
+                      desc: 'Come back daily to keep your streak alive',
+                      href: '/dashboard',
+                    },
                   ].map(item => (
                     <Link
                       key={item.step}
@@ -1106,11 +1360,17 @@ export default function DashboardClient() {
                     >
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-                          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">{item.step}</span>
+                          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+                            {item.step}
+                          </span>
                         </div>
-                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{item.title}</span>
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {item.title}
+                        </span>
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{item.desc}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {item.desc}
+                      </p>
                       <div className="flex items-center gap-1 mt-2 text-xs font-medium text-blue-600 dark:text-blue-400">
                         Start <ArrowRight className="w-3 h-3" />
                       </div>

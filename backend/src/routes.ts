@@ -11,6 +11,7 @@ import commentRoutes from "./modules/comment/comment.routes";
 import reactionRoutes from "./modules/reactions/reaction.routes";
 import postRoutes from "./modules/post/post.route";
 import connectionRoutes from "./modules/connection/connection.routes";
+import dashboardRoutes from "./modules/dashboard/dashboard.routes";
 
 
 const router = Router();
@@ -26,6 +27,9 @@ router.use('/posts', postRoutes);
 router.use('/comments', commentRoutes);
 router.use('/reactions', reactionRoutes);
 router.use('/connections', connectionRoutes);
+
+// Dashboard routes
+router.use('/dashboard', dashboardRoutes)
 router.use('/health', healthRouter);
 
 export default router;

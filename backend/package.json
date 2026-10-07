@@ -23,6 +23,7 @@
     "firebase-admin": "^13.7.0",
     "howler": "^2.2.4",
     "jsonwebtoken": "^9.0.3",
+    "node-cache": "^5.1.2",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.13",
     "onesignal-node": "^3.4.0",

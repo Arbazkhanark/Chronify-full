@@ -156,7 +156,7 @@ export function Header() {
               </span>
             </div>
             <span className="font-bold text-lg text-foreground hidden sm:inline">
-              Chronify AI
+              Chronify
             </span>
           </Link>
 
