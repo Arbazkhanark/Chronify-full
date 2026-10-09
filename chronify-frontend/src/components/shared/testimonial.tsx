@@ -2,9 +2,26 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Star, Quote, ChevronLeft, ChevronRight, CheckCircle, Users, Target, TrendingUp } from 'lucide-react'
+import {
+  Star,
+  Quote,
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle,
+  Users,
+  Target,
+  TrendingUp,
+  Home,
+  ListChecks,
+  BarChart3,
+  Bell,
+} from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+
+/* ============================================================================
+   TESTIMONIALS
+   ============================================================================ */
 
 export function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -15,52 +32,56 @@ export function Testimonials() {
       name: 'Arbaz Khan',
       role: 'MCA Student',
       university: 'Amity University',
-      content: 'Chronify AI helped me balance DSA prep with college studies. Completed 180 questions in 3 months while maintaining 8.5+ CGPA!',
+      content:
+        'Chronify helped me balance DSA prep with college studies. Completed 180 questions in 3 months while maintaining 8.5+ CGPA!',
       rating: 5,
       avatar: 'AK',
       achievement: 'DSA + College Balance',
-      stats: { dsa: '180 questions', cgpa: '8.7', time: '3 months' }
+      stats: { dsa: '180 questions', cgpa: '8.7', time: '3 months' },
     },
     {
       name: 'Priya Sharma',
       role: 'BTech CSE',
       university: 'Delhi University',
-      content: 'The AI-generated timetable perfectly used my commute time for DSA audio learning. My productivity increased by 40% in just 2 months!',
+      content:
+        'The personalized timetable perfectly used my commute time for audio learning. My productivity increased by 40% in just 2 months!',
       rating: 5,
       avatar: 'PS',
       achievement: 'Commute Optimization',
-      stats: { productivity: '+40%', dsa: '120 questions', time: '2 months' }
+      stats: { productivity: '+40%', dsa: '120 questions', time: '2 months' },
     },
     {
       name: 'Rahul Verma',
       role: 'Placement Aspirant',
       university: 'IIT Delhi',
-      content: 'From struggling with time management to landing 3 offers - Chronify AI made all the difference with its smart scheduling and analytics.',
+      content:
+        'From struggling with time management to landing 3 offers — Chronify made all the difference with its smart scheduling and analytics.',
       rating: 5,
       avatar: 'RV',
       achievement: 'Placement Success',
-      stats: { offers: '3 companies', dsa: '200+ questions', time: '4 months' }
+      stats: { offers: '3 companies', dsa: '200+ questions', time: '4 months' },
     },
     {
       name: 'Neha Patel',
       role: 'MTech Student',
       university: 'VIT University',
-      content: 'As a working professional studying part-time, Chronify AI optimized my limited hours perfectly. Landed a promotion and completed DSA!',
+      content:
+        'As a working professional studying part-time, Chronify optimized my limited hours perfectly. Landed a promotion and completed DSA!',
       rating: 5,
       avatar: 'NP',
       achievement: 'Work-Study Balance',
-      stats: { promotion: 'Yes', dsa: '150 questions', time: '5 months' }
+      stats: { promotion: 'Yes', dsa: '150 questions', time: '5 months' },
     },
   ]
 
   const stats = [
-    { value: '5000+', label: 'Active Students', icon: Users },
-    { value: '95%', label: 'Satisfaction Rate', icon: Star },
-    { value: '180+', label: 'Avg. DSA Questions', icon: Target },
-    { value: '8.2', label: 'Avg. CGPA Improved', icon: TrendingUp },
+    { value: '5+', label: 'Active Users', icon: Users },
+    { value: 'NA', label: 'Satisfaction Rate', icon: Star },
+    { value: '10+', label: 'Avg. Questions', icon: Target },
+    { value: '40%', label: 'Avg. Productivity Boost', icon: TrendingUp },
   ]
 
-  // Auto-slide functionality
+  /* Auto-slide */
   useEffect(() => {
     let interval: NodeJS.Timeout
     if (isPlaying) {
@@ -79,7 +100,9 @@ export function Testimonials() {
 
   const handlePrev = () => {
     setIsPlaying(false)
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)
+    setCurrentIndex(
+      (prev) => (prev - 1 + testimonials.length) % testimonials.length
+    )
     setTimeout(() => setIsPlaying(true), 3000)
   }
 
@@ -90,31 +113,39 @@ export function Testimonials() {
   }
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
+    <section className="relative py-14 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+      <div className="absolute -top-40 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+
+      <div className="relative max-w-6xl mx-auto">
+        {/* ============================================================
+            HEADER
+           ============================================================ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 mb-4">
-            <Quote className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Trusted by 5000+ Students
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+            <Quote className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+            <span className="text-xs sm:text-sm font-medium bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Trusted by 5000+ Users
             </span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4">
             Success Stories
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            See how students transformed their academic journey with Chronify AI.
+          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
+            See how people transformed their journey with Chronify.
           </p>
         </motion.div>
 
-        {/* Desktop Testimonials Grid */}
+        {/* ============================================================
+            DESKTOP: 4-card grid
+           ============================================================ */}
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {testimonials.map((testimonial, index) => (
             <motion.div
@@ -124,44 +155,47 @@ export function Testimonials() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="h-full border border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-colors">
+              <Card className="h-full border border-border hover:border-primary/30 transition-colors bg-card/50 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-gray-900 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
-                      <span className="font-bold text-white">{testimonial.avatar}</span>
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
+                      <span className="font-bold text-primary-foreground text-sm">
+                        {testimonial.avatar}
+                      </span>
                     </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-gray-900 dark:text-gray-100">{testimonial.name}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">{testimonial.role}</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">{testimonial.university}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-sm">
+                        {testimonial.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {testimonial.role}
+                      </div>
+                      <div className="text-xs text-muted-foreground/70">
+                        {testimonial.university}
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="flex mb-4">
+
+                  <div className="flex mb-3">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-4 h-4 ${i < testimonial.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300 dark:text-gray-700'}`}
+                        className={`w-4 h-4 ${
+                          i < testimonial.rating
+                            ? 'text-yellow-500 fill-yellow-500'
+                            : 'text-muted'
+                        }`}
                       />
                     ))}
                   </div>
-                  
-                  <p className="text-gray-700 dark:text-gray-300 mb-6 italic text-sm leading-relaxed">
-                    "{testimonial.content}"
+
+                  <p className="text-sm text-muted-foreground mb-4 italic leading-relaxed">
+                    &ldquo;{testimonial.content}&rdquo;
                   </p>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                      <CheckCircle className="w-4 h-4" />
-                      <span>{testimonial.achievement}</span>
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-500">
-                      {Object.entries(testimonial.stats).map(([key, value]) => (
-                        <span key={key} className="mr-3">
-                          {value} {key}
-                        </span>
-                      ))}
-                    </div>
+
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground pt-3 border-t border-border/50">
+                    <CheckCircle className="w-3.5 h-3.5 text-green-500" />
+                    <span>{testimonial.achievement}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -169,157 +203,211 @@ export function Testimonials() {
           ))}
         </div>
 
-        {/* Mobile Testimonials Carousel */}
-        <div className="md:hidden mb-12">
-          <div className="relative overflow-hidden rounded-xl">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentIndex}
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Card className="border border-gray-200 dark:border-gray-800">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-gray-900 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
-                        <span className="font-bold text-white">{testimonials[currentIndex].avatar}</span>
+        {/* ============================================================
+            MOBILE: APP-LIKE PHONE MOCKUP
+           ============================================================ */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="md:hidden flex justify-center mb-8"
+        >
+          <div className="relative w-[300px] rounded-[2.5rem] border-[8px] border-gray-900 dark:border-gray-800 bg-gray-900 dark:bg-black shadow-2xl overflow-hidden">
+            {/* Notch */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-5 bg-gray-900 dark:bg-black rounded-b-2xl z-20" />
+
+            {/* Screen */}
+            <div className="bg-background pt-8 pb-20 relative min-h-[520px]">
+              {/* Status bar */}
+              <div className="flex items-center justify-between px-5 py-1 text-[10px] font-medium text-muted-foreground">
+                <span>9:41</span>
+                <div className="flex items-center gap-1">
+                  <span>●●●</span>
+                </div>
+              </div>
+
+              {/* App header */}
+              <div className="px-5 py-4">
+                <h4 className="font-bold text-base">Success Stories</h4>
+                <p className="text-xs text-muted-foreground">
+                  Real people, real results
+                </p>
+              </div>
+
+              {/* Testimonial card — swipe style */}
+              <div className="px-4">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentIndex}
+                    initial={{ opacity: 0, x: 60 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -60 }}
+                    transition={{ duration: 0.3 }}
+                    className="p-4 rounded-2xl bg-card border border-border"
+                  >
+                    {/* Avatar + name */}
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
+                        <span className="font-bold text-primary-foreground text-xs">
+                          {testimonials[currentIndex].avatar}
+                        </span>
                       </div>
-                      <div className="flex-1">
-                        <div className="font-semibold text-gray-900 dark:text-gray-100">{testimonials[currentIndex].name}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">{testimonials[currentIndex].role}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-500">{testimonials[currentIndex].university}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-semibold text-xs truncate">
+                          {testimonials[currentIndex].name}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground truncate">
+                          {testimonials[currentIndex].role}
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="flex mb-4">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${i < testimonials[currentIndex].rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300 dark:text-gray-700'}`}
-                        />
-                      ))}
-                    </div>
-                    
-                    <p className="text-gray-700 dark:text-gray-300 mb-6 italic text-sm leading-relaxed">
-                      "{testimonials[currentIndex].content}"
-                    </p>
-                    
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                        <CheckCircle className="w-4 h-4" />
-                        <span>{testimonials[currentIndex].achievement}</span>
-                      </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-500">
-                        {Object.entries(testimonials[currentIndex].stats).map(([key, value]) => (
-                          <span key={key} className="mr-3">
-                            {value} {key}
-                          </span>
+                      <div className="flex flex-shrink-0">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-2.5 h-2.5 ${
+                              i < testimonials[currentIndex].rating
+                                ? 'text-yellow-500 fill-yellow-500'
+                                : 'text-muted'
+                            }`}
+                          />
                         ))}
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </AnimatePresence>
 
-            {/* Carousel Controls */}
-            <div className="flex items-center justify-between mt-6">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handlePrev}
-                className="rounded-full border-gray-300 dark:border-gray-700"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              
-              <div className="flex items-center gap-2">
-                {testimonials.map((_, index) => (
+                    {/* Quote */}
+                    <p className="text-xs text-muted-foreground italic leading-relaxed mb-3">
+                      &ldquo;{testimonials[currentIndex].content}&rdquo;
+                    </p>
+
+                    {/* Achievement */}
+                    <div className="flex items-center gap-1.5 pt-3 border-t border-border/50">
+                      <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
+                      <span className="text-[10px] font-medium truncate">
+                        {testimonials[currentIndex].achievement}
+                      </span>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Controls — compact */}
+                <div className="flex items-center justify-between mt-4">
                   <button
-                    key={index}
-                    onClick={() => handleDotClick(index)}
-                    className={`w-2 h-2 rounded-full transition-colors ${
-                      index === currentIndex 
-                        ? 'bg-gray-900 dark:bg-gray-300' 
-                        : 'bg-gray-300 dark:bg-gray-700'
-                    }`}
-                  />
-                ))}
+                    onClick={handlePrev}
+                    className="w-8 h-8 rounded-full border border-border flex items-center justify-center"
+                    aria-label="Previous"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                  </button>
+
+                  <div className="flex items-center gap-1.5">
+                    {testimonials.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleDotClick(index)}
+                        aria-label={`Go to ${index + 1}`}
+                        className={`h-1.5 rounded-full transition-all ${
+                          index === currentIndex
+                            ? 'w-4 bg-primary'
+                            : 'w-1.5 bg-muted'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={handleNext}
+                    className="w-8 h-8 rounded-full border border-border flex items-center justify-center"
+                    aria-label="Next"
+                  >
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
-              
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={handleNext}
-                className="rounded-full border-gray-300 dark:border-gray-700"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+
+              {/* Bottom nav */}
+              <div className="absolute bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border">
+                <div className="flex items-center justify-around py-2.5">
+                  {[Home, ListChecks, BarChart3, Bell].map((Icon, i) => (
+                    <Icon
+                      key={i}
+                      className={`w-5 h-5 ${
+                        i === 2 ? 'text-primary' : 'text-muted-foreground'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-center pb-1.5">
+                  <div className="w-24 h-1 bg-foreground/30 rounded-full" />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Stats Section */}
+        {/* ============================================================
+            STATS — 2×2 mobile, 4-col desktop
+           ============================================================ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-12"
+          transition={{ duration: 0.6 }}
+          className="mb-10 sm:mb-14"
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
             {stats.map((stat, index) => {
               const Icon = stat.icon
               return (
                 <motion.div
                   key={stat.label}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="text-center p-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
+                  transition={{ duration: 0.4, delay: index * 0.08 }}
+                  className="text-center p-3 sm:p-5 rounded-2xl bg-card/50 backdrop-blur-sm border border-border"
                 >
-                  <div className="flex justify-center mb-3">
-                    <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                      <Icon className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                  <div className="flex justify-center mb-2 sm:mb-3">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     </div>
                   </div>
-                  <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-1">
+                  <div className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-0.5">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-[10px] sm:text-xs text-muted-foreground">
                     {stat.label}
                   </div>
                 </motion.div>
               )
             })}
           </div>
+        </motion.div>
 
-          {/* Call to Action */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-12 text-center"
-          >
-            <div className="max-w-2xl mx-auto p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">
-                Join Our Success Stories
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Start your journey towards academic excellence and placement success.
-              </p>
-              <Button className="bg-gray-900 hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 text-white">
-                Get Started Free
-              </Button>
-              <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
-                No credit card required • 14-day free trial
-              </p>
-            </div>
-          </motion.div>
+        {/* ============================================================
+            CTA
+           ============================================================ */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center"
+        >
+          <div className="max-w-2xl mx-auto p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-primary/10 via-transparent to-accent/10 border border-border">
+            <h3 className="text-lg sm:text-xl font-bold mb-2">
+              Join Our Success Stories
+            </h3>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-5">
+              Start your journey towards better productivity and success.
+            </p>
+            <Button className="rounded-xl px-6 py-5 text-sm sm:text-base">
+              Get Started Free
+            </Button>
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-3">
+              No credit card required • 14-day free trial
+            </p>
+          </div>
         </motion.div>
       </div>
     </section>

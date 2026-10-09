@@ -11,6 +11,7 @@ import { CTASection } from '@/components/shared/cta.section'
 import { useEffect } from 'react'
 import { DsaToolSection } from '@/components/shared/dsa-tool.section'
 import { MobileBottomNav } from '@/components/shared/MobileBottomNav'
+import { VideoTourSection } from '@/components/shared/video-tour.section'
 
 export default function Home() {
     useEffect(() => {
@@ -30,16 +31,12 @@ export default function Home() {
   return (
     <>
       <main className="min-h-screen bg-gradient-to-br from-background via-background to-background/95">
-        {/* <Header /> */}
         <HeroSection />
+        <VideoTourSection />
         <FeaturesSection />
         <DsaToolSection />
-        <HowItWorks />
-        <HeatmapSection />
         <Testimonials />
         <CTASection />
-        {/* <Footer /> */}
-      {/* <MobileBottomNav/> */}
       </main>
     </>
   )
