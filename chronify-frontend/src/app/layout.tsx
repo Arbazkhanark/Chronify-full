@@ -13,8 +13,8 @@ const geist = Geist({ subsets: ["latin"] });
 const geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Chronify AI - AI-Powered Student Productivity',
-  description: 'Plan smart, study consistent, and succeed faster with AI-powered time management for students.',
+  title: 'Chronify - Student Productivity',
+  description: 'Plan smart, study consistent, and succeed faster with time management for students.',
 }
 
 export default function RootLayout({
@@ -25,35 +25,25 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geist.className} antialiased bg-background text-foreground`}>
-        {/* <TutorialTourProvider> */}
-          <ThemeProvider 
-            attribute="class" 
-            defaultTheme="dark" 
-            enableSystem 
-            disableTransitionOnChange
-            storageKey="studyflow-theme"
-          >
-            <Header />
+        <ThemeProvider 
+          attribute="class" 
+          defaultTheme="dark" 
+          enableSystem 
+          disableTransitionOnChange
+          storageKey="studyflow-theme"
+        >
+          <Header />
 
-            {/* <FCMProvider /> */}
-
-            {/*
-              🔥 MOBILE BOTTOM NAV KE LIYE:
-              - `pb-16` → mobile pe 64px bottom padding (nav = 56px + buffer)
-              - `md:pb-0` → desktop pe padding hatao (nav hidden hai wahan)
-
-              Ye padding ZAROORI hai, warna bottom nav content ko dhak legi.
-              Ise ek wrapper me daala hai taaki Footer bhi affected ho.
-            */}
-            <div className="pb-16 md:pb-0">
-              {children}
+          <div className="pb-16 md:pb-0">
+            {children}
+            {/* Hide footer on mobile, show on md and up */}
+            <div className="hidden md:block">
               <Footer />
             </div>
+          </div>
 
-            {/* 🔥 Mobile bottom navigation — sirf mobile pe, sirf logged-in users ke liye */}
-            <MobileBottomNav />
-          </ThemeProvider>
-        {/* </TutorialTourProvider> */}
+          <MobileBottomNav />
+        </ThemeProvider>
       </body>
     </html>
   )
