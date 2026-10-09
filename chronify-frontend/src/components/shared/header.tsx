@@ -29,6 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { AuthService, type User } from '@/hooks/useAuth'
+import Image from 'next/image'
 
 /* ============================================================================
    CONSTANTS
@@ -150,14 +151,17 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* ============================== LOGO ============================== */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+            {/* <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
               <span className="text-sm font-bold text-primary-foreground">
                 SF
               </span>
             </div>
             <span className="font-bold text-lg text-foreground hidden sm:inline">
               Chronify
-            </span>
+            </span> */}
+            <div>
+              <Image src="/logo.svg" alt="Chronify Logo" width={150} height={80} />
+            </div>
           </Link>
 
           {/* ============================== NAVIGATION (desktop only) ============================== */}
