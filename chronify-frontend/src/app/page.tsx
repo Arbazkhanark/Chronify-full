@@ -33,10 +33,9 @@ export default function Home() {
       <main className="min-h-screen bg-gradient-to-br from-background via-background to-background/95">
         <HeroSection />
         <VideoTourSection />
-        <FeaturesSection />
-        <DsaToolSection />
-        <Testimonials />
+        {/* <Testimonials /> */}
         <CTASection />
+        <DsaToolSection />
       </main>
     </>
   )

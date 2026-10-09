@@ -201,7 +201,7 @@ export function CTASection() {
 
           {/* CTA buttons */}
           <div className="space-y-3 mb-4">
-            <Link href="/auth/register" className="block">
+            <Link href="/pricing" className="block">
               <Button
                 size="lg"
                 className="w-full rounded-xl py-6 text-base font-semibold gap-2 group"
@@ -472,7 +472,7 @@ export function CTASection() {
         {/* ============================================================
             BOTTOM CTA — both mobile & desktop (compact)
            ============================================================ */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -511,7 +511,7 @@ export function CTASection() {
               support
             </p>
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
 
       {/* Animations */}

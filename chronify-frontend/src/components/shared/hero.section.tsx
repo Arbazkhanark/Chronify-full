@@ -21,6 +21,7 @@ import {
   Wifi,
   Signal,
   Battery,
+  Layers,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -125,7 +126,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 max-w-3xl mx-auto mb-12"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 max-w-3xl mx-auto mb-8"
           >
             {[
               { text: 'Smart Priority Sorting', icon: TrendingUp },
@@ -149,6 +150,46 @@ export function HeroSection() {
               </motion.div>
             ))}
           </motion.div>
+
+          {/* ============================================================
+              ✨ ATTRACTIVE LINK TO FEATURES PAGE
+             ============================================================ */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+            className="flex justify-center mb-12 sm:mb-16"
+          >
+            <Link href="/features" className="group">
+              <motion.div
+                whileHover={{ scale: 1.03, y: -3 }}
+                whileTap={{ scale: 0.98 }}
+                className="relative inline-flex items-center gap-3 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border border-primary/30 hover:border-primary/60 transition-all cursor-pointer overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-primary/20"
+              >
+                {/* Animated shine */}
+                <motion.div
+                  animate={{ x: ['-100%', '200%'] }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    repeatDelay: 1.5,
+                    ease: 'easeInOut',
+                  }}
+                  className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 pointer-events-none"
+                />
+
+                <div className="relative z-10 p-1.5 sm:p-2 rounded-full bg-gradient-to-br from-primary to-accent flex-shrink-0">
+                  <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-foreground" />
+                </div>
+
+                <span className="relative z-10 text-xs sm:text-sm font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Explore All Features
+                </span>
+
+                <ArrowRight className="relative z-10 w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary group-hover:translate-x-1 transition-transform flex-shrink-0" />
+              </motion.div>
+            </Link>
+          </motion.div>
         </motion.div>
 
         {/* ============================================================
@@ -158,7 +199,7 @@ export function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
           className="mt-12 sm:mt-16 relative max-w-4xl mx-auto"
         >
           {/* Glow */}
@@ -257,7 +298,7 @@ export function HeroSection() {
                         key={item.task}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.8 + i * 0.1 }}
+                        transition={{ delay: 0.9 + i * 0.1 }}
                         className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${
                           item.done
                             ? 'bg-secondary/30 border-transparent'
@@ -423,7 +464,7 @@ export function HeroSection() {
                       key={item.task}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.8 + i * 0.1 }}
+                      transition={{ delay: 0.9 + i * 0.1 }}
                       className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
                         item.done
                           ? 'bg-secondary/30 border-transparent'
@@ -460,16 +501,19 @@ export function HeroSection() {
                 })}
               </div>
 
-              {/* Bottom hint */}
-              <div className="mt-5 p-3 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-accent flex-shrink-0" />
-                  <p className="text-sm">
-                    <span className="font-medium">Tip:</span> You focus best in
-                    the morning — try scheduling DSA first.
-                  </p>
+              {/* Bottom hint — with link to features */}
+              <Link href="/features" className="block group/tip mt-5">
+                <div className="p-3 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 group-hover/tip:border-primary/40 transition-all group-hover/tip:shadow-lg group-hover/tip:shadow-primary/10">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-accent flex-shrink-0" />
+                    <p className="text-sm flex-1">
+                      <span className="font-medium">Tip:</span> You focus best in
+                      the morning — try scheduling DSA first.
+                    </p>
+                    <ArrowRight className="w-4 h-4 text-primary group-hover/tip:translate-x-1 transition-transform flex-shrink-0" />
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
 

@@ -5,12 +5,16 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Sign Up - Chronify AI | Create Free Account & Start Your Consistency Journey',
-  description: 'Create your free Chronify AI account today. Track daily goals, manage tasks, build lasting habits, and join thousands of productive users. Start your consistency journey now!',
-  keywords: 'sign up, create account, register, free trial, productivity app, goal tracking, task manager, habit tracker, consistency app, daily planner, time management, get started',
+  title:
+    'Sign Up - Chronify | Create Free Account & Start Your Consistency Journey',
+  description:
+    'Create your free Chronify account today. Track daily goals, manage tasks, build lasting habits, and join thousands of productive users. Start your consistency journey now!',
+  keywords:
+    'sign up, create account, register, free trial, productivity app, goal tracking, task manager, habit tracker, consistency app, daily planner, time management, get started',
   openGraph: {
-    title: 'Join Chronify AI - Start Building Better Habits Today',
-    description: 'Free account creation. Track goals, manage tasks, monitor progress, and build consistent habits with AI-powered insights.',
+    title: 'Join Chronify - Start Building Better Habits Today',
+    description:
+      'Free account creation. Track goals, manage tasks, monitor progress, and build consistent habits.',
     type: 'website',
     url: 'https://chronify.com/auth/register',
     images: [
@@ -18,16 +22,17 @@ export const metadata: Metadata = {
         url: 'https://chronify.com/og-register.jpg',
         width: 1200,
         height: 630,
-        alt: 'Chronify AI Registration - Start Your Journey',
+        alt: 'Chronify Registration - Start Your Journey',
       },
     ],
-    siteName: 'Chronify AI',
+    siteName: 'Chronify',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Join Chronify AI - Free Account',
-    description: 'Start tracking your daily consistency and achieving your goals with Chronify AI. Sign up free today!',
+    title: 'Join Chronify - Free Account',
+    description:
+      'Start tracking your daily consistency and achieving your goals with Chronify. Sign up free today!',
     images: ['https://chronify.com/twitter-register.jpg'],
     creator: '@chronify',
     site: '@chronify',
@@ -58,8 +63,8 @@ export const metadata: Metadata = {
   category: 'productivity',
   classification: 'Productivity Software',
   referrer: 'origin-when-cross-origin',
-  creator: 'Chronify AI',
-  publisher: 'Chronify AI',
+  creator: 'Chronify',
+  publisher: 'Chronify',
   formatDetection: {
     email: false,
     address: false,
@@ -79,13 +84,13 @@ const structuredData = {
       '@type': 'WebPage',
       '@id': 'https://chronify.com/auth/register',
       url: 'https://chronify.com/auth/register',
-      name: 'Sign Up for Chronify AI - Free Productivity Account',
+      name: 'Sign Up for Chronify - Free Productivity Account',
       description:
-        'Create your free Chronify AI account to start tracking daily goals and building consistent habits.',
+        'Create your free Chronify account to start tracking daily goals and building consistent habits.',
       isPartOf: {
         '@type': 'WebSite',
         '@id': 'https://chronify.com/#website',
-        name: 'Chronify AI',
+        name: 'Chronify',
         url: 'https://chronify.com',
         potentialAction: {
           '@type': 'SearchAction',
@@ -113,10 +118,10 @@ const structuredData = {
     },
     {
       '@type': 'Product',
-      name: 'Chronify AI - Free Plan',
+      name: 'Chronify - Free Plan',
       description:
         'Free productivity tracking software with goal setting, task management, and consistency monitoring.',
-      brand: { '@type': 'Brand', name: 'Chronify AI' },
+      brand: { '@type': 'Brand', name: 'Chronify' },
       offers: {
         '@type': 'Offer',
         price: '0',
@@ -145,7 +150,7 @@ const structuredData = {
         'Progress Insights',
         'Daily Schedule Planning',
         'Motivation Board',
-        'AI-Powered Recommendations',
+        'Personalized Recommendations',
       ],
       applicationCategory: 'ProductivityApplication',
       operatingSystem: 'Web, iOS, Android',
@@ -157,10 +162,10 @@ const structuredData = {
       mainEntity: [
         {
           '@type': 'Question',
-          name: 'Is Chronify AI really free?',
+          name: 'Is Chronify really free?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes! Chronify AI offers a robust free tier with essential features including goal tracking, task management, and basic insights. Premium plans are available for advanced features.',
+            text: 'Yes! Chronify offers a robust free tier with essential features including goal tracking, task management, and basic insights. Premium plans are available for advanced features.',
           },
         },
         {
@@ -184,16 +189,16 @@ const structuredData = {
           name: 'Can I upgrade later?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Absolutely! You can upgrade to Premium anytime to unlock unlimited goals, advanced analytics, AI recommendations, and priority support.',
+            text: 'Absolutely! You can upgrade to Premium anytime to unlock unlimited goals, advanced analytics, personalized recommendations, and priority support.',
           },
         },
       ],
     },
     {
       '@type': 'HowTo',
-      name: 'How to Sign Up for Chronify AI',
+      name: 'How to Sign Up for Chronify',
       description:
-        'Simple steps to create your Chronify AI account and start your consistency journey.',
+        'Simple steps to create your Chronify account and start your consistency journey.',
       step: [
         {
           '@type': 'HowToStep',
@@ -227,24 +232,6 @@ const structuredData = {
     },
   ],
 }
-
-const benefits = [
-  {
-    icon: '🎯',
-    title: 'Smart Goal Tracking',
-    text: 'Set and track unlimited goals with AI-powered insights and recommendations.',
-  },
-  {
-    icon: '📊',
-    title: 'Progress Analytics',
-    text: 'Visualize your consistency with detailed charts and performance metrics.',
-  },
-  {
-    icon: '🤖',
-    title: 'AI Recommendations',
-    text: 'Get personalized suggestions to optimize your productivity routine.',
-  },
-]
 
 const faqs = [
   {
@@ -296,19 +283,6 @@ export default function RegisterPage() {
       <section className="bg-muted/30 border-t border-border/60">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-5xl mx-auto">
-            {/* Benefits */}
-            <div className="grid md:grid-cols-3 gap-6 mb-16">
-              {benefits.map((b) => (
-                <div
-                  key={b.title}
-                  className="p-6 rounded-2xl bg-card border border-border/60 hover:border-primary/40 hover:shadow-md transition-all duration-200"
-                >
-                  <div className="text-3xl mb-4">{b.icon}</div>
-                  <h3 className="text-lg font-semibold mb-2">{b.title}</h3>
-                  <p className="text-sm text-muted-foreground">{b.text}</p>
-                </div>
-              ))}
-            </div>
 
             {/* FAQ */}
             <h2 className="text-2xl font-bold text-center mb-8">
@@ -342,8 +316,8 @@ export default function RegisterPage() {
             ))}
           </div>
           <p className="mt-6 text-center text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Chronify AI. All rights reserved.
-            Made for consistent achievers worldwide.
+            © {new Date().getFullYear()} Chronify. All rights reserved. Made for
+            consistent achievers worldwide.
           </p>
         </div>
       </section>

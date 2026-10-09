@@ -3,11 +3,11 @@ import { LoginForm } from '@/components/features/auth/login'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Sign In - Chronify AI | Track Your Daily Consistency',
-  description: 'Sign in to Chronify AI to track your daily goals, manage tasks, and monitor your consistency journey. Join thousands of productive users today.',
+  title: 'Sign In - Chronify | Track Your Daily Consistency',
+  description: 'Sign in to Chronify to track your daily goals, manage tasks, and monitor your consistency journey. Join thousands of productive users today.',
   keywords: 'login, sign in, productivity app, task manager, goal tracking, consistency tracker, daily planner, time management',
   openGraph: {
-    title: 'Sign In to Chronify AI - Start Your Consistency Journey',
+    title: 'Sign In to Chronify - Start Your Consistency Journey',
     description: 'Access your personalized dashboard to track goals, manage tasks, and build lasting habits.',
     type: 'website',
     url: 'https://chronify.com/auth/login',
@@ -16,14 +16,14 @@ export const metadata: Metadata = {
         url: 'https://chronify.com/og-login.jpg',
         width: 1200,
         height: 630,
-        alt: 'Chronify AI Login',
+        alt: 'Chronify Login',
       },
     ],
-    siteName: 'Chronify AI',
+    siteName: 'Chronify',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sign In to Chronify AI',
+    title: 'Sign In to Chronify',
     description: 'Access your productivity dashboard and track your consistency journey.',
     images: ['https://chronify.com/twitter-login.jpg'],
     creator: '@chronify',

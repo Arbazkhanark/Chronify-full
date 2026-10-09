@@ -383,32 +383,6 @@ export function Testimonials() {
             })}
           </div>
         </motion.div>
-
-        {/* ============================================================
-            CTA
-           ============================================================ */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center"
-        >
-          <div className="max-w-2xl mx-auto p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-primary/10 via-transparent to-accent/10 border border-border">
-            <h3 className="text-lg sm:text-xl font-bold mb-2">
-              Join Our Success Stories
-            </h3>
-            <p className="text-xs sm:text-sm text-muted-foreground mb-5">
-              Start your journey towards better productivity and success.
-            </p>
-            <Button className="rounded-xl px-6 py-5 text-sm sm:text-base">
-              Get Started Free
-            </Button>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mt-3">
-              No credit card required • 14-day free trial
-            </p>
-          </div>
-        </motion.div>
       </div>
     </section>
   )
